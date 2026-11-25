@@ -1,0 +1,11 @@
+slug,name,also_matches,sort_order
+south-asia,South Asia,Asia|APAC|Asia-Pacific|Asia Pacific,1
+east-asia,East Asia,Asia|APAC|Asia-Pacific|Asia Pacific,2
+southeast-asia,Southeast Asia,Asia|APAC|Asia-Pacific|Asia Pacific|ASEAN,3
+central-asia,Central Asia,Asia,4
+middle-east,Middle East,Asia|EMEA|MENA|Middle East and North Africa,5
+africa,Africa,EMEA|Sub-Saharan Africa,6
+europe,Europe,EMEA,7
+north-america,North America,Americas,8
+latin-america,Latin America,Americas|LATAM|Latin America and the Caribbean,9
+oceania,Oceania,APAC|Asia-Pacific|Asia Pacific,10

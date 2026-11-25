@@ -1,0 +1,3 @@
+title,url,summary,institution,city,country,is_remote,disciplines,program_kind,degree_name,duration_months,mode,portfolio_required,tuition_amount,tuition_currency,tuition_per,deadline_in_days,deadline_round,scholarship_name,scholarship_eligible_countries
+[Demo] MA Creative Technology,https://example.com/demo/programs/ma-creative-tech,Demo programme for development. Not real.,,London,United Kingdom,false,creative-coding|experience-design,masters,MA,12,in_person,true,24000,GBP,year,18,Round 1,Demo International Scholarship,India
+[Demo] Online Course in Creative Coding,https://example.com/demo/programs/online-cc,Demo course for development. Not real.,,,,true,creative-coding,online_course,,3,online,false,300,USD,course,40,Rolling,,

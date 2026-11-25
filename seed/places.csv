@@ -1,0 +1,104 @@
+city,state,country,region,lat,lng
+Bengaluru,Karnataka,India,South Asia,12.9716,77.5946
+Mumbai,Maharashtra,India,South Asia,19.0760,72.8777
+New Delhi,Delhi,India,South Asia,28.6139,77.2090
+Gurugram,Haryana,India,South Asia,28.4595,77.0266
+Pune,Maharashtra,India,South Asia,18.5204,73.8567
+Hyderabad,Telangana,India,South Asia,17.3850,78.4867
+Chennai,Tamil Nadu,India,South Asia,13.0827,80.2707
+Ahmedabad,Gujarat,India,South Asia,23.0225,72.5714
+Kolkata,West Bengal,India,South Asia,22.5726,88.3639
+Goa,Goa,India,South Asia,15.4909,73.8278
+Kochi,Kerala,India,South Asia,9.9312,76.2673
+Indore,Madhya Pradesh,India,South Asia,22.7196,75.8577
+Jaipur,Rajasthan,India,South Asia,26.9124,75.7873
+London,,United Kingdom,Europe,51.5074,-0.1278
+Berlin,,Germany,Europe,52.5200,13.4050
+Amsterdam,,Netherlands,Europe,52.3676,4.9041
+Rotterdam,,Netherlands,Europe,51.9244,4.4777
+Paris,,France,Europe,48.8566,2.3522
+Linz,,Austria,Europe,48.3069,14.2858
+Barcelona,,Spain,Europe,41.3874,2.1686
+Copenhagen,,Denmark,Europe,55.6761,12.5683
+Helsinki,,Finland,Europe,60.1699,24.9384
+New York,NY,United States,North America,40.7128,-74.0060
+Los Angeles,CA,United States,North America,34.0522,-118.2437
+San Francisco,CA,United States,North America,37.7749,-122.4194
+Montreal,QC,Canada,North America,45.5019,-73.5674
+Toronto,ON,Canada,North America,43.6532,-79.3832
+Tokyo,,Japan,East Asia,35.6762,139.6503
+Seoul,,South Korea,East Asia,37.5665,126.9780
+Singapore,,Singapore,Southeast Asia,1.3521,103.8198
+Shanghai,,China,East Asia,31.2304,121.4737
+Melbourne,VIC,Australia,Oceania,-37.8136,144.9631
+Mexico City,,Mexico,Latin America,19.4326,-99.1332
+São Paulo,,Brazil,Latin America,-23.5558,-46.6396
+Sheffield,,United Kingdom,Europe,53.3811,-1.4701
+Eindhoven,,Netherlands,Europe,51.4416,5.4697
+Gandhinagar,Gujarat,India,South Asia,23.2156,72.6369
+Cambridge,MA,United States,North America,42.3736,-71.1097
+Antwerp,,Belgium,Europe,51.2194,4.4025
+Fukuoka,,Japan,East Asia,33.5904,130.4017
+Buenos Aires,,Argentina,Latin America,-34.6037,-58.3816
+Cary,NC,United States,North America,35.7915,-78.7811
+Philadelphia,PA,United States,North America,39.9526,-75.1652
+Karlsruhe,,Germany,Europe,49.0069,8.4037
+Yamaguchi,,Japan,East Asia,34.1859,131.4714
+Sydney,NSW,Australia,Oceania,-33.8688,151.2093
+Lyon,,France,Europe,45.7640,4.8357
+Namur,,Belgium,Europe,50.4674,4.8720
+Colombo,,Sri Lanka,South Asia,6.9271,79.8612
+Lausanne,,Switzerland,Europe,46.5197,6.6323
+Zurich,,Switzerland,Europe,47.3769,8.5417
+Ogaki,,Japan,East Asia,35.3594,136.6129
+Daejeon,,South Korea,East Asia,36.3504,127.3845
+Bari,,Italy,Europe,41.1171,16.8719
+Istanbul,,Turkey,Middle East,41.0082,28.9784
+Dubai,,United Arab Emirates,Middle East,25.2048,55.2708
+Sharjah,,United Arab Emirates,Middle East,25.3463,55.4209
+Dhahran,Eastern Province,Saudi Arabia,Middle East,26.2361,50.0393
+Cape Town,Western Cape,South Africa,Africa,-33.9249,18.4241
+Johannesburg,Gauteng,South Africa,Africa,-26.2041,28.0473
+Lagos,Lagos,Nigeria,Africa,6.5244,3.3792
+Nairobi,,Kenya,Africa,-1.2921,36.8219
+Rio de Janeiro,RJ,Brazil,Latin America,-22.9068,-43.1729
+Gwangju,,South Korea,East Asia,35.1595,126.8526
+Yongin,Gyeonggi,South Korea,East Asia,37.2411,127.1776
+Hong Kong,,Hong Kong,East Asia,22.3193,114.1694
+Beijing,,China,East Asia,39.9042,116.4074
+Taipei,,Taiwan,East Asia,25.0330,121.5654
+The Hague,,Netherlands,Europe,52.0705,4.3007
+Leiden,,Netherlands,Europe,52.1601,4.4970
+Maastricht,,Netherlands,Europe,50.8514,5.6910
+Brussels,,Belgium,Europe,50.8503,4.3517
+Basel,,Switzerland,Europe,47.5596,7.5886
+Geneva,,Switzerland,Europe,46.2044,6.1432
+Ljubljana,,Slovenia,Europe,46.0569,14.5058
+Athens,,Greece,Europe,37.9838,23.7275
+Gijón,Asturias,Spain,Europe,43.5322,-5.6611
+Madrid,,Spain,Europe,40.4168,-3.7038
+Liverpool,,United Kingdom,Europe,53.4084,-2.9916
+Bristol,,United Kingdom,Europe,51.4545,-2.5879
+Cologne,,Germany,Europe,50.9375,6.9603
+Stuttgart,,Germany,Europe,48.7758,9.1829
+Frankfurt,,Germany,Europe,50.1109,8.6821
+Modena,,Italy,Europe,44.6471,10.9252
+Nantes,,France,Europe,47.2184,-1.5536
+Wrocław,,Poland,Europe,51.1079,17.0385
+Prague,,Czechia,Europe,50.0755,14.4378
+Belgrade,,Serbia,Europe,44.7866,20.4489
+Umeå,,Sweden,Europe,63.8258,20.2630
+Espoo,,Finland,Europe,60.2055,24.6559
+Santa Fe,NM,United States,North America,35.6870,-105.9378
+Washington,DC,United States,North America,38.9072,-77.0369
+Pasadena,CA,United States,North America,34.1478,-118.1445
+Santa Cruz,CA,United States,North America,36.9741,-122.0308
+Providence,RI,United States,North America,41.8240,-71.4128
+Austin,TX,United States,North America,30.2672,-97.7431
+Ottawa,ON,Canada,North America,45.4215,-75.6972
+Pittsburgh,PA,United States,North America,40.4406,-79.9959
+Kyoto,,Japan,East Asia,35.0116,135.7681
+Berkeley,CA,United States,North America,37.8715,-122.2730
+Jodhpur,Rajasthan,India,South Asia,26.2389,73.0243
+Galway,,Ireland,Europe,53.2707,-9.0568
+Bilbao,,Spain,Europe,43.2630,-2.9350

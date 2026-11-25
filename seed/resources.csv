@@ -1,0 +1,60 @@
+title,url,summary,resource_kind,author,publisher,frequency,is_free,disciplines,city,country,is_remote
+Creative Applications Network,https://www.creativeapplications.net,"Long-running publication covering projects, tools and research at the intersection of art, media and technology.",magazine,,,,true,creative-coding|installation|generative-art,,,true
+The Nature of Code,https://natureofcode.com,Book by Daniel Shiffman on simulating natural systems with code; free to read online.,book,Daniel Shiffman,,,true,creative-coding|generative-art,,,true
+The Coding Train,https://thecodingtrain.com,"Video tutorials on creative coding with p5.js, Processing and machine learning.",library,Daniel Shiffman,,,true,creative-coding|ai-art,,,true
+p5.js,https://p5js.org,"Free JavaScript library for creative coding, maintained by the Processing Foundation.",tool,,Processing Foundation,,true,creative-coding,,,true
+Processing,https://processing.org,Flexible software sketchbook and language for learning to code in the visual arts.,tool,,Processing Foundation,,true,creative-coding,,,true
+openFrameworks,https://openframeworks.cc,Open source C++ toolkit for creative coding.,tool,,,,true,creative-coding|installation,,,true
+TouchDesigner,https://derivative.ca,Node-based visual programming environment for real-time interactive multimedia.,tool,,Derivative,,,creative-coding|projection-mapping|installation,Toronto,Canada,false
+Are.na,https://www.are.na,Platform for collecting and connecting ideas; widely used by designers and artists for research.,community,,,,,research,,,true
+Design Fabric,https://designfabric.in,"Indian publication covering design, art and culture.",magazine,,,,true,experience-design|research,Mumbai,India,false
+Leonardo,https://direct.mit.edu/leon,"Journal of the International Society for the Arts, Sciences and Technology.",journal,,MIT Press,bimonthly,false,research,,,true
+awesome-creative-technology,https://github.com/j0hnm4r5/awesome-creative-technology,"Community-curated list of creative technology resources, studios, tools and courses.",directory,,,,true,creative-coding|research,,,true
+Ars Electronica Archive,https://ars.electronica.art/archive/de/,"Archive of Prix Ars Electronica entries, festival programmes and media art since 1979.",archive,,Ars Electronica,,true,research|installation,Linz,Austria,false
+Hackaday,https://hackaday.com,"Daily publication on hardware hacking, electronics and DIY projects.",magazine,,,daily,true,physical-computing,,,true
+Adafruit Learning System,https://learn.adafruit.com,"Free tutorials on electronics, microcontrollers and wearables.",library,,Adafruit,,true,physical-computing,,,true
+Arduino,https://www.arduino.cc,Open-source electronics platform and IDE for physical computing.,tool,,Arduino,,true,physical-computing,,,true
+three.js,https://threejs.org,JavaScript 3D library for WebGL and WebGPU.,tool,,,,true,creative-coding|spatial-xr,,,true
+Hydra,https://hydra.ojack.xyz,Live-coding video synth that runs in the browser.,tool,Olivia Jack,,,true,creative-coding|generative-art,,,true
+Strudel,https://strudel.cc,Browser-based live-coding environment for music patterns.,tool,,,,true,sound-music-tech|creative-coding,,,true
+Shadertoy,https://www.shadertoy.com,Community for writing and sharing GLSL shaders in the browser.,community,,,,true,generative-art|creative-coding,,,true
+The Book of Shaders,https://thebookofshaders.com,Step-by-step guide to fragment shaders.,book,Patricio Gonzalez Vivo and Jen Lowe,,,true,generative-art|creative-coding,,,true
+It's Nice That,https://www.itsnicethat.com,"Publication championing creativity across art, design and visual culture.",magazine,,,daily,true,experience-design|research,London,United Kingdom,false
+Neural,https://neural.it,"Magazine on new media art, electronic music and hacktivism.",magazine,,,,,research|sound-music-tech,Bari,Italy,false
+OpenProcessing,https://openprocessing.org,Community for sharing and remixing p5.js and Processing sketches.,community,,,,true,creative-coding|generative-art,,,true
+Kadenze,https://www.kadenze.com,Online courses in art and creative technology from universities and institutions.,library,,,,,creative-coding|sound-music-tech,,,true
+ml5.js,https://ml5js.org,"Friendly machine-learning library for the web, built on TensorFlow.js.",tool,,,,true,ai-art|creative-coding,,,true
+Programming Design Systems,https://programmingdesignsystems.com,Free online book by Rune Madsen on graphic design with code.,book,Rune Madsen,,,true,creative-coding|generative-art,,,true
+Generative Design,http://www.generative-gestaltung.de,"Book and code examples on generative design with p5.js, by Groß, Bohnacker, Laub and Lazzeroni.",book,"Hartmut Bohnacker, Benedikt Groß, Julia Laub, Claudius Lazzeroni",Princeton Architectural Press,,false,generative-art|creative-coding,,,true
+vvvv,https://visualprogramming.net,Visual live-programming environment for interactive media and installations.,tool,,,,true,creative-coding|installation,,,true
+Max (Cycling ’74),https://cycling74.com,"Visual programming environment for music, audio and interactive media.",tool,,Cycling ’74,,false,sound-music-tech|creative-coding,,,true
+Notch,https://www.notch.one,Real-time graphics tool used for live events and interactive installations.,tool,,,,false,installation|projection-mapping,,,true
+Blender,https://www.blender.org,"Free, open-source 3D creation suite.",tool,,,,true,spatial-xr|generative-art,,,true
+Houdini,https://www.sidefx.com,Procedural 3D and VFX software by SideFX.,tool,,SideFX,,false,generative-art|spatial-xr,,,true
+Unity,https://unity.com,"Real-time 3D engine used for games, XR and interactive installations.",tool,,,,true,game-design|spatial-xr,,,true
+cables.gl,https://cables.gl,Browser-based visual programming tool for real-time WebGL graphics.,tool,,,,true,creative-coding|generative-art,,,true
+nannou,https://nannou.cc,Open-source creative coding framework for Rust.,library,,,,true,creative-coding,,,true
+MediaPipe,https://ai.google.dev/edge/mediapipe/solutions/guide,"Google’s on-device ML solutions for pose, hand and face tracking, widely used in interactive work.",library,,,,true,ai-art|interaction-design,,,true
+Runway,https://runwayml.com,Generative AI video and image tools for artists and designers.,tool,,,,false,ai-art,,,true
+Interaction Design Foundation,https://www.interaction-design.org,Online courses and an open encyclopedia of interaction design.,community,,,,false,interaction-design|service-design,,,true
+Rhizome ArtBase,https://artbase.rhizome.org,Rhizome’s archive of born-digital artworks.,archive,,,,true,research|ai-art,,,true
+Archive of Digital Art (ADA),https://www.digitalartarchive.at,Research archive documenting digital art since the 1960s.,archive,,,,true,research,,,true
+Dezeen,https://www.dezeen.com,"Architecture and design magazine, with frequent coverage of interactive and immersive work.",magazine,,,daily,true,experience-design|installation,,,true
+designboom,https://www.designboom.com,"Architecture, design and art magazine.",magazine,,,daily,true,experience-design|installation,,,true
+Design Observer,https://designobserver.com,Writing and podcasts on design and visual culture.,magazine,,,,true,research|experience-design,,,true
+The Creative Independent,https://thecreativeindependent.com,"Interviews and guides on creative work, published by Kickstarter.",magazine,,,,true,research,,,true
+Dense Discovery,https://www.densediscovery.com,"Weekly newsletter on design, technology, urbanism and culture.",newsletter,Kai Brach,,weekly,true,research|experience-design,,,true
+99% Invisible,https://99percentinvisible.org,Podcast about design and architecture.,podcast,Roman Mars,,weekly,true,research|experience-design,,,true
+Design Matters with Debbie Millman,https://www.designmattersmedia.com,Long-running podcast of interviews with designers and artists.,podcast,Debbie Millman,,weekly,true,research,,,true
+Homegrown,https://homegrown.co.in,"Indian youth culture publication covering art, design and music.",magazine,,,,true,research,Mumbai,India,false
+Journal of Design and Science,https://jods.mitpress.mit.edu,Open-access journal from the MIT Media Lab and MIT Press.,journal,,MIT Press,,true,research,,,true
+Digital Creativity,https://www.tandfonline.com/journals/ndcr20,"Peer-reviewed journal on the arts, design and digital technology.",journal,,Taylor & Francis,quarterly,false,research,,,true
+Interactions (ACM),https://interactions.acm.org,ACM magazine on human–computer interaction and design.,magazine,,ACM,bimonthly,false,interaction-design|research,,,true
+TOPLAP,https://toplap.org,International community for live coding music and visuals.,community,,,,true,sound-music-tech|creative-coding,,,true
+Algorave,https://algorave.com,Network of events where people dance to music made from algorithms.,community,,,,true,sound-music-tech|creative-coding,,,true
+Genuary,https://genuary.art,Yearly January challenge of daily generative art prompts.,community,,,,true,generative-art|creative-coding,,,true
+lines (llllllll.co),https://llllllll.co,"Forum for music, art and technology, around monome and norns.",community,,,,true,sound-music-tech,,,true
+Creative Code Berlin,https://creativecode.berlin,Berlin meetup community for creative coding.,community,,,,true,creative-coding,Berlin,Germany,false
+Processing Community Day,https://day.processing.org,"Worldwide events celebrating art, code and the Processing community.",community,,,,true,creative-coding,,,true
+Derivative job board,https://derivative.ca/job-board,"TouchDesigner job board run by Derivative, with studio and freelance roles worldwide.",directory,,,,true,installation|creative-coding,,,true
+Interactive & Immersive Jobs,https://jobs.interactiveimmersive.io,"Job board for creative technology, immersive and experiential roles, run by The Interactive & Immersive HQ.",directory,,,,true,experience-design|installation|creative-coding,,,true

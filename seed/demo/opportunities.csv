@@ -1,0 +1,4 @@
+title,url,summary,opp_kind,organisation,city,country,is_remote,open_worldwide,eligibility_countries,fee,stipend_or_budget,travel_covered,closes_in_days,deadline_source_text
+[Demo] Light Festival Open Call,https://example.com/demo/calls/light-festival,Demo open call for development. Not real.,open_call,,Amsterdam,Netherlands,false,true,,none,EUR 10000 production budget,true,4,Demo: submissions close in four days.
+[Demo] Media Art Residency,https://example.com/demo/calls/residency,Demo residency for development. Not real.,residency,,Goa,India,false,,,none,INR 50000 stipend,unknown,25,Demo: apply within 25 days.
+[Demo] EU Arts Grant,https://example.com/demo/calls/eu-grant,Demo grant for development. Not real.,grant,,Berlin,Germany,false,false,Germany|France|Netherlands,none,,false,45,Demo: deadline in 45 days.
