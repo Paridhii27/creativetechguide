@@ -83,14 +83,13 @@ describe("relevance rules", () => {
 
 describe("filters", () => {
   it("maps params per type and drops junk", () => {
-    const f = parseFilters({ kind: "masters", tuition: "5000-15000", within: "30", remote: "yes", relevance: "nope", page: "3" }, "program", india, NOW);
-    expect(f).toMatchObject({ type: "program", lens: "india", programKind: "masters", tuitionUsdMin: 5000, tuitionUsdMax: 15000, remote: true, dateFrom: "2026-11-22", dateTo: "2026-12-22", offset: 80 });
+    const f = parseFilters({ kind: "masters", within: "30", remote: "yes", relevance: "nope", page: "3" }, "program", india, NOW);
+    expect(f).toMatchObject({ type: "program", lens: "india", programKind: "masters", remote: true, dateFrom: "2026-11-22", dateTo: "2026-12-22", offset: 80 });
     expect(f.relevance).toBeUndefined();
   });
   it("job filters", () => {
-    const f = parseFilters({ kind: "senior", work_mode: "remote", visa: "yes", tuition: "0-1" }, "job", GLOBAL_LENS, NOW);
+    const f = parseFilters({ kind: "senior", work_mode: "remote", visa: "yes" }, "job", GLOBAL_LENS, NOW);
     expect(f).toMatchObject({ seniority: "senior", workMode: "remote", visa: "yes" });
-    expect(f.tuitionUsdMin).toBeUndefined();
   });
   it("ignores a kind that doesn't belong to the type", () => {
     expect(parseFilters({ kind: "masters" }, "event", GLOBAL_LENS).kind).toBeUndefined();

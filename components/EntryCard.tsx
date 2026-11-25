@@ -34,7 +34,7 @@ export default function EntryCard({ entry: e, lens, fx, orgName, actions, saved 
   return (
     <li
       style={swatch ? ({ "--row-wash": tintVar(swatch, 10) } as CSSProperties) : undefined}
-      className="group -mx-3 grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-4 gap-y-3 border-b border-line px-3 py-5 transition-colors hover:bg-[var(--row-wash,var(--surface))] sm:grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:gap-x-6"
+      className="group grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-4 gap-y-3 border-b border-line px-3 py-5 transition-colors hover:bg-[var(--row-wash,var(--surface))] sm:grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:gap-x-6"
     >
       <Thumb src={pic.src} title={title} fit={pic.fit} swatch={swatch} className="aspect-square w-full" />
       <div className="min-w-0">

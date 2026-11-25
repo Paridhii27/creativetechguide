@@ -50,7 +50,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           </h1>
           <p className="text-body-l mt-6 max-w-xl text-ink-muted">
             Studios, programmes, jobs, open calls, publications and events in experience design and design technology. Pick a country or
-            region in the lens to see what&apos;s based there or open to applicants from there, with costs in the local currency.
+            region in the lens to see what&apos;s based there or open to applicants from there.
           </p>
         </div>
         <Specimen
@@ -112,7 +112,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
       </section>
 
       {/* CLOSING SOON ----------------------------------------------------- */}
-      <section className="grid gap-y-6 lg:grid-cols-[13rem_minmax(0,46rem)] lg:gap-x-24 xl:gap-x-32">
+      <section className="grid gap-y-6 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-x-28 xl:gap-x-36">
         <div>
           <h2 className="text-heading text-ink">Closing soon</h2>
           <p className="text-body-s mt-3 text-ink-muted">Open calls, job closing dates and programme application rounds in the next 60 days.</p>

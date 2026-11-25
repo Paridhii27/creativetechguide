@@ -18,9 +18,6 @@ export interface BrowseFilters {
   dateFrom?: string;
   dateTo?: string;
   programKind?: string;
-  /** Tuition band in USD a year; converted to the stored INR estimate for the query. */
-  tuitionUsdMin?: number;
-  tuitionUsdMax?: number;
   seniority?: string;
   workMode?: string;
   visa?: string;
@@ -28,14 +25,15 @@ export interface BrowseFilters {
   excludeKind?: string;
   limit?: number;
   offset?: number;
+  /** Also count every match (for "Page 02 of 05"). Costs a second query, so only paged lists ask. */
+  withTotal?: boolean;
 }
 
-export async function browseEntries(f: BrowseFilters): Promise<{ entries: Entry[]; hasMore: boolean }> {
-  if (!isSupabaseConfigured()) return { entries: [], hasMore: false };
+export async function browseEntries(f: BrowseFilters): Promise<{ entries: Entry[]; hasMore: boolean; total: number }> {
+  if (!isSupabaseConfigured()) return { entries: [], hasMore: false, total: 0 };
   const supabase = await createClient();
   const limit = f.limit ?? 50;
-  const usd = f.tuitionUsdMin != null || f.tuitionUsdMax != null ? (await getFxTable()).USD : undefined;
-  const { data, error } = await supabase.rpc("browse_entries", {
+  const args = {
     p_type: f.type ?? null,
     p_lens: f.lens,
     p_q: f.q || null,
@@ -48,20 +46,28 @@ export async function browseEntries(f: BrowseFilters): Promise<{ entries: Entry[
     p_date_from: f.dateFrom ?? null,
     p_date_to: f.dateTo ?? null,
     p_program_kind: f.programKind ?? null,
-    p_tuition_inr_min: usd && f.tuitionUsdMin != null ? f.tuitionUsdMin * usd : null,
-    p_tuition_inr_max: usd && f.tuitionUsdMax != null ? f.tuitionUsdMax * usd : null,
+    // No tuition filter in the UI (cost data isn't reliable); the SQL parameters stay unused.
+    p_tuition_inr_min: null,
+    p_tuition_inr_max: null,
     p_seniority: f.seniority ?? null,
     p_work_mode: f.workMode ?? null,
     p_visa: f.visa ?? null,
     p_kind: f.kind ?? null,
     // Only sent when used: needs migration 20261123000002_tools_section.
     ...(f.excludeKind ? { p_exclude_kind: f.excludeKind } : {}),
-    p_limit: limit + 1,
-    p_offset: f.offset ?? 0,
-  });
+  };
+  const offset = f.offset ?? 0;
+  // The page itself, plus a count of every match (p_limit null = no limit; PostgREST returns one row and the exact total).
+  const [{ data, error }, counted] = await Promise.all([
+    supabase.rpc("browse_entries", { ...args, p_limit: limit + 1, p_offset: offset }),
+    f.withTotal ? supabase.rpc("browse_entries", { ...args, p_limit: null, p_offset: 0 }, { count: "exact" }).select("id").range(0, 0) : null,
+  ]);
   if (error) throw new Error(`browse_entries failed: ${error.message}`);
   const rows = (data ?? []) as Entry[];
-  return { entries: rows.slice(0, limit), hasMore: rows.length > limit };
+  const hasMore = rows.length > limit;
+  // If the count fails, fall back to what this page shows.
+  const total = !counted || counted.error || counted.count == null ? offset + rows.length : counted.count;
+  return { entries: rows.slice(0, limit), hasMore, total };
 }
 
 export async function getEntry(id: string): Promise<Entry | null> {
@@ -133,6 +139,14 @@ export async function getPlaces(): Promise<Place[]> {
   const supabase = await createClient();
   const { data } = await supabase.from("places").select("city,state,country,region,lat,lng").order("country").order("city");
   return (data ?? []) as Place[];
+}
+
+/** Every country name (from the countries table), for the Country field's suggestions. */
+export async function getCountryNames(): Promise<string[]> {
+  if (!isSupabaseConfigured()) return [];
+  const supabase = await createClient();
+  const { data } = await supabase.from("countries").select("name").order("name");
+  return (data ?? []).map((c) => c.name as string);
 }
 
 export async function getDisciplines(): Promise<Discipline[]> {

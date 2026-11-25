@@ -209,7 +209,7 @@ const DISCIPLINE_HINTS: Record<string, RegExp> = {
   "spatial-xr": /\b(xr|vr|ar|virtual reality|augmented reality|mixed reality|spatial computing)\b/i,
   installation: /\b(installation art|interactive installation|installations)\b/i,
   "projection-mapping": /\bprojection mapping/i,
-  "ai-art": /\b(ai art|machine learning art|generative ai|artificial intelligence)\b/i,
+  ai: /\b(ai|a\.i\.|artificial intelligence|generative ai|genai|ai art|llms?|large language models?|diffusion models?)\b/i,
   "sound-music-tech": /\b(sound art|music tech|audio-visual|audiovisual|sonic)\b/i,
   "generative-art": /\bgenerative art|generative design\b/i,
   "physical-computing": /\b(physical computing|arduino|raspberry pi|microcontroller)\b/i,

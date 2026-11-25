@@ -51,6 +51,8 @@
     --on-swatch: #050505;
     --grid: rgb(234 253 87 / 0.05);
     --img-filter: brightness(0.9);
+    --thumb-ground: transparent;
+    --thumb-edge: inset 0 0 0 1px var(--line);
     color-scheme: dark;
   }
 }
@@ -74,6 +76,9 @@
   --on-swatch: #050505;
   --grid: rgb(234 253 87 / 0.05);
   --img-filter: brightness(0.9);
+  /* image grounds: no type tint, just a hairline edge */
+  --thumb-ground: transparent;
+  --thumb-edge: inset 0 0 0 1px var(--line);
   color-scheme: dark;
 }
 
@@ -256,6 +261,15 @@ a { text-underline-offset: 3px; }
   text-transform: uppercase;
   letter-spacing: 0.01em;
 }
+/* Nav at 14px: keeps all seven sections on one row beside search (the header is capped at 1280px). */
+@utility text-nav-s {
+  font-family: var(--font-text);
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
 @utility text-label {
   font-family: var(--font-text);
   font-size: 13px;
@@ -298,7 +312,10 @@ a { text-underline-offset: 3px; }
   background-size: 24px 24px;
 }
 
-/* Images follow the mode: as-is (Paper), dimmed (Night), blue duotone (Blueprint; original on hover) */
+/* Image grounds: the type tint by default; a mode can replace it with --thumb-ground (Monitor: transparent). */
+.thumb-ground { background: var(--thumb-ground, var(--thumb-tint)); box-shadow: var(--thumb-edge, none); }
+
+/* Images follow the mode: as-is (Document), dimmed (Monitor), blue duotone (Blueprint; original on hover) */
 .mode-img { filter: var(--img-filter); transition: filter 300ms ease; }
 .mode-img:hover, .mode-img-original { filter: none; }
 [data-theme="night"] .mode-img:hover { filter: brightness(0.9); }

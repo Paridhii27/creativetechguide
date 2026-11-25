@@ -24,10 +24,26 @@ Requires Node 20+ (this machine has Node 22 at `~/.local/node/bin`; run `export 
 3. Apply the schema, either:
    - paste `supabase/migrations/20261122000001_init.sql` into the Supabase SQL editor and run it, **or**
    - `npx supabase login && npx supabase link --project-ref <ref> && npm run db:push`
-4. In Supabase → Authentication → URL Configuration, add `http://localhost:3000/auth/callback` (and your Vercel URL later) to the redirect URLs.
+4. In Supabase → Authentication → URL Configuration, add `http://localhost:3000/**` to the redirect URLs (see *Deploying to Vercel* for production).
 5. Seed: `npm run seed` (real entries only) or `npm run seed -- --demo` (adds fake, clearly labelled `[Demo]` jobs, calls and programmes with deadlines relative to today, to exercise urgency colours and INR conversion).
 6. `npm run dev` and open http://localhost:3000
 7. Sign in once with a magic link, then `npm run make-admin -- you@example.com`.
+
+## Deploying to Vercel
+
+1. Import the GitHub repo in Vercel (framework: Next.js, no build settings to change).
+2. **Environment variables** (Settings → Environment Variables, for Production and Preview):
+   - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+   - `ANTHROPIC_API_KEY` once classification ships
+   - Do **not** add `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_DB_URL` (local scripts only), and don't set `NEXT_PUBLIC_SITE_URL` to localhost. Sign-in links use the domain the request came in on.
+   - `NEXT_PUBLIC_*` values are baked in at build time: **redeploy** after changing them.
+3. **Supabase → Authentication → URL Configuration:**
+   - *Site URL*: your production URL, e.g. `https://<app>.vercel.app` (Supabase falls back to this when a redirect isn't allowed, which is how localhost links end up in emails).
+   - *Redirect URLs*: `https://<app>.vercel.app/**`, `http://localhost:3000/**`, and for preview deployments `https://*-<vercel-team-slug>.vercel.app/**`.
+4. **Supabase → Authentication → Emails:** the built-in mailer only delivers to members of your Supabase organisation and only a few emails an hour. Before inviting other people, add custom SMTP (e.g. Resend or Postmark, both have free tiers).
+5. Recommended: in *Authentication → Emails → Magic Link*, change the link to
+   `<a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=magiclink">Sign in</a>`.
+   `.RedirectTo` is already `https://<the domain you signed in from>/auth/callback?next=…`, and `/auth/callback` accepts `token_hash`. With the default template, a link only works in the same browser that asked for it (PKCE), so opening it in a phone's mail app fails.
 
 ## Scripts
 

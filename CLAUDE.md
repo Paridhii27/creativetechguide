@@ -85,7 +85,7 @@ A watchlist of pages to check: `url`, `kind` (page/rss/search_query), `expected_
 
 ## Taxonomy (seed values, editable)
 
-**Disciplines:** experience-design, creative-coding, interaction-design, spatial-xr, installation, projection-mapping, ai-art, sound-music-tech, generative-art, physical-computing, game-design, data-visualisation, service-design, research
+**Disciplines:** experience-design, creative-coding, interaction-design, spatial-xr, installation, projection-mapping, ai, sound-music-tech, generative-art, physical-computing, game-design, data-visualisation, service-design, research
 
 **Indian cities to start with:** Bengaluru, Mumbai, New Delhi, Gurugram, Pune, Hyderabad, Chennai, Ahmedabad, Kolkata, Goa, Kochi, Indore, Jaipur
 

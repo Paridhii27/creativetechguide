@@ -6,14 +6,6 @@ export type Params = Record<string, string | string[] | undefined>;
 
 export const PAGE_SIZE = 40;
 
-/** Tuition bands per year, in USD; labels are shown in the lens currency. */
-export const TUITION_BANDS = [
-  { value: "0-5000", min: 0, max: 5000 },
-  { value: "5000-15000", min: 5000, max: 15000 },
-  { value: "15000-35000", min: 15000, max: 35000 },
-  { value: "35000-", min: 35000, max: null },
-] as const;
-
 export const WINDOWS = [
   { value: "7", label: "Next 7 days" },
   { value: "30", label: "Next 30 days" },
@@ -49,14 +41,6 @@ export function parseFilters(p: Params, type: EntryType | undefined, lens: Lens,
     else f.kind = kind;
   }
 
-  if (type === "program") {
-    const band = one(p.tuition);
-    const m = band?.match(/^(\d*)-(\d*)$/);
-    if (m) {
-      if (m[1]) f.tuitionUsdMin = Number(m[1]);
-      if (m[2]) f.tuitionUsdMax = Number(m[2]);
-    }
-  }
   if (type === "job") {
     const wm = one(p.work_mode);
     if (wm && ["onsite", "hybrid", "remote"].includes(wm)) f.workMode = wm;

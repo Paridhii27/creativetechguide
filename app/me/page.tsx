@@ -8,7 +8,7 @@ import { Accent, PageTitle } from "@/components/ui/layout";
 import { BracketLabel, Mark } from "@/components/ui/primitives";
 import { getFxTable } from "@/lib/db/entries";
 import { getCurrentUser } from "@/lib/db/profiles";
-import { isAdmin, listMyEntries } from "@/lib/db/mylayer";
+import { isAdmin, listMyEntries, pendingReviewCount } from "@/lib/db/mylayer";
 import { resolveLens } from "@/lib/lens-server";
 import type { Swatch } from "@/lib/swatch";
 import type { Entry } from "@/lib/types";
@@ -59,7 +59,7 @@ export default async function MyLayerPage({ searchParams }: { searchParams: Prom
   if (!user) redirect("/login?next=/me");
   const sp = await searchParams;
   const lens = await resolveLens(sp.lens);
-  const [{ own, saved }, fx, admin] = await Promise.all([listMyEntries(), getFxTable(), isAdmin()]);
+  const [{ own, saved }, fx, admin, reviewCount] = await Promise.all([listMyEntries(), getFxTable(), isAdmin(), pendingReviewCount()]);
 
   const items: Record<ViewKey, Entry[]> = {
     saved,
@@ -113,7 +113,7 @@ export default async function MyLayerPage({ searchParams }: { searchParams: Prom
       </section>
 
       {/* VIEWS + LIST ------------------------------------------------------ */}
-      <div className="grid gap-y-8 lg:grid-cols-[13rem_minmax(0,46rem)] lg:gap-x-24 xl:gap-x-32">
+      <div className="grid gap-y-8 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-x-28 xl:gap-x-36">
         <nav aria-label="My Layer" className="lg:sticky lg:top-8 lg:self-start">
           <ul className="grid grid-cols-2 border-t border-line sm:grid-cols-4 lg:grid-cols-1">
             {VIEWS.map((v) => {
@@ -134,6 +134,21 @@ export default async function MyLayerPage({ searchParams }: { searchParams: Prom
                 </li>
               );
             })}
+            {/* Only the admin reviews suggestions, so the queue lives here rather than in everyone's navbar. */}
+            {admin && (
+              <li className="col-span-2 border-b border-line sm:col-span-4 lg:col-span-1 lg:mt-6 lg:border-t">
+                <Link
+                  href="/admin/review"
+                  title="Suggestions waiting for you to approve or reject"
+                  className="flex items-end justify-between gap-3 border-l-2 border-transparent py-3 pr-2 pl-3 transition-colors hover:bg-surface"
+                >
+                  <span className="text-label flex items-center gap-2 text-ink">
+                    Review queue <span aria-hidden>→</span>
+                  </span>
+                  <span className={`text-numeral ${reviewCount > 0 ? "text-accent-text" : "text-ink-muted"}`}>{reviewCount}</span>
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
 

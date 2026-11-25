@@ -56,9 +56,9 @@ describe("entry form", () => {
   };
 
   it("builds an open call without inventing unknowns", () => {
-    const v = EntryForm.parse(fd({ type: "opportunity", title: "Light Residency", url: "https://x.org/call", kind: "residency", deadline: "2027-01-15", deadline_source_text: "Apply by 15 Jan 2027", suggest: "on", disciplines: ["installation", "ai-art"] }));
+    const v = EntryForm.parse(fd({ type: "opportunity", title: "Light Residency", url: "https://x.org/call", kind: "residency", deadline: "2027-01-15", deadline_source_text: "Apply by 15 Jan 2027", suggest: "on", disciplines: ["installation", "ai"] }));
     expect(v.suggest).toBe(true);
-    expect(v.disciplines).toEqual(["installation", "ai-art"]);
+    expect(v.disciplines).toEqual(["installation", "ai"]);
     const d = buildData(v, {});
     expect(d).toMatchObject({ opp_kind: "residency", deadline: "2027-01-15", deadline_source_text: "Apply by 15 Jan 2027", fee: "unknown", travel_covered: "unknown", apply_url: "https://x.org/call" });
     expect(d).not.toHaveProperty("open_worldwide");

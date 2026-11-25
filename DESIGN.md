@@ -26,7 +26,7 @@ The visual design system for the site. `CLAUDE.md` covers what the product does;
    - One central "specimen" (the world map, or a region of it, in the hero; the entry's image on detail pages) with **thin leader lines connecting to small annotation boxes** that hold metadata: location, discipline, deadline, eligibility.
    - Small bracketed labels such as `[ CORE DISCIPLINES ]` in the `micro` text style, local time and coordinates in the corners, tiny barcodes and grid marks, and fine corner ticks on panels.
    - An **exploded or layered diagram** idea for explaining the lenses and layers (the Map at the bottom, My Layer above it) on the homepage.
-   - This specimen look is what the three view modes (Paper, Night, Blueprint) are built from: see Colour below.
+   - This specimen look is what the three view modes (Document, Monitor, Blueprint) are built from: see Colour below.
 3. **Bento box (used sparingly, about 10%).** Only on the **Insights** page and the **My Layer home**: rounded cards in an uneven grid, pill-shaped buttons and toggles, one or two soft gradient or glass image tiles, and big numbers (counts, deadlines this week).
 
 ## Typography
@@ -92,7 +92,7 @@ Use tabular numerals (`font-variant-numeric: tabular-nums`) in `micro`, `tag`, a
 
 The site has **three view modes**, taken from the three versions of the specimen reference in Figma ("Visual References" → "visual direction"). They share the same layout, type and components; only the colour tokens change. All colour in components comes from semantic CSS variables, never hard-coded hex values.
 
-| Token | **Paper** (white + black, signal-red accent) | **Night** (black + white, chartreuse accent) | **Blueprint** (white + blue, monochrome) |
+| Token | **Document** (white + black, signal-red accent) | **Monitor** (black + white, chartreuse accent) | **Blueprint** (white + blue, monochrome) |
 |---|---|---|---|
 | `--bg` | `#FCFCFC` | `#050505` | `#FCFCFC` |
 | `--surface` (cards, image grounds) | `#F2F2F0` | `#0F0F0F` | `#EEF3FC` |
@@ -107,11 +107,11 @@ The site has **three view modes**, taken from the three versions of the specimen
 | `--swatch-1…5` (secondary palette: fills, tiles, map dots, category marks; never small text) | red `#F04A30`, blue `#387EB2`, green `#7FB17E`, mustard `#DCB572`, pink `#DBAAAE` | coral `#D9777C`, sage `#7C9A8F`, pink `#D365A4`, cobalt `#5A78E6`, orange `#D86A48` | all `#3449B2` |
 | `--on-swatch` (text on palette fills) | `#1E1E1E` | `#050505` | `#FCFCFC` |
 
-All pairs above pass WCAG AA: ink on background is at least 7:1 in every mode, and `--accent-text` on background is at least 4.5:1. In Paper mode, keep the brighter `#F04A30` for shapes, lines and large text only, and use `--accent-text` for small accent text. White on `#F04A30` fails AA, so text on solid red is ink. The Paper palette comes from the "paper squares" reference (Figma node `19:132`), the Night palette from the soft gradient-tile reference (node `19:128`).
+All pairs above pass WCAG AA: ink on background is at least 7:1 in every mode, and `--accent-text` on background is at least 4.5:1. In Document mode, keep the brighter `#F04A30` for shapes, lines and large text only, and use `--accent-text` for small accent text. White on `#F04A30` fails AA, so text on solid red is ink. The Document palette comes from the "paper squares" reference (Figma node `19:132`), the Monitor palette from the soft gradient-tile reference (node `19:128`).
 
 ### How each mode should feel
-- **Paper** (default): mostly black on white, like a printed field guide. The red accent is rare: active states, urgent deadlines, specimen leader-line dots, the active lens. The paper-square colours (red, blue, green, mustard, pink) appear only as small fills and tiles.
-- **Night:** a black instrument panel. White type with chartreuse for HUD details: annotation boxes, leader lines, bracketed `micro` labels, focus states. Soft coral, sage, pink, cobalt and orange for bento tiles and category fills. A faint chartreuse grid behind specimen areas. Slightly more glow and line work than the other modes, but no neon blur effects.
+- **Document** (default): mostly black on white, like a printed field guide. The red accent is rare: active states, urgent deadlines, specimen leader-line dots, the active lens. The paper-square colours (red, blue, green, mustard, pink) appear only as small fills and tiles.
+- **Monitor:** a black instrument panel. White type with chartreuse for HUD details: annotation boxes, leader lines, bracketed `micro` labels, focus states. Soft coral, sage, pink, cobalt and orange for bento tiles and category fills. A faint chartreuse grid behind specimen areas. Slightly more glow and line work than the other modes, but no neon blur effects.
 - **Blueprint:** monochrome blue on white, like a technical drawing. *Everything*, type included, is the one blue. "Accents" become solid blue fills with white type (active pills, urgent deadlines, badges), as in the reference's inverted labels. A visible blue grid in specimen areas.
 
 ### Where the palette is used
@@ -126,16 +126,16 @@ The five swatches (`--swatch-1…5`) appear throughout the system, always as fil
 - The main `--accent` keeps its jobs: active states, urgency, the lens toggle, focus and the nav underline.
 
 ### Images per mode
-- Paper: images as they are, on `--surface`.
-- Night: images as they are, at 90% brightness so they don't glare.
+- Document: images as they are, on `--surface`.
+- Monitor: images as they are, at 90% brightness so they don't glare.
 - Blueprint: images get a blue duotone (CSS `filter` or an SVG duotone filter mapping shadows to `--ink` and highlights to `--bg`) so the page stays monochrome. Show the original on hover or on the detail page.
 
 ### Switching modes
-- A **"CHANGE VIEW"** control: a small outlined pill in `tag` style, centred in the top bar (echoing the reference's centred "CHANGE REALITY" button). It cycles Paper → Night → Blueprint, and shows the current mode's name in `micro` beside it.
-- Set `data-theme="paper|night|blueprint"` on `<html>`. Save the choice in `localStorage` (wrapped in try/catch) and per user once logged in. On a first visit, use Night if the system prefers dark, otherwise Paper.
+- A **view switch** at the right of the top strip, just before the account links (kept off the left so it never sits above the wordmark): a `micro` "VIEW" label, then a pill-shaped segmented control showing all three modes (Document · Monitor · Blueprint) in `tag` style. Each option has a tiny preview of that mode (its paper, ink and accent), and the current one is filled with ink. Clicking one switches straight to it; arrow keys move between them. (This replaced an earlier "CHANGE VIEW" button that cycled modes, which hid what each mode was.)
+- Set `data-theme="paper|night|blueprint"` on `<html>` (internal ids: `paper` = Document, `night` = Monitor; the visible names live in `VIEW_MODE_LABELS` in `lib/theme.ts`). Save the choice in `localStorage` (wrapped in try/catch) and per user once logged in. On a first visit, use Monitor if the system prefers dark, otherwise Document.
 - Apply the saved mode with a tiny inline script before first paint, so there is no flash of the wrong mode.
 - Transition `background-color` and `color` over 300ms when switching. Respect `prefers-reduced-motion`.
-- The map tiles (MapLibre) need a style per mode: a light grey basemap for Paper, a dark basemap with chartreuse labels for Night, and a white basemap with blue lines for Blueprint.
+- The map tiles (MapLibre) need a style per mode: a light grey basemap for Document, a dark basemap with chartreuse labels for Monitor, and a white basemap with blue lines for Blueprint.
 
 ### The lens and the modes
 The lens no longer changes colour (modes now own colour). Show the active lens through the toggle itself (solid `--accent` fill on the active option) and a `micro` label in the top bar, e.g. `LENS — INDIA`.
@@ -147,7 +147,7 @@ More than 30 days: `--ink`. Under 30 days: `--accent` outline. Under 7 days: sol
 - 12-column grid, wide outer margins, generous whitespace between sections but dense rows inside lists.
 - Hairline borders (1px) instead of shadows. Square corners everywhere except bento cards and pills.
 - Buttons are pill-shaped (outlined, or solid ink for primary).
-- Navigation (as in Figma): the wordmark "CREATIVE TECHNOLOGY" (`wordmark`) with "A Field Guide" (`accent-m`) beside or beneath it; then a nav row in `nav` style with 36px gaps: STUDIOS & COMPANIES · PROGRAMMES · JOBS · OPEN CALLS · PUBLICATIONS & RESOURCES · TOOLS · EVENTS · SEARCH THE WEBSITE. TOOLS is a browse page for resources where `resource_kind = 'tool'`. The **India / Global** lens toggle and the URL drop button sit at the right.
+- Navigation (as in Figma, with two changes: section links are set at 14px (`nav-s`) so all seven fit on one row beside search, and they wrap rather than scroll on narrow screens; search is a fixed field at the end of the row from `xl`, and an icon that opens it in a panel below the row on narrower screens): the wordmark "CREATIVE TECHNOLOGY" (`wordmark`) with "A Field Guide" (`accent-m`) beside or beneath it; then a nav row in `nav` style with 36px gaps: STUDIOS & COMPANIES · PROGRAMMES · JOBS · OPEN CALLS · PUBLICATIONS & RESOURCES · TOOLS · EVENTS · SEARCH THE WEBSITE. TOOLS is a browse page for resources where `resource_kind = 'tool'`. The **India / Global** lens toggle and the URL drop button sit at the right.
 - Tags in `tag` style as small outlined chips. Pill-shaped buttons in `nav` or `label` style.
 - Images are cut-out objects or tightly cropped work stills on light grey grounds. Use the entry's OG image or a screenshot, with a caption in `micro`.
 - Each card shows a small location label and, in the India lens, an eligibility badge (Based in India / Open to India / Eligibility unclear).

@@ -2,7 +2,7 @@ import type { EntryType } from "./types";
 
 /**
  * The five-colour secondary palette (DESIGN.md → Colour). Each mode defines --swatch-1…5:
- * Paper = paper-square colours, Night = gradient-tile colours, Blueprint = all one blue.
+ * Document (paper) = paper-square colours, Monitor (night) = gradient-tile colours, Blueprint = all one blue.
  * Swatches are for fills, tints and marks — never small text.
  */
 export type Swatch = 1 | 2 | 3 | 4 | 5;

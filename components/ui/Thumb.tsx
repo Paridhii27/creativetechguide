@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { swatchFor, swatchVar, tintVar, type Swatch } from "@/lib/swatch";
 
 /**
  * Tightly cropped image, following the view mode (dimmed in Night, blue duotone in Blueprint,
- * original on hover). The ground is a soft wash of `swatch` (or plain surface without one).
+ * original on hover). The ground is a soft wash of `swatch` (or plain surface without one); Monitor mode makes it transparent.
  * With no image, it becomes a solid palette block with the title's first letter — so lists
  * without pictures still read as the "paper squares", not grey boxes.
  */
@@ -30,8 +30,8 @@ export function Thumb({
   const fill = swatchFor(title);
   return (
     <div
-      className={`relative overflow-hidden [container-type:size] ${hasImage && !swatch ? "bg-surface" : ""} ${className}`}
-      style={hasImage ? (swatch ? { background: tintVar(swatch) } : undefined) : { background: swatchVar(fill) }}
+      className={`relative overflow-hidden [container-type:size] ${hasImage ? (swatch ? "thumb-ground" : "bg-surface") : ""} ${className}`}
+      style={hasImage ? (swatch ? ({ "--thumb-tint": tintVar(swatch) } as CSSProperties) : undefined) : { background: swatchVar(fill) }}
     >
       {hasImage ? (
         // eslint-disable-next-line @next/next/no-img-element

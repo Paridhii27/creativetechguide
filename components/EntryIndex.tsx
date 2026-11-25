@@ -8,7 +8,7 @@ import type { FxTable } from "@/lib/money";
 import { locationLabel } from "@/lib/places";
 import { placeRelevance } from "@/lib/relevance";
 import { TYPE_SWATCH } from "@/lib/swatch";
-import { humanize, KINDS, type Discipline, type Entry, type EntryType, type Lens } from "@/lib/types";
+import { humanize, isTool, KINDS, type Discipline, type Entry, type EntryType, type Lens } from "@/lib/types";
 import { IndexGroup, IndexRow } from "@/components/ui/IndexRow";
 import { DisciplineTag, LocationLabel, Tag } from "@/components/ui/primitives";
 import { DeadlineMark, EligibilityTag } from "@/components/ui/status";
@@ -120,7 +120,7 @@ export default async function EntryIndex({
                 meta={
                   <>
                     {cost && <span className="text-body-s order-first basis-full pb-1 text-ink">{cost}</span>}
-                    {lens.kind !== "global" && <EligibilityTag relevance={placeRelevance(e, lens)} place={lens.label} />}
+                    {lens.kind !== "global" && !isTool(e) && <EligibilityTag relevance={placeRelevance(e, lens)} place={lens.label} />}
                     {locationLabel(e) && (
                       <LocationLabel className="ml-1">
                         <span title={locationLabel(e, { all: true })}>{locationLabel(e)}</span>

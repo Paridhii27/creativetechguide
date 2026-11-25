@@ -1,4 +1,4 @@
-import type { Entry } from "./types";
+import { isTool, type Entry } from "./types";
 
 /** Other offices stored in data.locations, as "City, Country" strings. */
 export function extraPlaceNames(e: Pick<Entry, "data">): string[] {
@@ -7,7 +7,9 @@ export function extraPlaceNames(e: Pick<Entry, "data">): string[] {
 }
 
 /** The main place, then other offices: all of them with `all`, otherwise "+N more". */
-export function locationLabel(e: Pick<Entry, "city" | "country" | "is_remote"> & { data?: Entry["data"] }, opts: { all?: boolean } = {}): string {
+export function locationLabel(e: Pick<Entry, "city" | "country" | "is_remote"> & { type?: Entry["type"]; data?: Entry["data"] }, opts: { all?: boolean } = {}): string {
+  // Tools are digital and not tied to a place: no location at all.
+  if (e.type && e.data && isTool({ type: e.type, data: e.data })) return "";
   const main = [e.city, e.country].filter(Boolean).join(", ");
   const extra = e.data ? extraPlaceNames({ data: e.data }) : [];
   const place = opts.all ? [main, ...extra].filter(Boolean).join(" · ") : `${main}${main && extra.length ? ` +${extra.length} more` : ""}`;

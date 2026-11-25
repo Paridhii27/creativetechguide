@@ -1,7 +1,6 @@
 import SearchField from "./ui/SearchField";
 import AutoSubmit from "./AutoSubmit";
-import { TUITION_BANDS, WINDOWS, type Params } from "@/lib/filters";
-import { formatMoney, type FxTable } from "@/lib/money";
+import { WINDOWS, type Params } from "@/lib/filters";
 import { humanize, KINDS, type Discipline, type EntryType, type Lens } from "@/lib/types";
 
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
@@ -37,30 +36,21 @@ function Select({ name, label, value, options }: { name: string; label: string; 
   );
 }
 
-/** Tuition band label in the lens currency when we can convert, else USD. */
-function bandLabel(min: number, max: number | null, currency: string, fx: FxTable): string {
-  const rate = currency === "USD" ? 1 : fx.USD && fx[currency] ? fx.USD / fx[currency] : null;
-  const cur = rate ? currency : "USD";
-  const f = (n: number) => formatMoney({ amount: n * (rate ?? 1) >= 1000 ? Math.round((n * (rate ?? 1)) / 1000) * 1000 : n * (rate ?? 1), currency: cur });
-  if (min === 0 && max != null) return `Under ${f(max)}`;
-  if (max == null) return `${f(min)} and above`;
-  return `${f(min)} – ${f(max)}`;
-}
-
 export default function Filters({
   type,
   kinds,
   params,
   lens,
   disciplines,
-  fx,
+  placeless = false,
 }: {
   type: EntryType;
   kinds?: string[];
   params: Params;
   lens: Lens;
   disciplines: Discipline[];
-  fx: FxTable;
+  /** Tools are digital and not place-based: no remote or lens-relevance filters. */
+  placeless?: boolean;
 }) {
   const v = (k: string) => one(params[k]);
   const dated = type === "job" || type === "opportunity" || type === "program" || type === "event";
@@ -81,22 +71,14 @@ export default function Filters({
       {dated && (
         <Select name="within" label={type === "event" ? "Starting within" : "Deadline within"} value={v("within")} options={WINDOWS.map((w) => ({ ...w }))} />
       )}
-      {type === "program" && (
-        <Select
-          name="tuition"
-          label="Tuition per year"
-          value={v("tuition")}
-          options={TUITION_BANDS.map((b) => ({ value: b.value, label: bandLabel(b.min, b.max, lens.currency ?? "USD", fx) }))}
-        />
-      )}
       {type === "job" && (
         <>
           <Select name="work_mode" label="Work mode" value={v("work_mode")} options={["onsite", "hybrid", "remote"].map((x) => ({ value: x, label: humanize(x) }))} />
           <Select name="visa" label="Visa sponsorship" value={v("visa")} options={[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "unknown", label: "Unknown" }]} />
         </>
       )}
-      <Select name="remote" label="Remote / online" value={v("remote")} options={[{ value: "yes", label: "Remote or online" }, { value: "no", label: "In person" }]} />
-      {lens.kind !== "global" && (
+      {!placeless && <Select name="remote" label="Remote / online" value={v("remote")} options={[{ value: "yes", label: "Remote or online" }, { value: "no", label: "In person" }]} />}
+      {lens.kind !== "global" && !placeless && (
         <Select
           name="relevance"
           label={`Relevance to ${lens.label}`}

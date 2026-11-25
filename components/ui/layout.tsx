@@ -12,16 +12,21 @@ export function Accent({ children }: { children: ReactNode }) {
   return <span className="text-accent-display">{children}</span>;
 }
 
-/** Page title: optional serif kicker, display-m title, micro meta line, right-hand slot. */
+/**
+ * Page title: optional serif kicker, display-m title, micro meta line, right-hand slot.
+ * From lg up the slot always sits beside the title; a long title wraps onto two lines rather than
+ * pushing the slot underneath. Smaller screens stack them.
+ */
 export function PageTitle({ kicker, title, meta, aside }: { kicker?: ReactNode; title: ReactNode; meta?: ReactNode; aside?: ReactNode }) {
   return (
-    <header className="flex flex-wrap items-end justify-between gap-6 pb-8">
-      <div>
+    <header className="flex flex-wrap items-end justify-between gap-6 pb-8 lg:flex-nowrap lg:gap-x-16">
+      <div className="min-w-0">
         {kicker && <p className="text-accent-m mb-2 text-ink-muted">{kicker}</p>}
-        <h1 className="text-display-m text-ink">{title}</h1>
+        <h1 className="text-display-m text-balance text-ink">{title}</h1>
         {meta && <p className="text-micro mt-3 text-ink-muted">{meta}</p>}
       </div>
-      {aside}
+      {/* Right-aligned from lg up so every line of the intro ends flush with the page rule below. */}
+      {aside && <div className="text-pretty lg:shrink-0 lg:text-right">{aside}</div>}
     </header>
   );
 }
@@ -62,42 +67,43 @@ export function NavBar({
   utility?: ReactNode;
   /** e.g. "INDIA" → "LENS — INDIA" */
   lensLabel?: string;
-  /** sits at the end of the section row, outside the scrolling nav so its dropdown isn't clipped */
+  /** sits at the end of the section row, in its own slot so it never covers the links */
   search?: ReactNode;
 }) {
   return (
     <div className="border-b border-line">
-      {/* Top strip: view mode on the left, account links on the right, all quiet. */}
-      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-b border-line py-2">
-        <ChangeView variant="text" />
-        {utility && <div className="text-micro flex flex-wrap items-center gap-x-5 gap-y-1 text-ink-muted">{utility}</div>}
+      {/* Top strip, all quiet and all on the right: the settings corner (view mode, then account links).
+          Kept off the left so nothing sits above the wordmark and reads as part of it. */}
+      <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 border-b sm:gap-x-5 border-line py-2">
+        <ChangeView />
+        {utility && (
+          <div className="text-micro flex flex-wrap items-center gap-x-5 gap-y-1 border-l border-line pl-4 text-ink-muted sm:pl-5">{utility}</div>
+        )}
       </div>
       {/* Main row: wordmark, then the lens (the page's main control) and the primary action. */}
       <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-4 py-5">
         <Wordmark />
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 sm:gap-x-8">
           {lensLabel && <span className="text-micro text-ink-muted">Lens — {lensLabel}</span>}
           {right}
         </div>
       </div>
-      <div className="flex flex-col-reverse gap-y-4 lg:flex-row lg:items-end lg:gap-x-8">
-      <nav aria-label="Sections" className="-mb-px flex min-w-0 flex-1 gap-x-8 overflow-x-auto">
-        {nav}
-        {!nav && items.map((i) => (
-          <Link
-            key={i.href}
-            href={i.href}
-            aria-current={i.active ? "page" : undefined}
-            className={`text-nav whitespace-nowrap border-b-2 pb-3 transition-colors ${i.active ? "border-accent text-ink" : "border-transparent text-ink hover:border-line"}`}
-          >
-            {i.label}
-          </Link>
-        ))}
-      </nav>
-      {search && (
-        // On lg+ this slot reserves the compact width; the field widens leftwards over the nav while in use.
-        <div className="relative z-10 shrink-0 lg:mb-2 lg:h-9 lg:w-40">{search}</div>
-      )}
+      {/* Section row: links wrap onto a second line rather than scroll; search keeps its own slot at the end. */}
+      <div className="flex items-end justify-between gap-x-6">
+        <nav aria-label="Sections" className="-mb-px flex min-w-0 flex-1 flex-wrap gap-x-6 gap-y-1 xl:gap-x-8">
+          {nav}
+          {!nav && items.map((i) => (
+            <Link
+              key={i.href}
+              href={i.href}
+              aria-current={i.active ? "page" : undefined}
+              className={`text-nav-s whitespace-nowrap border-b-2 pb-3 transition-colors ${i.active ? "border-accent text-ink" : "border-transparent text-ink hover:border-line"}`}
+            >
+              {i.label}
+            </Link>
+          ))}
+        </nav>
+        {search && <div className="relative z-10 mb-2 shrink-0">{search}</div>}
       </div>
     </div>
   );

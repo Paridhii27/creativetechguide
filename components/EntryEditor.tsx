@@ -171,6 +171,8 @@ interface Props {
   hidden: Record<string, string>;
   action: (prev: SaveState, fd: FormData) => Promise<SaveState>;
   places: Place[];
+  /** Every country name, for the Country suggestions (places only covers countries with a seeded city). */
+  countries?: string[];
   disciplines: Discipline[];
   /** Tool names for the "For tool" picker. */
   tools?: string[];
@@ -185,7 +187,7 @@ interface Props {
   cancelHref?: string;
 }
 
-export default function EntryEditor({ mode, initial, hidden, action, places, disciplines, tools = [], favicon, image, isAdmin, note, editableUrl, cancelHref }: Props) {
+export default function EntryEditor({ mode, initial, hidden, action, places, countries: allCountries = [], disciplines, tools = [], favicon, image, isAdmin, note, editableUrl, cancelHref }: Props) {
   const initialType = (initial.type as EntryType) ?? "organisation";
   const [slug, setSlug] = useState(initialType === "resource" && initial.kind === TOOL_KIND ? "tools" : SECTIONS.find((s) => s.type === initialType && !s.kind)!.slug);
   const section = SECTIONS.find((s) => s.slug === slug)!;
@@ -200,16 +202,20 @@ export default function EntryEditor({ mode, initial, hidden, action, places, dis
   // Typing or picking a known city fills its country, unless you've set the country yourself.
   const [title, setTitle] = useState(asText(initial.title));
   const [icon, setIcon] = useState<IconChoice>(defaultIconChoice(initial.icon, favicon, image));
-  const [city, setCity] = useState(asText(initial.city));
-  const [country, setCountry] = useState(asText(initial.country));
-  const countryAuto = useRef(false);
+  // "Auto" means the country came from the city, not from you: it follows the city, including clearing
+  // when the city becomes one we don't know (so "Lisbon" never keeps "India" from a previous "Mumbai").
+  // A country you type yourself is never overwritten.
+  const initialCity = asText(initial.city);
+  const initialAutoCountry = asText(initial.country) ? null : countryForCity(places, initialCity);
+  const [city, setCity] = useState(initialCity);
+  const [country, setCountry] = useState(asText(initial.country) || initialAutoCountry || "");
+  const countryAuto = useRef(Boolean(initialAutoCountry));
   const onCity = (v: string) => {
     setCity(v);
+    if (country && !countryAuto.current) return;
     const c = countryForCity(places, v);
-    if (c && (!country || countryAuto.current)) {
-      setCountry(c);
-      countryAuto.current = true;
-    }
+    setCountry(c ?? "");
+    countryAuto.current = Boolean(c);
   };
   const patchRow = (id: number, patch: Partial<{ city: string; country: string; auto: boolean }>) =>
     setExtraRows((rows) => rows.map((r) => (r.id === id ? { ...r, ...patch } : r)));
@@ -217,12 +223,13 @@ export default function EntryEditor({ mode, initial, hidden, action, places, dis
     setExtraRows((rows) =>
       rows.map((r) => {
         if (r.id !== id) return r;
+        if (r.country && !r.auto) return { ...r, city: v };
         const c = countryForCity(places, v);
-        return c && (!r.country || r.auto) ? { ...r, city: v, country: c, auto: true } : { ...r, city: v };
+        return { ...r, city: v, country: c ?? "", auto: Boolean(c) };
       }),
     );
   const errors = state && "fieldErrors" in state ? state.fieldErrors ?? {} : {};
-  const countries = [...new Set(places.map((p) => p.country))].sort();
+  const countries = [...new Set([...allCountries, ...places.map((p) => p.country)])].sort();
   const selectedDisciplines = new Set(Array.isArray(initial.disciplines) ? initial.disciplines : []);
 
   const specs = [...(section.kind ? TOOL_FIELDS : FIELDS[type]), ...(type === "opportunity" || type === "job" || type === "program" ? [SOURCE_TEXT] : [])];
@@ -289,6 +296,9 @@ export default function EntryEditor({ mode, initial, hidden, action, places, dis
             </select>
           </Field>
         )}
+        {/* Tools are digital and not place-based: no location or remote/online fields. */}
+        {!section.kind && (
+          <>
         <div className="grid grid-cols-2 gap-2">
           <Field label="City" name="city">
             <input id="city" name="city" list="cities" value={city} onChange={(e) => onCity(e.target.value)} autoComplete="off" className="field" />
@@ -317,6 +327,8 @@ export default function EntryEditor({ mode, initial, hidden, action, places, dis
             <input type="checkbox" name="is_remote" defaultChecked={initial.is_remote === true} /> Remote / online
           </label>
         </div>
+          </>
+        )}
         <datalist id="cities">{places.map((p) => <option key={`${p.city}-${p.country}`} value={p.city}>{p.country}</option>)}</datalist>
         <datalist id="countries">{countries.map((c) => <option key={c} value={c} />)}</datalist>
         <datalist id="tools">{tools.map((t) => <option key={t} value={t} />)}</datalist>

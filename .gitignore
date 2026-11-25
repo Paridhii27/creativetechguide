@@ -24,6 +24,10 @@
 .DS_Store
 *.pem
 
+# file guidelines
+CLAUDE.md
+DESIGN.md
+
 # debug
 npm-debug.log*
 yarn-debug.log*

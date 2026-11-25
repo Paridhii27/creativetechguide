@@ -1,11 +1,11 @@
 title,url,summary,resource_kind,author,publisher,frequency,is_free,disciplines,city,country,is_remote
 Creative Applications Network,https://www.creativeapplications.net,"Long-running publication covering projects, tools and research at the intersection of art, media and technology.",magazine,,,,true,creative-coding|installation|generative-art,,,true
 The Nature of Code,https://natureofcode.com,Book by Daniel Shiffman on simulating natural systems with code; free to read online.,book,Daniel Shiffman,,,true,creative-coding|generative-art,,,true
-The Coding Train,https://thecodingtrain.com,"Video tutorials on creative coding with p5.js, Processing and machine learning.",library,Daniel Shiffman,,,true,creative-coding|ai-art,,,true
-p5.js,https://p5js.org,"Free JavaScript library for creative coding, maintained by the Processing Foundation.",tool,,Processing Foundation,,true,creative-coding,,,true
-Processing,https://processing.org,Flexible software sketchbook and language for learning to code in the visual arts.,tool,,Processing Foundation,,true,creative-coding,,,true
-openFrameworks,https://openframeworks.cc,Open source C++ toolkit for creative coding.,tool,,,,true,creative-coding|installation,,,true
-TouchDesigner,https://derivative.ca,Node-based visual programming environment for real-time interactive multimedia.,tool,,Derivative,,,creative-coding|projection-mapping|installation,Toronto,Canada,false
+The Coding Train,https://thecodingtrain.com,"Video tutorials on creative coding with p5.js, Processing and machine learning.",library,Daniel Shiffman,,,true,creative-coding|ai,,,true
+p5.js,https://p5js.org,"Free JavaScript library for creative coding, maintained by the Processing Foundation.",tool,,Processing Foundation,,true,creative-coding|generative-art|interaction-design|data-visualisation|web-development|graphic-design,,,false
+Processing,https://processing.org,Flexible software sketchbook and language for learning to code in the visual arts.,tool,,Processing Foundation,,true,creative-coding|generative-art|interaction-design|data-visualisation|graphic-design|physical-computing|installation,,,false
+openFrameworks,https://openframeworks.cc,Open source C++ toolkit for creative coding.,tool,,,,true,creative-coding|installation|generative-art|interaction-design|3d-real-time|physical-computing|data-visualisation|sound-music-tech,,,false
+TouchDesigner,https://derivative.ca,Node-based visual programming environment for real-time interactive multimedia.,tool,,Derivative,,,creative-coding|projection-mapping|installation|generative-art|interaction-design|3d-real-time|experience-design|data-visualisation|sound-music-tech|physical-computing|ai,,,false
 Are.na,https://www.are.na,Platform for collecting and connecting ideas; widely used by designers and artists for research.,community,,,,,research,,,true
 Design Fabric,https://designfabric.in,"Indian publication covering design, art and culture.",magazine,,,,true,experience-design|research,Mumbai,India,false
 Leonardo,https://direct.mit.edu/leon,"Journal of the International Society for the Arts, Sciences and Technology.",journal,,MIT Press,bimonthly,false,research,,,true
@@ -13,31 +13,31 @@ awesome-creative-technology,https://github.com/j0hnm4r5/awesome-creative-technol
 Ars Electronica Archive,https://ars.electronica.art/archive/de/,"Archive of Prix Ars Electronica entries, festival programmes and media art since 1979.",archive,,Ars Electronica,,true,research|installation,Linz,Austria,false
 Hackaday,https://hackaday.com,"Daily publication on hardware hacking, electronics and DIY projects.",magazine,,,daily,true,physical-computing,,,true
 Adafruit Learning System,https://learn.adafruit.com,"Free tutorials on electronics, microcontrollers and wearables.",library,,Adafruit,,true,physical-computing,,,true
-Arduino,https://www.arduino.cc,Open-source electronics platform and IDE for physical computing.,tool,,Arduino,,true,physical-computing,,,true
-three.js,https://threejs.org,JavaScript 3D library for WebGL and WebGPU.,tool,,,,true,creative-coding|spatial-xr,,,true
-Hydra,https://hydra.ojack.xyz,Live-coding video synth that runs in the browser.,tool,Olivia Jack,,,true,creative-coding|generative-art,,,true
-Strudel,https://strudel.cc,Browser-based live-coding environment for music patterns.,tool,,,,true,sound-music-tech|creative-coding,,,true
+Arduino,https://www.arduino.cc,Open-source electronics platform and IDE for physical computing.,tool,,Arduino,,true,physical-computing|interaction-design|installation|robotics|wearables-fashion-tech|design-engineering|product-design|creative-coding,,,false
+three.js,https://threejs.org,JavaScript 3D library for WebGL and WebGPU.,tool,,,,true,3d-real-time|creative-coding|web-development|spatial-xr|generative-art|interaction-design|data-visualisation|experience-design,,,false
+Hydra,https://hydra.ojack.xyz,Live-coding video synth that runs in the browser.,tool,Olivia Jack,,,true,creative-coding|generative-art|motion-design|web-development|sound-music-tech,,,false
+Strudel,https://strudel.cc,Browser-based live-coding environment for music patterns.,tool,,,,true,sound-music-tech|creative-coding|generative-art|web-development,,,false
 Shadertoy,https://www.shadertoy.com,Community for writing and sharing GLSL shaders in the browser.,community,,,,true,generative-art|creative-coding,,,true
 The Book of Shaders,https://thebookofshaders.com,Step-by-step guide to fragment shaders.,book,Patricio Gonzalez Vivo and Jen Lowe,,,true,generative-art|creative-coding,,,true
 It's Nice That,https://www.itsnicethat.com,"Publication championing creativity across art, design and visual culture.",magazine,,,daily,true,experience-design|research,London,United Kingdom,false
 Neural,https://neural.it,"Magazine on new media art, electronic music and hacktivism.",magazine,,,,,research|sound-music-tech,Bari,Italy,false
 OpenProcessing,https://openprocessing.org,Community for sharing and remixing p5.js and Processing sketches.,community,,,,true,creative-coding|generative-art,,,true
 Kadenze,https://www.kadenze.com,Online courses in art and creative technology from universities and institutions.,library,,,,,creative-coding|sound-music-tech,,,true
-ml5.js,https://ml5js.org,"Friendly machine-learning library for the web, built on TensorFlow.js.",tool,,,,true,ai-art|creative-coding,,,true
+ml5.js,https://ml5js.org,"Friendly machine-learning library for the web, built on TensorFlow.js.",tool,,,,true,ai|machine-learning|creative-coding|interaction-design|web-development,,,false
 Programming Design Systems,https://programmingdesignsystems.com,Free online book by Rune Madsen on graphic design with code.,book,Rune Madsen,,,true,creative-coding|generative-art,,,true
 Generative Design,http://www.generative-gestaltung.de,"Book and code examples on generative design with p5.js, by Groß, Bohnacker, Laub and Lazzeroni.",book,"Hartmut Bohnacker, Benedikt Groß, Julia Laub, Claudius Lazzeroni",Princeton Architectural Press,,false,generative-art|creative-coding,,,true
-vvvv,https://visualprogramming.net,Visual live-programming environment for interactive media and installations.,tool,,,,true,creative-coding|installation,,,true
-Max (Cycling ’74),https://cycling74.com,"Visual programming environment for music, audio and interactive media.",tool,,Cycling ’74,,false,sound-music-tech|creative-coding,,,true
-Notch,https://www.notch.one,Real-time graphics tool used for live events and interactive installations.,tool,,,,false,installation|projection-mapping,,,true
-Blender,https://www.blender.org,"Free, open-source 3D creation suite.",tool,,,,true,spatial-xr|generative-art,,,true
-Houdini,https://www.sidefx.com,Procedural 3D and VFX software by SideFX.,tool,,SideFX,,false,generative-art|spatial-xr,,,true
-Unity,https://unity.com,"Real-time 3D engine used for games, XR and interactive installations.",tool,,,,true,game-design|spatial-xr,,,true
-cables.gl,https://cables.gl,Browser-based visual programming tool for real-time WebGL graphics.,tool,,,,true,creative-coding|generative-art,,,true
+vvvv,https://visualprogramming.net,Visual live-programming environment for interactive media and installations.,tool,,,,true,creative-coding|installation|generative-art|interaction-design|3d-real-time|projection-mapping|experience-design,,,false
+Max (Cycling ’74),https://cycling74.com,"Visual programming environment for music, audio and interactive media.",tool,,Cycling ’74,,false,sound-music-tech|creative-coding|interaction-design|installation|physical-computing|generative-art|experience-design,,,false
+Notch,https://www.notch.one,Real-time graphics tool used for live events and interactive installations.,tool,,,,false,3d-real-time|motion-design|installation|projection-mapping|experience-design|generative-art|production,,,false
+Blender,https://www.blender.org,"Free, open-source 3D creation suite.",tool,,,,true,3d-real-time|motion-design|technical-art|spatial-xr|generative-art|game-design|architecture-spatial|product-design,,,false
+Houdini,https://www.sidefx.com,Procedural 3D and VFX software by SideFX.,tool,,SideFX,,false,3d-real-time|technical-art|generative-art|motion-design|spatial-xr|architecture-spatial,,,false
+Unity,https://unity.com,"Real-time 3D engine used for games, XR and interactive installations.",tool,,,,true,game-design|3d-real-time|spatial-xr|interaction-design|installation|technical-art|experience-design|ai,,,false
+cables.gl,https://cables.gl,Browser-based visual programming tool for real-time WebGL graphics.,tool,,,,true,creative-coding|generative-art|web-development|3d-real-time|motion-design|interaction-design|data-visualisation,,,false
 nannou,https://nannou.cc,Open-source creative coding framework for Rust.,library,,,,true,creative-coding,,,true
-MediaPipe,https://ai.google.dev/edge/mediapipe/solutions/guide,"Google’s on-device ML solutions for pose, hand and face tracking, widely used in interactive work.",library,,,,true,ai-art|interaction-design,,,true
-Runway,https://runwayml.com,Generative AI video and image tools for artists and designers.,tool,,,,false,ai-art,,,true
+MediaPipe,https://ai.google.dev/edge/mediapipe/solutions/guide,"Google’s on-device ML solutions for pose, hand and face tracking, widely used in interactive work.",library,,,,true,ai|interaction-design,,,true
+Runway,https://runwayml.com,Generative AI video and image tools for artists and designers.,tool,,,,false,ai|machine-learning|motion-design|generative-art|graphic-design|creative-direction,,,false
 Interaction Design Foundation,https://www.interaction-design.org,Online courses and an open encyclopedia of interaction design.,community,,,,false,interaction-design|service-design,,,true
-Rhizome ArtBase,https://artbase.rhizome.org,Rhizome’s archive of born-digital artworks.,archive,,,,true,research|ai-art,,,true
+Rhizome ArtBase,https://artbase.rhizome.org,Rhizome’s archive of born-digital artworks.,archive,,,,true,research|ai,,,true
 Archive of Digital Art (ADA),https://www.digitalartarchive.at,Research archive documenting digital art since the 1960s.,archive,,,,true,research,,,true
 Dezeen,https://www.dezeen.com,"Architecture and design magazine, with frequent coverage of interactive and immersive work.",magazine,,,daily,true,experience-design|installation,,,true
 designboom,https://www.designboom.com,"Architecture, design and art magazine.",magazine,,,daily,true,experience-design|installation,,,true
@@ -58,3 +58,72 @@ Creative Code Berlin,https://creativecode.berlin,Berlin meetup community for cre
 Processing Community Day,https://day.processing.org,"Worldwide events celebrating art, code and the Processing community.",community,,,,true,creative-coding,,,true
 Derivative job board,https://derivative.ca/job-board,"TouchDesigner job board run by Derivative, with studio and freelance roles worldwide.",directory,,,,true,installation|creative-coding,,,true
 Interactive & Immersive Jobs,https://jobs.interactiveimmersive.io,"Job board for creative technology, immersive and experiential roles, run by The Interactive & Immersive HQ.",directory,,,,true,experience-design|installation|creative-coding,,,true
+Unreal Engine,https://www.unrealengine.com,"Epic Games’ real-time 3D engine, used for games, virtual production, XR and large-scale installations.",tool,,Epic Games,,true,3d-real-time|game-design|spatial-xr|technical-art|installation|experience-design|production|architecture-spatial,,,false
+Godot Engine,https://godotengine.org,"Free, open-source 2D and 3D game engine, increasingly used for interactive installations.",tool,,Godot Foundation,,true,game-design|3d-real-time|interaction-design|spatial-xr|technical-art|creative-coding,,,false
+Resolume,https://resolume.com,VJ and media-server software for live visuals and projection mapping.,tool,,Resolume,,false,projection-mapping|installation|motion-design|experience-design|production|sound-music-tech,,,false
+MadMapper,https://madmapper.com,Software for projection mapping and LED/DMX lighting control.,tool,,GarageCUBE,,false,projection-mapping|installation|experience-design|production|architecture-spatial,,,false
+Millumin,https://www.millumin.com,"Media server and timeline tool for theatre, dance and projection mapping (macOS).",tool,,Anomes,,false,projection-mapping|installation|experience-design|production|interaction-design,,,false
+disguise,https://www.disguise.one,"Media-server platform for live events, concerts and virtual production.",tool,,disguise,,false,projection-mapping|production|installation|3d-real-time|experience-design|spatial-xr,,,false
+Pixera,https://pixera.one,Media-server and real-time compositing software by AV Stumpfl.,tool,,AV Stumpfl,,false,projection-mapping|installation|production|experience-design|3d-real-time,,,false
+Isadora,https://troikatronix.com,Visual programming environment for interactive media in performance and installation.,tool,,TroikaTronix,,false,installation|interaction-design|projection-mapping|experience-design|sound-music-tech|production,,,false
+ossia score,https://ossia.io,"Free, open-source intermedia sequencer for interactive shows and installations.",tool,,,,true,installation|sound-music-tech|interaction-design|production|experience-design|physical-computing,,,false
+Chataigne,https://benjamin.kuperberg.fr/chataigne,"Free tool for connecting and sequencing show-control protocols (OSC, MIDI, DMX, serial).",tool,Benjamin Kuperberg,,,true,installation|production|interaction-design|physical-computing|projection-mapping|experience-design|sound-music-tech,,,false
+KodeLife,https://hexler.net/kodelife,Real-time GPU shader editor for live-coding and prototyping shaders.,tool,,hexler,,false,creative-coding|generative-art|3d-real-time|technical-art|motion-design,,,false
+Pure Data,https://puredata.info,"Open-source visual programming language for audio, video and interaction.",tool,Miller Puckette,,,true,sound-music-tech|creative-coding|interaction-design|installation|physical-computing|generative-art,,,false
+SuperCollider,https://supercollider.github.io,Platform for audio synthesis and algorithmic composition.,tool,,,,true,sound-music-tech|creative-coding|generative-art|installation|research,,,false
+Sonic Pi,https://sonic-pi.net,"Free live-coding music synth, designed for learning as well as performance.",tool,Sam Aaron,,,true,sound-music-tech|creative-coding|generative-art,,,false
+TidalCycles,https://tidalcycles.org,"Live-coding language for musical patterns, written in Haskell.",tool,,,,true,sound-music-tech|creative-coding|generative-art,,,false
+Tone.js,https://tonejs.github.io,Web Audio framework for making interactive music in the browser.,tool,,,,true,sound-music-tech|web-development|creative-coding|interaction-design,,,false
+Ableton Live,https://www.ableton.com/en/live/,Music production and performance software; Max for Live extends it with Max patches.,tool,,Ableton,,false,sound-music-tech|installation|experience-design|production,,,false
+Cinder,https://libcinder.org,Open-source C++ library for creative coding.,tool,,,,true,creative-coding|installation|generative-art|3d-real-time|interaction-design|data-visualisation|experience-design,,,false
+Bela,https://bela.io,Embedded platform for ultra-low-latency audio and sensor interaction.,tool,,Augmented Instruments,,false,physical-computing|sound-music-tech|interaction-design|installation|design-engineering,,,false
+Raspberry Pi,https://www.raspberrypi.com,Low-cost single-board computers widely used in installations and prototypes.,tool,,Raspberry Pi Ltd,,false,physical-computing|installation|robotics|design-engineering|interaction-design|product-design,,,false
+Teensy,https://www.pjrc.com/teensy/,"Fast Arduino-compatible microcontroller boards, popular for audio and LED work.",tool,,PJRC,,false,physical-computing|sound-music-tech|interaction-design|installation|wearables-fashion-tech|design-engineering,,,false
+Node-RED,https://nodered.org,"Flow-based programming tool for wiring together hardware, APIs and online services.",tool,,OpenJS Foundation,,true,physical-computing|design-engineering|installation|interaction-design|robotics,,,false
+KiCad,https://www.kicad.org,"Free, open-source suite for designing circuit boards.",tool,,,,true,physical-computing|design-engineering|product-design|robotics|wearables-fashion-tech,,,false
+Fritzing,https://fritzing.org,"Tool for documenting electronics prototypes as breadboard, schematic and PCB views.",tool,,,,false,physical-computing|design-engineering|product-design|wearables-fashion-tech,,,false
+Rhino and Grasshopper,https://www.rhino3d.com,"3D modelling software with Grasshopper, a visual scripting environment for parametric design.",tool,,Robert McNeel & Associates,,false,architecture-spatial|generative-art|product-design|3d-real-time|design-engineering|wearables-fashion-tech,,,false
+A-Frame,https://aframe.io,Web framework for building WebXR experiences with HTML.,tool,,,,true,spatial-xr|web-development|3d-real-time|creative-coding|interaction-design|experience-design,,,false
+Babylon.js,https://www.babylonjs.com,Open-source web 3D and WebXR engine.,tool,,,,true,3d-real-time|web-development|spatial-xr|game-design|creative-coding|interaction-design,,,false
+PlayCanvas,https://playcanvas.com,Open-source WebGL/WebGPU engine with a browser-based editor.,tool,,,,true,3d-real-time|web-development|game-design|spatial-xr|interaction-design,,,false
+Lens Studio,https://ar.snap.com/lens-studio,Snap’s tool for building AR lenses for Snapchat and Spectacles.,tool,,Snap Inc.,,true,spatial-xr|interaction-design|3d-real-time|ai|motion-design|technical-art|experience-design,,,false
+Spline,https://spline.design,Browser-based 3D design tool for interactive web scenes.,tool,,,,false,3d-real-time|ui-ux-design|interaction-design|web-development|motion-design|product-design,,,false
+Rive,https://rive.app,"Tool for interactive, state-driven animations for apps, web and games.",tool,,,,false,motion-design|ui-ux-design|interaction-design|game-design|web-development|product-design,,,false
+Cavalry,https://cavalry.scenegroup.co,Procedural 2D animation software.,tool,,Scene Group,,false,motion-design|generative-art|graphic-design|data-visualisation,,,false
+ProtoPie,https://www.protopie.io,"Prototyping tool for interactions using sensors, hardware and multiple devices.",tool,,,,false,interaction-design|ui-ux-design|product-design|design-engineering|physical-computing,,,false
+ComfyUI,https://www.comfy.org,Node-based interface for running and chaining image and video generation models.,tool,,,,true,ai|machine-learning|generative-art|motion-design|graphic-design|technical-art,,,false
+Hugging Face,https://huggingface.co,"Hub for open machine-learning models, datasets and demos.",tool,,,,true,ai|machine-learning|research|creative-coding,,,false
+Teachable Machine,https://teachablemachine.withgoogle.com,"Browser tool for training simple image, sound and pose models without code.",tool,,Google,,true,ai|machine-learning|interaction-design|creative-coding|physical-computing,,,false
+Wekinator,http://www.wekinator.org,Free software for using machine learning to build interactive instruments and systems.,tool,Rebecca Fiebrink,,,true,ai|machine-learning|interaction-design|sound-music-tech|physical-computing|research,,,false
+Magenta,https://magenta.withgoogle.com,Google research project and tools for machine learning in music and art.,tool,,Google,,true,ai|machine-learning|sound-music-tech|creative-coding|research,,,false
+Open Sound Control,https://opensoundcontrol.stanford.edu,"Specification for OSC, the messaging protocol most creative tools use to talk to each other.",library,,,,true,sound-music-tech|installation,,,true
+The Interactive & Immersive HQ,https://interactiveimmersive.io,"Training, courses and a community focused on TouchDesigner and professional immersive work.",library,,,,false,installation|creative-coding,,,true
+TouchDesigner Learn,https://derivative.ca/learn,"Derivative’s official TouchDesigner tutorials, workshops and documentation hub.",library,,Derivative,,true,creative-coding|installation,,,true
+TouchDesigner Forum,https://forum.derivative.ca,Official community forum for TouchDesigner questions and shared components.,community,,Derivative,,true,creative-coding|installation,,,true
+Matthew Ragan’s TouchDesigner tutorials,https://matthewragan.com,Long-running blog of TouchDesigner tutorials and teaching material.,library,Matthew Ragan,,,true,creative-coding|installation,,,true
+elekktronaut,https://www.elekktronaut.com,Bileam Tschepe’s TouchDesigner tutorials on generative and audio-reactive visuals.,library,Bileam Tschepe,,,true,generative-art|creative-coding,,,true
+Cycling ’74 Forums,https://cycling74.com/forums,"Community forum for Max, MSP, Jitter and RNBO.",community,,Cycling ’74,,true,sound-music-tech|creative-coding,,,true
+Unity Learn,https://learn.unity.com,Free official Unity courses and learning pathways.,library,,Unity,,true,game-design|3d-real-time|spatial-xr,,,true
+Unreal Engine learning,https://dev.epicgames.com/community/unreal-engine/learning,Epic’s official Unreal Engine tutorials and courses.,library,,Epic Games,,true,3d-real-time|game-design,,,true
+Blender Studio,https://studio.blender.org,"Training, films and production assets from the Blender team.",library,,Blender Foundation,,false,3d-real-time|motion-design,,,true
+Blender Artists,https://blenderartists.org,Large community forum for Blender users.,community,,,,true,3d-real-time,,,true
+SideFX Learn,https://www.sidefx.com/learn/,Official Houdini tutorials and learning paths.,library,,SideFX,,true,technical-art|generative-art,,,true
+Entagma,https://entagma.com,Tutorials on procedural design with Houdini and other tools.,library,,,,false,technical-art|generative-art,,,true
+Discover three.js,https://discoverthreejs.com,Free online book introducing three.js.,book,Lewy Blue,,,true,web-development|3d-real-time,,,true
+Three.js Journey,https://threejs-journey.com,Paid course on three.js and WebGL by Bruno Simon.,library,Bruno Simon,,,false,web-development|3d-real-time,,,true
+WebGL Fundamentals,https://webglfundamentals.org,Free lessons on WebGL from first principles.,library,,,,true,web-development|generative-art,,,true
+WebGPU Fundamentals,https://webgpufundamentals.org,Free lessons on WebGPU from first principles.,library,,,,true,web-development|generative-art,,,true
+Inigo Quilez articles,https://iquilezles.org/articles/,"Articles on signed distance functions, ray marching and shader techniques.",article,Inigo Quilez,,,true,generative-art|technical-art,,,true
+LYGIA,https://lygia.xyz,"Multi-language shader library (GLSL, HLSL, Metal, WGSL) of reusable functions.",library,Patricio Gonzalez Vivo,,,true,generative-art|creative-coding,,,true
+ofBook,https://openframeworks.cc/ofBook/chapters/foreword.html,Community-written book on openFrameworks.,book,,openFrameworks,,true,creative-coding,,,true
+p5.js tutorials,https://p5js.org/tutorials/,"Official p5.js tutorials, from first sketch to sound, WebGL and accessibility.",library,,Processing Foundation,,true,creative-coding,,,true
+Strudel workshop,https://strudel.cc/workshop/getting-started/,Interactive introduction to live-coding music with Strudel.,library,,,,true,sound-music-tech|creative-coding,,,true
+Arduino Project Hub,https://projecthub.arduino.cc,Community-shared Arduino projects with code and wiring.,community,,Arduino,,true,physical-computing,,,true
+Random Nerd Tutorials,https://randomnerdtutorials.com,"Tutorials for ESP32, ESP8266, Arduino and Raspberry Pi.",library,,,,true,physical-computing,,,true
+SparkFun Tutorials,https://learn.sparkfun.com,Free electronics and sensor tutorials.,library,,SparkFun,,true,physical-computing,,,true
+ITP Physical Computing,https://itp.nyu.edu/physcomp/,"NYU ITP’s open physical-computing course site, with labs and videos.",library,,NYU ITP,,true,physical-computing|interaction-design,,,true
+Tyler Hobbs essays,https://www.tylerxhobbs.com/words,Essays on generative art techniques and practice.,article,Tyler Hobbs,,,true,generative-art,,,true
+Generative Hut,https://www.generativehut.com,Tutorials and articles on generative art with code.,library,,,,true,generative-art|creative-coding,,,true
+Web Audio API (MDN),https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API,MDN’s reference and guides for audio in the browser.,library,,Mozilla,,true,sound-music-tech|web-development,,,true
+ml5.js reference,https://docs.ml5js.org,Documentation and examples for ml5.js.,library,,,,true,machine-learning|creative-coding,,,true
+Hugging Face Learn,https://huggingface.co/learn,"Free courses on machine learning, diffusion models and more.",library,,Hugging Face,,true,machine-learning|ai,,,true

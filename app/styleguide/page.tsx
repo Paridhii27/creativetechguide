@@ -130,7 +130,7 @@ const SWATCHES = ["--swatch-1", "--swatch-2", "--swatch-3", "--swatch-4", "--swa
 const TYPE_LABEL = { opportunity: "Open call", program: "Programme", job: "Job", event: "Event", organisation: "Organisation", resource: "Resource" } as const;
 
 const DISCIPLINES = [
-  "experience-design", "creative-coding", "interaction-design", "spatial-xr", "installation", "projection-mapping", "ai-art",
+  "experience-design", "creative-coding", "interaction-design", "spatial-xr", "installation", "projection-mapping", "ai",
   "sound-music-tech", "generative-art", "physical-computing", "game-design", "data-visualisation", "service-design", "research",
 ];
 
@@ -173,10 +173,10 @@ export default function StyleguidePage() {
 
       {/* 01 COLOUR ------------------------------------------------------- */}
       <Section n="01" title="Colour · three view modes" refGroup="visual direction">
-        <Sub title="Side by side" note="Each panel is pinned to one mode; the rest of the page follows CHANGE VIEW.">
+        <Sub title="Side by side" note="Each panel is pinned to one mode; the rest of the page follows the View switch.">
           <div className="grid gap-4 md:grid-cols-3">
-            <ModeSample mode="paper" name="Paper" note="Black on white, like a printed guide. Signal red is rare: active states, urgent deadlines. Paper-square colours for fills." />
-            <ModeSample mode="night" name="Night" note="A black instrument panel. Chartreuse for HUD details and focus; soft coral, sage, pink, cobalt, orange for tiles." />
+            <ModeSample mode="paper" name="Document" note="Black on white, like a printed guide. Signal red is rare: active states, urgent deadlines. Paper-square colours for fills." />
+            <ModeSample mode="night" name="Monitor" note="A black instrument panel. Chartreuse for HUD details and focus; soft coral, sage, pink, cobalt, orange for tiles." />
             <ModeSample mode="blueprint" name="Blueprint" note="Monochrome blue, like a technical drawing. Accents become solid blue fills." />
           </div>
         </Sub>
@@ -193,7 +193,7 @@ export default function StyleguidePage() {
         </Sub>
         <Sub
           title="Secondary palette"
-          note="Paper: the paper-square colours. Night: the soft gradient-tile colours. Blueprint: all one blue. For fills, tiles, map dots and category marks only, never small text; text on them uses --on-swatch."
+          note="Document: the paper-square colours. Monitor: the soft gradient-tile colours. Blueprint: all one blue. For fills, tiles, map dots and category marks only, never small text; text on them uses --on-swatch."
         >
           <PaletteField />
         </Sub>
@@ -223,7 +223,7 @@ export default function StyleguidePage() {
             <DeadlineMark date={addDays(10)} label="Starts" event />
           </div>
         </Sub>
-        <Sub title="Images per mode" note="Paper as is; Night at 90% brightness; Blueprint in blue duotone (hover to see the original).">
+        <Sub title="Images per mode" note="Document as is; Monitor at 90% brightness; Blueprint in blue duotone (hover to see the original).">
           <div className="grid max-w-xl grid-cols-4 gap-3">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="aspect-square bg-surface">

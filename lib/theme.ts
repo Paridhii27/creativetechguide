@@ -2,6 +2,16 @@
 export const VIEW_MODES = ["paper", "night", "blueprint"] as const;
 export type ViewMode = (typeof VIEW_MODES)[number];
 
+/**
+ * Names people see. The ids above stay as they are (saved choices and `data-theme` use them);
+ * only these labels changed: page, screen, drawing.
+ */
+export const VIEW_MODE_LABELS: Record<ViewMode, string> = {
+  paper: "Document",
+  night: "Monitor",
+  blueprint: "Blueprint",
+};
+
 export const VIEW_MODE_KEY = "fg-view-mode";
 
 export function nextViewMode(m: ViewMode): ViewMode {
@@ -14,7 +24,7 @@ export function isViewMode(v: unknown): v is ViewMode {
 
 /**
  * Runs in <head> before first paint so there's no flash of the wrong mode.
- * Saved choice wins; otherwise Night if the system prefers dark, else Paper.
+ * Saved choice wins; otherwise Monitor (night) if the system prefers dark, else Document (paper).
  */
 export const VIEW_MODE_SCRIPT = `(function(){try{var m=localStorage.getItem(${JSON.stringify(VIEW_MODE_KEY)});if(${JSON.stringify(
   VIEW_MODES,

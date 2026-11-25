@@ -22,7 +22,7 @@ interface UnfurlResult {
   error?: string;
 }
 
-export default function AddForm({ initialUrl, places, disciplines, tools, initialTool, isAdmin }: { initialUrl: string; places: Place[]; disciplines: Discipline[]; tools: string[]; initialTool?: string; isAdmin: boolean }) {
+export default function AddForm({ initialUrl, places, countries, disciplines, tools, initialTool, isAdmin }: { initialUrl: string; places: Place[]; countries: string[]; disciplines: Discipline[]; tools: string[]; initialTool?: string; isAdmin: boolean }) {
   const [url, setUrl] = useState(initialUrl);
   const [fetching, setFetching] = useState(false);
   const [result, setResult] = useState<UnfurlResult | null>(null);
@@ -161,6 +161,7 @@ export default function AddForm({ initialUrl, places, disciplines, tools, initia
           editableUrl={!page}
           action={saveEntryAction}
           places={places}
+          countries={countries}
           disciplines={disciplines}
           tools={tools}
           favicon={page?.favicon_url}

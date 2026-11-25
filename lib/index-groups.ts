@@ -75,7 +75,7 @@ function runs<T extends Groupable>(entries: T[], lens: Lens, band: (e: T) => Ban
     const last = groups[groups.length - 1];
     if (last?.key === key) last.items.push(e);
     else {
-      const prefix = BUCKET_TITLE(lens, bucket);
+      const prefix = byRelevance ? BUCKET_TITLE(lens, bucket) : "";
       groups.push({ key, title: prefix ? (b.title ? `${prefix} · ${b.title.toLowerCase()}` : prefix) : b.title, period: b.period, items: [e] });
     }
   }
@@ -102,7 +102,8 @@ export function groupByDeadline<T extends Groupable>(
 export function groupByLetter<T extends Groupable & { title: string }>(
   entries: T[],
   lens: Lens,
-  opts: { query?: string; minPerGroup?: number } = {},
+  /** byRelevance: false for lists that aren't place-based (tools): plain A–Z, no "Elsewhere" prefix */
+  opts: { query?: string; minPerGroup?: number; byRelevance?: boolean } = {},
 ): IndexGroupSpec<T>[] {
   const letters = runs(
     entries,
@@ -113,6 +114,7 @@ export function groupByLetter<T extends Groupable & { title: string }>(
       return { key: letter, title: "", period: letter };
     },
     opts.query,
+    opts.byRelevance ?? true,
   );
   if (opts.query?.trim()) return letters;
   const min = opts.minPerGroup ?? 6;

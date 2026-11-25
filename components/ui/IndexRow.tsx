@@ -73,7 +73,7 @@ export function IndexRow({
   return (
     <li
       style={swatch ? ({ "--row-wash": tintVar(swatch, 10) } as CSSProperties) : undefined}
-      className={`group -mx-3 grid grid-cols-[3.5rem_minmax(0,1fr)] items-start gap-x-4 border-b border-line px-3 py-5 transition-colors hover:bg-[var(--row-wash,var(--surface))] sm:grid-cols-[4.5rem_minmax(0,1fr)_6.5rem] sm:gap-x-6 ${muted ? "opacity-60" : ""}`}
+      className={`group grid grid-cols-[3.5rem_minmax(0,1fr)] items-start gap-x-4 border-b border-line px-3 py-5 transition-colors hover:bg-[var(--row-wash,var(--surface))] sm:grid-cols-[4.5rem_minmax(0,1fr)_6.5rem] sm:gap-x-6 ${muted ? "opacity-60" : ""}`}
     >
       <Thumb src={image} title={title} fit={imageFit} swatch={swatch} className="aspect-square w-full" />
 
@@ -83,7 +83,7 @@ export function IndexRow({
           {title}
         </Link>
         {tags && <div className="mt-2.5 flex flex-wrap gap-1.5">{tags}</div>}
-        {description && <p className="text-body-s mt-3 line-clamp-2 text-ink-muted">{description}</p>}
+        {description && <p className="text-body-s mt-3 line-clamp-2 max-w-prose text-ink-muted">{description}</p>}
         {(meta || status) && <div className="mt-3 flex flex-wrap items-center gap-1.5">{status}{meta}</div>}
       </div>
 

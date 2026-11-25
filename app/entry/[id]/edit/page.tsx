@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import EntryEditor from "@/components/EntryEditor";
 import { updateEntryAction } from "@/app/actions/entries";
-import { getDisciplines, getEntriesByIds, getEntry, getPlaces, getToolNames } from "@/lib/db/entries";
+import { getCountryNames, getDisciplines, getEntriesByIds, getEntry, getPlaces, getToolNames } from "@/lib/db/entries";
 import { getCurrentUser } from "@/lib/db/profiles";
 import { isAdmin } from "@/lib/db/mylayer";
 import { entryToFormValues } from "@/lib/entry-input";
@@ -14,7 +14,7 @@ export default async function EditEntryPage({ params }: { params: Promise<{ id: 
   const { id } = await params;
   const user = await getCurrentUser();
   if (!user) redirect(`/login?next=${encodeURIComponent(`/entry/${id}/edit`)}`);
-  const [e, admin, places, disciplines, tools] = await Promise.all([getEntry(id), isAdmin(), getPlaces(), getDisciplines(), getToolNames()]);
+  const [e, admin, places, countries, disciplines, tools] = await Promise.all([getEntry(id), isAdmin(), getPlaces(), getCountryNames(), getDisciplines(), getToolNames()]);
   if (!e) notFound();
   const canEdit = admin || (e.owner_id === user.id && e.visibility === "private");
   if (!canEdit) redirect(`/entry/${id}`);
@@ -37,6 +37,7 @@ export default async function EditEntryPage({ params }: { params: Promise<{ id: 
           editableUrl
           action={updateEntryAction.bind(null, id)}
           places={places}
+          countries={countries}
           disciplines={disciplines}
           tools={tools}
           favicon={e.favicon_url}

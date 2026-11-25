@@ -26,6 +26,7 @@ export default async function EntryCatalogue({
   query,
   empty,
   savedIds,
+  placeless = false,
 }: {
   entries: Entry[];
   lens: Lens;
@@ -34,6 +35,8 @@ export default async function EntryCatalogue({
   empty: ReactNode;
   /** entries in the signed-in user's layer get a "Saved" tag */
   savedIds?: Set<string>;
+  /** Tools: digital, not place-based — no relevance groups or eligibility badges in a place lens. */
+  placeless?: boolean;
 }) {
   if (entries.length === 0) {
     return (
@@ -45,7 +48,7 @@ export default async function EntryCatalogue({
   const linkIds = entries.map((e) => (e.data.organisation_id ?? e.data.tool_id) as string | undefined).filter((x): x is string => !!x);
   const linked = await getEntriesByIds([...new Set(linkIds)]);
   const label = new Map((disciplines ?? []).map((d) => [d.slug, d.label]));
-  const groups = groupByLetter(entries, lens, { query });
+  const groups = groupByLetter(entries, lens, { query, byRelevance: !placeless });
 
   return (
     <div className="flex flex-col gap-14">
@@ -86,7 +89,7 @@ export default async function EntryCatalogue({
                             </>
                           ) : undefined
                         }
-                        eligibility={lens.kind !== "global" ? <EligibilityTag relevance={placeRelevance(e, lens)} place={lens.label} /> : undefined}
+                        eligibility={lens.kind !== "global" && !placeless && !isTool(e) ? <EligibilityTag relevance={placeRelevance(e, lens)} place={lens.label} /> : undefined}
                       />
                     </div>
                   </li>

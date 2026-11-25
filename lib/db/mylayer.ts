@@ -37,8 +37,10 @@ async function placeFor(city?: string, country?: string) {
   const { data } = await q;
   if (data?.[0]) return data[0];
   if (country) {
-    const { data: c } = await supabase.from("places").select("country,region").ilike("country", likeLiteral(country)).limit(1);
-    if (c?.[0]) return { city: city ?? null, state: null, country: c[0].country, region: c[0].region, lat: null, lng: null };
+    // A city we have no coordinates for: still file it under the right country and region. The countries
+    // table covers far more countries than places does (which only has those with a seeded city).
+    const { data: c } = await supabase.from("countries").select("name,region").ilike("name", likeLiteral(country)).limit(1);
+    if (c?.[0]) return { city: city ?? null, state: null, country: c[0].name, region: c[0].region, lat: null, lng: null };
   }
   return null;
 }

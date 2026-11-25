@@ -5,8 +5,8 @@ import { Black_Han_Sans, Instrument_Serif, Instrument_Sans } from "next/font/goo
 import "./globals.css";
 import { SECTIONS } from "@/lib/types";
 import { cookieLens, getGeoCached } from "@/lib/lens-server";
-import { getCurrentProfile, getCurrentUser } from "@/lib/db/profiles";
-import { myLayerCount, pendingReviewCount } from "@/lib/db/mylayer";
+import { getCurrentUser } from "@/lib/db/profiles";
+import { myLayerCount } from "@/lib/db/mylayer";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import LensSwitch from "@/components/LensSwitch";
 import NavLink from "@/components/NavLink";
@@ -27,10 +27,22 @@ export const metadata: Metadata = {
   description: "A field guide to creative technology, experience design and design-technology work, seen through any country or region.",
 };
 
+/** Account pill in the top strip, matching the view-mode switch beside it (outlined, tag-size text, small icon). */
+const ACCOUNT_PILL =
+  "text-tag inline-flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-ink transition-colors hover:border-ink";
+
+function UserIcon() {
+  return (
+    <svg aria-hidden viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.25" className="h-3.5 w-3.5 shrink-0">
+      <circle cx="7" cy="7" r="6.375" strokeOpacity="0.35" />
+      <circle cx="7" cy="5.5" r="2" />
+      <path d="M3.4 11.2c.7-1.6 2-2.4 3.6-2.4s2.9.8 3.6 2.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [lens, geo, user, profile, layerCount, reviewCount] = await Promise.all([cookieLens(), getGeoCached(), getCurrentUser(), getCurrentProfile(), myLayerCount(), pendingReviewCount()]);
-  // Only the admin reviews suggestions and publishes to the Map; everyone else suggests and keeps their own layer.
-  const admin = profile?.role === "admin";
+  const [lens, geo, user, layerCount] = await Promise.all([cookieLens(), getGeoCached(), getCurrentUser(), myLayerCount()]);
   return (
     <html
       lang="en"
@@ -50,32 +62,41 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <Suspense fallback={<div className="h-8 w-44" />}>
                     <LensSwitch fallback={lens.slug} geo={geo} />
                   </Suspense>
-                  <span aria-hidden className="hidden h-6 w-px bg-line sm:block" />
-                  {admin && (
-                    <PillLink href="/admin/review" title="Suggestions waiting for you to approve or reject">
-                      Review queue
-                      {reviewCount > 0 && <span className="text-tag -mr-1 rounded-full bg-accent px-1.5 py-px text-on-accent">{reviewCount}</span>}
+                  {/* Your own things, grouped tight; the wider gap before them separates them from the lens. */}
+                  <div className="flex items-center gap-2">
+                    <PillLink href={user ? "/me" : "/login?next=/me"} title="Your saves, your own entries and what you've suggested to the Map">
+                      My Layer
+                      {user && layerCount > 0 && <span className="text-tag -mr-1 rounded-full bg-accent px-1.5 py-px text-on-accent">{layerCount}</span>}
                     </PillLink>
-                  )}
-                  <PillLink href={user ? "/me" : "/login?next=/me"} title="Your saves, your own entries and what you've suggested to the Map">
-                    My Layer
-                    {user && layerCount > 0 && <span className="text-tag -mr-1 rounded-full bg-accent px-1.5 py-px text-on-accent">{layerCount}</span>}
-                  </PillLink>
-                  <PillLink href="/add" variant="primary" title="Add a URL to your layer (or press N, or paste/drop a link anywhere)">
-                    + Drop URL
-                  </PillLink>
+                    {/* Adding links is for signed-in users only, so signed-out visitors don't get a button that just leads to sign in. */}
+                    {user && (
+                      <Link
+                        href="/add"
+                        aria-label="Add a link"
+                        title="Add a link (press N, or paste or drop a link anywhere)"
+                        className="inline-flex h-7.5 w-7.5 items-center justify-center rounded-full border border-ink bg-ink text-bg transition-colors hover:bg-transparent hover:text-ink"
+                      >
+                        <svg aria-hidden viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" className="h-3.5 w-3.5">
+                          <path d="M8 2.5v11M2.5 8h11" />
+                        </svg>
+                      </Link>
+                    )}
+                  </div>
                 </>
               }
               utility={
                 user ? (
-                  <>
-                    {admin && <span className="text-ink">Admin</span>}
-                    <form action="/auth/signout" method="post" className="contents">
-                      <button className="hover:text-ink" title={user.email ?? undefined}>Sign out</button>
-                    </form>
-                  </>
+                  <form action="/auth/signout" method="post" className="contents">
+                    <button className={ACCOUNT_PILL} title={user.email ? `Signed in as ${user.email}` : undefined}>
+                      <UserIcon />
+                      Sign out
+                    </button>
+                  </form>
                 ) : (
-                  <Link href="/login" className="text-ink hover:underline">Sign in</Link>
+                  <Link href="/login" className={ACCOUNT_PILL}>
+                    <UserIcon />
+                    Sign in
+                  </Link>
                 )
               }
               search={

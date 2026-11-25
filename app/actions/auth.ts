@@ -1,8 +1,8 @@
 "use server";
-import { headers } from "next/headers";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { requestOrigin } from "@/lib/site-url";
 
 export type LoginState = { ok: boolean; message: string } | null;
 
@@ -11,8 +11,8 @@ export async function sendMagicLink(_prev: LoginState, form: FormData): Promise<
   const parsed = z.email().safeParse(String(form.get("email") ?? "").trim());
   if (!parsed.success) return { ok: false, message: "Enter a valid email address." };
   const next = String(form.get("next") ?? "/");
-  const h = await headers();
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
+  // The domain this request came in on (production, preview or localhost), never a hard-coded env value.
+  const origin = await requestOrigin();
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
     email: parsed.data,

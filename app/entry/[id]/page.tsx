@@ -276,7 +276,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
                   <DeadlineChip date={e.key_date} label={dateLabel} event={e.type === "event"} endDate={endDate} />
                 </AnnotationBox>
               )}
-              {(e.city || e.country || e.is_remote) && (
+              {!isTool(e) && (e.city || e.country || e.is_remote) && (
                 <AnnotationBox
                   title="Location"
                   swatch={5}
@@ -287,7 +287,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
                   ]}
                 />
               )}
-              {lens.kind !== "global" && (
+              {lens.kind !== "global" && !isTool(e) && (
                 <AnnotationBox title={`Lens — ${lens.label}`} swatch={2}>
                   <EligibilityBadge entry={e} lens={lens} />
                 </AnnotationBox>

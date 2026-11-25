@@ -14,7 +14,7 @@ import { kindsForSection, sectionForSlug } from "@/lib/types";
 
 const INTRO: Record<string, string> = {
   studios: "Studios, companies, labs, collectives, institutions and funders working in creative technology.",
-  programmes: "Degrees, diplomas, short courses and summer schools. In a country lens, tuition is also shown in that country’s currency.",
+  programmes: "Degrees, diplomas, short courses and summer schools.",
   jobs: "Roles for creative technologists, interaction developers and experience designers.",
   "open-calls": "Open calls, commissions, residencies, grants, fellowships and competitions.",
   resources: "Magazines, journals, books, talks, communities, archives and directories.",
@@ -32,8 +32,8 @@ export default async function SectionPage({ params, searchParams }: { params: Pr
   if (!section) notFound();
   const sp = await searchParams;
   const lens = await resolveLens(sp.lens);
-  const filters = { ...parseFilters(sp, section.type, lens), ...(section.kind ? { kind: section.kind } : {}), excludeKind: section.excludeKind };
-  const [{ entries, hasMore }, disciplines, fx, savedIds] = await Promise.all([browseEntries(filters), getDisciplines(), getFxTable(), mySavedIds()]);
+  const filters = { ...parseFilters(sp, section.type, lens), ...(section.kind ? { kind: section.kind, remote: undefined, relevance: undefined } : {}), excludeKind: section.excludeKind };
+  const [{ entries, hasMore, total }, disciplines, fx, savedIds] = await Promise.all([browseEntries({ ...filters, withTotal: true }), getDisciplines(), getFxTable(), mySavedIds()]);
   const page = currentPage(sp);
 
   const q = typeof sp.q === "string" ? sp.q : undefined;
@@ -45,31 +45,31 @@ export default async function SectionPage({ params, searchParams }: { params: Pr
     <div>
       <PageTitle
         title={section.label}
-        meta={<BracketLabel className="text-ink-muted">Lens — {lens.label}</BracketLabel>}
+        meta={section.kind ? undefined : <BracketLabel className="text-ink-muted">Lens — {lens.label}</BracketLabel>}
         aside={<p className="text-body-l max-w-md text-ink-muted">{INTRO[section.slug]}</p>}
       />
       <div className="mb-10 border-t border-line" />
-      <div className={`grid gap-y-8 ${catalogue ? "lg:grid-cols-[13rem_minmax(0,64rem)] lg:gap-x-16 xl:gap-x-20" : "lg:grid-cols-[13rem_minmax(0,46rem)] lg:gap-x-24 xl:gap-x-32"}`}>
+      <div className={`grid gap-y-8 ${catalogue ? "lg:grid-cols-[13rem_minmax(0,64rem)] lg:gap-x-16 xl:gap-x-20" : "lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-x-28 xl:gap-x-36"}`}>
         <aside>
           <details className="group lg:hidden">
             <summary className="text-label flex cursor-pointer list-none items-center justify-between border-y border-line py-3 text-ink">
               Filters <span aria-hidden className="transition-transform group-open:rotate-180">▾</span>
             </summary>
             <div className="pt-5 pb-2">
-              <Filters type={section.type} kinds={kindsForSection(section)} params={sp} lens={lens} disciplines={disciplines} fx={fx} />
+              <Filters type={section.type} kinds={kindsForSection(section)} params={sp} lens={lens} disciplines={disciplines} placeless={!!section.kind} />
             </div>
           </details>
           <div className="hidden lg:sticky lg:top-8 lg:block">
-            <Filters type={section.type} kinds={kindsForSection(section)} params={sp} lens={lens} disciplines={disciplines} fx={fx} />
+            <Filters type={section.type} kinds={kindsForSection(section)} params={sp} lens={lens} disciplines={disciplines} placeless={!!section.kind} />
           </div>
         </aside>
         <div className="min-w-0">
           {catalogue ? (
-            <EntryCatalogue entries={entries} lens={lens} disciplines={disciplines} query={q} empty={empty} savedIds={savedIds} />
+            <EntryCatalogue entries={entries} lens={lens} disciplines={disciplines} query={q} empty={empty} savedIds={savedIds} placeless={!!section.kind} />
           ) : (
             <EntryIndex type={section.type} entries={entries} lens={lens} fx={fx} disciplines={disciplines} query={q} empty={empty} savedIds={savedIds} />
           )}
-          <Pager path={`/${section.slug}`} params={sp} page={page} hasMore={hasMore} />
+          <Pager path={`/${section.slug}`} params={sp} page={page} hasMore={hasMore} total={total} />
         </div>
       </div>
     </div>
