@@ -122,7 +122,7 @@ export function LocationLabel({ children, className = "" }: { children: ReactNod
 /** Wordmark + tagline. */
 export function Wordmark({ href = "/", stacked = false }: { href?: string; stacked?: boolean }) {
   return (
-    <Link href={href} className={`inline-flex text-ink ${stacked ? "flex-col gap-0.5" : "flex-wrap items-baseline gap-x-2"}`}>
+    <Link href={href} className={`inline-flex text-ink ${stacked ? "flex-col gap-1 leading-none" : "flex-wrap items-baseline gap-x-2"}`}>
       <span className="text-wordmark">Creative Technology</span>
       <span className="text-accent-m text-ink-muted">A Field Guide</span>
     </Link>

@@ -4,7 +4,7 @@ import { DeadlineChip, EligibilityBadge, dateLabelFor, locationLabel } from "./B
 import { entryPicture } from "@/lib/icon";
 import { costLine } from "@/lib/cost";
 import type { FxTable } from "@/lib/money";
-import { TYPE_SWATCH, tintVar } from "@/lib/swatch";
+import { entrySwatch, tintVar } from "@/lib/swatch";
 import { humanize, KINDS, sectionForEntry, type Entry, type Lens } from "@/lib/types";
 import { Thumb } from "@/components/ui/Thumb";
 import { LocationLabel, Mark, Tag } from "@/components/ui/primitives";
@@ -27,7 +27,7 @@ export default function EntryCard({ entry: e, lens, fx, orgName, actions, saved 
   // Programmes lead with the institution; the course, level and degree sit below.
   const byInstitution = e.type === "program" && !!orgName;
   const degree = typeof e.data.degree_name === "string" && e.data.degree_name !== e.title ? e.data.degree_name : null;
-  const swatch = TYPE_SWATCH[e.type];
+  const swatch = entrySwatch(e);
   const pic = entryPicture(e);
   const kicker = [sectionForEntry(e).singular, ...(byInstitution ? [kind, degree] : [orgName, kind])].filter(Boolean).join(" · ");
   const location = locationLabel(e);

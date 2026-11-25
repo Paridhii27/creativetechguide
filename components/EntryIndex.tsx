@@ -7,7 +7,7 @@ import { DEFAULT_BAND_LABELS, groupByDeadline, type BandLabels } from "@/lib/ind
 import type { FxTable } from "@/lib/money";
 import { locationLabel } from "@/lib/places";
 import { placeRelevance } from "@/lib/relevance";
-import { TYPE_SWATCH } from "@/lib/swatch";
+import { entrySwatch, TYPE_SWATCH } from "@/lib/swatch";
 import { humanize, isTool, KINDS, type Discipline, type Entry, type EntryType, type Lens } from "@/lib/types";
 import { IndexGroup, IndexRow } from "@/components/ui/IndexRow";
 import { DisciplineTag, LocationLabel, Tag } from "@/components/ui/primitives";
@@ -79,7 +79,7 @@ export default async function EntryIndex({
             const kindValue = e.data[KINDS[e.type].field];
             const kind = typeof kindValue === "string" ? humanize(kindValue) : null;
             const cost = costLine(e, lens, fx);
-            const swatch = TYPE_SWATCH[e.type];
+            const swatch = entrySwatch(e);
             const pic = entryPicture(e);
             const endDate = typeof e.data.end_date === "string" ? e.data.end_date : null;
             const over = e.type === "event" ? (endDate ?? e.key_date) : e.key_date;

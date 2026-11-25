@@ -3,9 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DeadlineChip, EligibilityBadge, dateLabelFor, locationLabel } from "@/components/Badges";
 import { AnnotationBox } from "@/components/ui/hud";
-import { Barcode, BracketLabel, DisciplineTag, LocationLabel, Mark, Tag } from "@/components/ui/primitives";
+import { Barcode, BracketLabel, DisciplineTag, LocationLabel, Mark, PillLink, Tag } from "@/components/ui/primitives";
 import { Thumb } from "@/components/ui/Thumb";
-import { TYPE_SWATCH } from "@/lib/swatch";
+import { entrySwatch } from "@/lib/swatch";
 import EntryList from "@/components/EntryList";
 import EntryActions from "@/components/EntryActions";
 import { getCurrentUser } from "@/lib/db/profiles";
@@ -172,7 +172,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
   const rows = facts(e, lens, fx, linked).filter(([, v]) => v != null && v !== "");
   const isPublic = e.visibility === "public" && e.status === "approved";
 
-  const swatch = TYPE_SWATCH[e.type];
+  const swatch = entrySwatch(e);
   const pic = entryPicture(e);
   const kind = (() => {
     const v = d[KINDS[e.type].field];
@@ -302,19 +302,24 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
 
       {isTool(e) && (
         <section className="mt-20 max-w-[46rem]">
-          <div className="flex flex-wrap items-end justify-between gap-3 border-b border-ink pb-2">
+          {/* The list draws the section's one rule (its top border), so the heading has none of its own. */}
+          <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
             <h2 className="text-heading text-ink">Libraries &amp; resources for {e.title}</h2>
-            {user && <Link href={`/add?tool=${encodeURIComponent(e.title)}`} className="text-label text-ink underline underline-offset-4">+ Add one</Link>}
+            {user && (
+              <PillLink href={`/add?tool=${encodeURIComponent(e.title)}`} className="shrink-0">
+                + Add one
+              </PillLink>
+            )}
           </div>
-          <div className="mt-2">
+          <div className="mt-4">
             <EntryList entries={related} lens={lens} fx={fx} empty={<>Nothing linked yet. When you add a library, tutorial or community, choose {e.title} under &ldquo;For tool&rdquo;.</>} />
           </div>
         </section>
       )}
       {!isTool(e) && related.length > 0 && (
         <section className="mt-20 max-w-[46rem]">
-          <h2 className="text-heading border-b border-ink pb-2 text-ink">At {e.title}</h2>
-          <div className="mt-2"><EntryList entries={related} lens={lens} fx={fx} /></div>
+          <h2 className="text-heading text-ink">At {e.title}</h2>
+          <div className="mt-4"><EntryList entries={related} lens={lens} fx={fx} /></div>
         </section>
       )}
     </article>

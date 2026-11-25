@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 
 /** Account pill in the top strip, matching the view-mode switch beside it (outlined, tag-size text, small icon). */
 const ACCOUNT_PILL =
-  "text-tag inline-flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-ink transition-colors hover:border-ink";
+  "text-tag inline-flex h-7 items-center gap-1.5 rounded-full border border-line px-3 text-ink transition-colors hover:border-ink";
 
 function UserIcon() {
   return (
@@ -64,7 +64,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   </Suspense>
                   {/* Your own things, grouped tight; the wider gap before them separates them from the lens. */}
                   <div className="flex items-center gap-2">
-                    <PillLink href={user ? "/me" : "/login?next=/me"} title="Your saves, your own entries and what you've suggested to the Map">
+                    <PillLink className="h-8 py-0!" href={user ? "/me" : "/login?next=/me"} title="Your saves, your own entries and what you've suggested to the Map">
                       My Layer
                       {user && layerCount > 0 && <span className="text-tag -mr-1 rounded-full bg-accent px-1.5 py-px text-on-accent">{layerCount}</span>}
                     </PillLink>
@@ -74,7 +74,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                         href="/add"
                         aria-label="Add a link"
                         title="Add a link (press N, or paste or drop a link anywhere)"
-                        className="inline-flex h-7.5 w-7.5 items-center justify-center rounded-full border border-ink bg-ink text-bg transition-colors hover:bg-transparent hover:text-ink"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-ink bg-ink text-bg transition-colors hover:bg-transparent hover:text-ink"
                       >
                         <svg aria-hidden viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" className="h-3.5 w-3.5">
                           <path d="M8 2.5v11M2.5 8h11" />

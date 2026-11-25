@@ -62,7 +62,7 @@ export default function EntryActions({ entryId, signedIn, saved: initialSaved, i
           {saved ? "Saved ✓" : "Save to My Layer"}
         </button>}
         {!compact && saved && !inLayer && (
-          <Link href="/me?view=saved" className="text-label inline-flex items-center px-1 text-ink-muted underline underline-offset-4 hover:text-ink">
+          <Link href="/me?view=saved" className={btn}>
             In My Layer →
           </Link>
         )}

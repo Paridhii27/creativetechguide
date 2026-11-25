@@ -4,7 +4,7 @@ import { entryPicture } from "@/lib/icon";
 import { groupByLetter } from "@/lib/index-groups";
 import { locationLabel } from "@/lib/places";
 import { placeRelevance } from "@/lib/relevance";
-import { TYPE_SWATCH } from "@/lib/swatch";
+import { entrySwatch } from "@/lib/swatch";
 import { humanize, isTool, KINDS, type Discipline, type Entry, type Lens } from "@/lib/types";
 import { Card } from "@/components/ui/Card";
 import { IndexGroup } from "@/components/ui/IndexRow";
@@ -72,7 +72,7 @@ export default async function EntryCatalogue({
                         href={`/entry/${e.id}?lens=${lens.slug}`}
                         title={title}
                         kicker={[kind, by].filter(Boolean).join(" · ") || undefined}
-                        swatch={TYPE_SWATCH[e.type]}
+                        swatch={entrySwatch(e)}
                         image={pic.src}
                         imageFit={pic.fit}
                         location={locationLabel(e) || undefined}

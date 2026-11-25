@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { browseEntries } from "@/lib/db/entries";
 import { resolveLens } from "@/lib/lens-server";
 import { locationLabel } from "@/lib/places";
-import { TYPE_SWATCH } from "@/lib/swatch";
+import { entrySwatch } from "@/lib/swatch";
 import { sectionForEntry } from "@/lib/types";
 
 /** GET ?q=&lens= → a handful of compact matches for the navbar search dropdown. */
@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     id: e.id,
     title: e.title,
     kind: sectionForEntry(e).singular,
-    swatch: TYPE_SWATCH[e.type],
+    swatch: entrySwatch(e),
     location: locationLabel(e),
   }));
   return NextResponse.json({ results, hasMore });

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 import { ChangeView } from "./ChangeView";
+import { ShrinkToText } from "./ShrinkToText";
 import { Wordmark } from "./primitives";
 
 /* ---------------------------------------------------------------------------
@@ -25,8 +26,8 @@ export function PageTitle({ kicker, title, meta, aside }: { kicker?: ReactNode; 
         <h1 className="text-display-m text-balance text-ink">{title}</h1>
         {meta && <p className="text-micro mt-3 text-ink-muted">{meta}</p>}
       </div>
-      {/* Right-aligned from lg up so every line of the intro ends flush with the page rule below. */}
-      {aside && <div className="text-pretty lg:shrink-0 lg:text-right">{aside}</div>}
+      {/* Left-aligned text in a box narrowed to its longest line, so that line ends flush with the page rule below. */}
+      {aside && <ShrinkToText className="text-pretty lg:shrink-0">{aside}</ShrinkToText>}
     </header>
   );
 }
@@ -72,20 +73,20 @@ export function NavBar({
 }) {
   return (
     <div className="border-b border-line">
-      {/* Top strip, all quiet and all on the right: the settings corner (view mode, then account links).
-          Kept off the left so nothing sits above the wordmark and reads as part of it. */}
-      <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 border-b sm:gap-x-5 border-line py-2">
-        <ChangeView />
-        {utility && (
-          <div className="text-micro flex flex-wrap items-center gap-x-5 gap-y-1 border-l border-line pl-4 text-ink-muted sm:pl-5">{utility}</div>
-        )}
-      </div>
-      {/* Main row: wordmark, then the lens (the page's main control) and the primary action. */}
-      <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-4 py-5">
-        <Wordmark />
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 sm:gap-x-8">
-          {lensLabel && <span className="text-micro text-ink-muted">Lens — {lensLabel}</span>}
-          {right}
+      {/* One masthead row: the two-line wordmark on the left, every control in a single right-hand column.
+          The column's top line is the quiet settings corner (view mode, account); the line beneath holds the
+          lens and your own things. Both lines end flush right, so the controls read as one block. */}
+      <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-5 pt-6 pb-5">
+        <Wordmark stacked />
+        <div className="flex flex-col items-start gap-3 sm:items-end">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 sm:justify-end">
+            <ChangeView />
+            {utility && <div className="flex items-center text-ink-muted">{utility}</div>}
+          </div>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 sm:justify-end">
+            {lensLabel && <span className="text-micro text-ink-muted">Lens — {lensLabel}</span>}
+            {right}
+          </div>
         </div>
       </div>
       {/* Section row: links wrap onto a second line rather than scroll; search keeps its own slot at the end. */}

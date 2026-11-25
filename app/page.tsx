@@ -8,7 +8,7 @@ import { browseEntries, countBySection, getFxTable } from "@/lib/db/entries";
 import { mySavedIds } from "@/lib/db/mylayer";
 import { addDays, daysUntil } from "@/lib/dates";
 import { resolveLens } from "@/lib/lens-server";
-import { TYPE_SWATCH } from "@/lib/swatch";
+import { sectionSwatch } from "@/lib/swatch";
 import { SECTIONS } from "@/lib/types";
 
 const BLURB: Record<string, string> = {
@@ -52,6 +52,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
             Studios, programmes, jobs, open calls, publications and events in experience design and design technology. Pick a country or
             region in the lens to see what&apos;s based there or open to applicants from there.
           </p>
+          <p className="text-body-l mt-4 max-w-xl text-ink-muted">
+            Found something that&apos;s missing? Sign in and paste or drop any link (a studio, course, job, open call or event) to add it to{" "}
+            <Link href="/me" className="text-ink underline decoration-1 underline-offset-4 hover:decoration-2">your own layer</Link>. It stays private
+            until you suggest it to the Map.
+          </p>
         </div>
         <Specimen
           label="The field"
@@ -92,7 +97,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
         </header>
         <ul className="anim-stagger grid grid-cols-2 border-l border-line md:grid-cols-4">
           {SECTIONS.map((s) => {
-            const sw = s.kind ? null : TYPE_SWATCH[s.type];
+            const sw = sectionSwatch(s);
             return (
               <li key={s.slug} className="border-r border-b border-line">
                 <Link href={`/${s.slug}?lens=${lens.slug}`} className="group flex h-full flex-col gap-6 p-5 transition-colors hover:bg-surface">

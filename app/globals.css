@@ -24,6 +24,8 @@
   --swatch-3: #7fb17e; /* green */
   --swatch-4: #dcb572; /* mustard */
   --swatch-5: #dbaaae; /* pink */
+  --swatch-6: #8f6fcf; /* violet: publications & resources */
+  --swatch-7: #2f9e9a; /* teal: tools */
   --on-swatch: #1e1e1e;
   --grid: rgb(30 30 30 / 0.04);
   --img-filter: none;
@@ -48,6 +50,8 @@
     --swatch-3: #d365a4; /* pink */
     --swatch-4: #5a78e6; /* cobalt */
     --swatch-5: #d86a48; /* orange */
+    --swatch-6: #cdb57e; /* sand: publications & resources */
+    --swatch-7: #a48fe0; /* lavender: tools */
     --on-swatch: #050505;
     --grid: rgb(234 253 87 / 0.05);
     --img-filter: brightness(0.9);
@@ -73,6 +77,8 @@
   --swatch-3: #d365a4; /* pink */
   --swatch-4: #5a78e6; /* cobalt */
   --swatch-5: #d86a48; /* orange */
+  --swatch-6: #cdb57e; /* sand: publications & resources */
+  --swatch-7: #a48fe0; /* lavender: tools */
   --on-swatch: #050505;
   --grid: rgb(234 253 87 / 0.05);
   --img-filter: brightness(0.9);
@@ -98,6 +104,8 @@
   --swatch-3: #3449b2;
   --swatch-4: #3449b2;
   --swatch-5: #3449b2;
+  --swatch-6: #3449b2;
+  --swatch-7: #3449b2;
   --on-swatch: #fcfcfc;
   --grid: rgb(52 73 178 / 0.08);
   --img-filter: url(#duotone-blueprint);
@@ -121,6 +129,8 @@
   --color-swatch-3: var(--swatch-3);
   --color-swatch-4: var(--swatch-4);
   --color-swatch-5: var(--swatch-5);
+  --color-swatch-6: var(--swatch-6);
+  --color-swatch-7: var(--swatch-7);
   --color-on-swatch: var(--on-swatch);
 
   /* families */

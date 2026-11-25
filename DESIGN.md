@@ -105,6 +105,7 @@ The site has **three view modes**, taken from the three versions of the specimen
 | `--on-accent` (text on solid accent fills) | `#1E1E1E` | `#050505` | `#FCFCFC` |
 | `--grid` (faint background grid in specimen areas) | `#1E1E1E` at 4% | `#EAFD57` at 5% | `#3449B2` at 8% |
 | `--swatch-1…5` (secondary palette: fills, tiles, map dots, category marks; never small text) | red `#F04A30`, blue `#387EB2`, green `#7FB17E`, mustard `#DCB572`, pink `#DBAAAE` | coral `#D9777C`, sage `#7C9A8F`, pink `#D365A4`, cobalt `#5A78E6`, orange `#D86A48` | all `#3449B2` |
+| `--swatch-6`, `--swatch-7` (type colours for Publications & Resources and for Tools only) | violet `#8F6FCF`, teal `#2F9E9A` | sand `#CDB57E`, lavender `#A48FE0` | all `#3449B2` |
 | `--on-swatch` (text on palette fills) | `#1E1E1E` | `#050505` | `#FCFCFC` |
 
 All pairs above pass WCAG AA: ink on background is at least 7:1 in every mode, and `--accent-text` on background is at least 4.5:1. In Document mode, keep the brighter `#F04A30` for shapes, lines and large text only, and use `--accent-text` for small accent text. White on `#F04A30` fails AA, so text on solid red is ink. The Document palette comes from the "paper squares" reference (Figma node `19:132`), the Monitor palette from the soft gradient-tile reference (node `19:128`).
@@ -116,7 +117,7 @@ All pairs above pass WCAG AA: ink on background is at least 7:1 in every mode, a
 
 ### Where the palette is used
 The five swatches (`--swatch-1…5`) appear throughout the system, always as fills, washes and marks, never as small text. They live in `lib/swatch.ts`.
-- **Type colours:** every entry type keeps one swatch site-wide (`TYPE_SWATCH`): open call 1, programme 2, job 3, event 4, organisation 5; resources use an outlined mark. Shown as a small square mark in index rows (under the year), card kickers and catalogue headings, as the image ground, and as map dots.
+- **Type colours:** every entry type keeps one swatch site-wide (`TYPE_SWATCH`): open call 1, programme 2, job 3, event 4, organisation 5, publications & resources 6, tools 7 (`entrySwatch` / `sectionSwatch`). Swatches 6 and 7 are only for those two types; disciplines and fallback blocks stay on 1–5. Shown as a small square mark in index rows (under the year), card kickers and catalogue headings, as the image ground, and as map dots.
 - **Disciplines and skills:** each gets a stable swatch from its name (`swatchFor`), shown as a small square inside its tag chip.
 - **Image grounds and fallbacks:** cut-out images sit on a soft wash of their swatch. Items with no image show a solid swatch block (colour chosen from the title, so lists stay varied) with the first letter, never a grey box.
 - **Kind chips:** `tint` tags (residency, masters, full time…) take a soft wash of their type's swatch.
