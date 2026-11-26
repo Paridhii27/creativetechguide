@@ -4,7 +4,7 @@ import { AnnotationBox, Specimen } from "@/components/ui/hud";
 import { Globe } from "@/components/ui/Globe";
 import { Accent } from "@/components/ui/layout";
 import { BracketLabel, Mark } from "@/components/ui/primitives";
-import { browseEntries, countBySection, getFxTable } from "@/lib/db/entries";
+import { browseEntries, countBySection } from "@/lib/db/entries";
 import { mySavedIds } from "@/lib/db/mylayer";
 import { addDays, daysUntil } from "@/lib/dates";
 import { resolveLens } from "@/lib/lens-server";
@@ -24,9 +24,8 @@ const BLURB: Record<string, string> = {
 /** Home: specimen hero (visual-direction reference), section index, and the next 60 days of deadlines. */
 export default async function Home({ searchParams }: { searchParams: Promise<{ lens?: string }> }) {
   const lens = await resolveLens((await searchParams).lens);
-  const [counts, fx, savedIds, deadlines] = await Promise.all([
+  const [counts, savedIds, deadlines] = await Promise.all([
     countBySection(),
-    getFxTable(),
     mySavedIds(),
     Promise.all(
       (["opportunity", "job", "program"] as const).map((type) => browseEntries({ type, lens: lens.slug, dateFrom: addDays(0), dateTo: addDays(60), limit: 6 })),
@@ -99,14 +98,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           {SECTIONS.map((s) => {
             const sw = sectionSwatch(s);
             return (
-              <li key={s.slug} className="border-r border-b border-line">
-                <Link href={`/${s.slug}?lens=${lens.slug}`} className="group flex h-full flex-col gap-6 p-5 transition-colors hover:bg-surface">
+              <li key={s.slug} className="min-w-0 border-r border-b border-line">
+                <Link href={`/${s.slug}?lens=${lens.slug}`} className="group flex h-full flex-col gap-6 p-4 sm:p-5 transition-colors hover:bg-surface">
                   <span className="text-micro flex items-center gap-1.5 text-ink-muted">
                     <Mark swatch={sw} size={7} />
                     {BLURB[s.slug]}
                   </span>
-                  <span className="mt-auto flex items-end justify-between gap-3">
-                    <span className="text-body font-semibold leading-tight text-ink group-hover:underline">{s.label}</span>
+                  <span className="mt-auto flex flex-wrap items-end justify-between gap-x-3 gap-y-1">
+                    <span className="text-body min-w-0 break-words font-semibold leading-tight text-ink group-hover:underline">{s.label}</span>
                     <span className="text-numeral text-ink">{counts[s.slug]}</span>
                   </span>
                 </Link>
@@ -122,7 +121,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           <h2 className="text-heading text-ink">Closing soon</h2>
           <p className="text-body-s mt-3 text-ink-muted">Open calls, job closing dates and programme application rounds in the next 60 days.</p>
         </div>
-        <EntryIndex entries={upcoming} lens={lens} fx={fx} byRelevance={false} savedIds={savedIds} empty="No dated deadlines in the next 60 days." />
+        <EntryIndex entries={upcoming} lens={lens} byRelevance={false} savedIds={savedIds} empty="No dated deadlines in the next 60 days." />
       </section>
     </div>
   );

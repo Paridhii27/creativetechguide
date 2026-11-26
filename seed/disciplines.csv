@@ -1,29 +1,29 @@
 slug,label,sort_order
-experience-design,Experience design,1
-creative-coding,Creative coding,2
-interaction-design,Interaction design,3
+experience-design,Experience Design,1
+creative-coding,Creative Coding,2
+interaction-design,Interaction Design,3
 spatial-xr,AR/VR & Spatial,4
 installation,Installation,5
-projection-mapping,Projection mapping,6
+projection-mapping,Projection Mapping,6
 ai,AI,7
-sound-music-tech,Sound & music tech,8
-generative-art,Generative art,9
-physical-computing,Physical computing,10
-game-design,Game design,11
-data-visualisation,Data visualisation,12
-service-design,Service design,13
+sound-music-tech,Sound & Music Tech,8
+generative-art,Generative Art,9
+physical-computing,Physical Computing,10
+game-design,Game Design,11
+data-visualisation,Data Visualisation,12
+service-design,Service Design,13
 research,Research,14
-ui-ux-design,UI/UX design,15
-product-design,Product design,16
-design-engineering,Design engineering,17
-motion-design,Motion design & animation,18
-3d-real-time,3D & real-time graphics,19
-technical-art,Technical art,20
-creative-direction,Creative direction,21
-web-development,Web & front-end development,22
-graphic-design,Graphic & visual design,23
+ui-ux-design,UI/UX Design,15
+product-design,Product Design,16
+design-engineering,Design Engineering,17
+motion-design,Motion Design & Animation,18
+3d-real-time,3D & Real-Time Graphics,19
+technical-art,Technical Art,20
+creative-direction,Creative Direction,21
+web-development,Web & Front-End Development,22
+graphic-design,Graphic & Visual Design,23
 robotics,Robotics,24
-machine-learning,Machine learning,25
-architecture-spatial,Architecture & spatial design,26
-wearables-fashion-tech,Wearables & fashion tech,27
-production,Production & project management,28
+machine-learning,Machine Learning,25
+architecture-spatial,Architecture & Spatial Design,26
+wearables-fashion-tech,Wearables & Fashion Tech,27
+production,Production Design,28

@@ -1,8 +1,9 @@
+import aliases from "@/lib/place-aliases.json";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { daysUntil, urgency, addDays } from "@/lib/dates";
 import { parseFilters, withParams } from "@/lib/filters";
-import { approxIn, convert, formatInr, formatMoney, toInr } from "@/lib/money";
-import { GLOBAL_LENS, buildLens, parseLensSlug, relevanceBadge, slugify } from "@/lib/lens";
+import { GLOBAL_LENS, buildLens, parseLensSlug, relevanceBadge, slugify, findPlaceSlug } from "@/lib/lens";
 import { placeRelevance } from "@/lib/relevance";
 import type { PlaceLens } from "@/lib/types";
 import { RELEVANCE_CASES, TEST_GEO } from "./relevance-cases";
@@ -23,25 +24,6 @@ describe("deadline urgency", () => {
   it("counts days and adds days", () => {
     expect(daysUntil("2026-12-01", NOW)).toBe(9);
     expect(addDays(10, NOW)).toBe("2026-12-02");
-  });
-});
-
-describe("money", () => {
-  it("converts and formats rupees", () => {
-    expect(toInr({ amount: 100, currency: "gbp" }, { GBP: 107 })).toBe(10700);
-    expect(toInr({ amount: 100, currency: "XYZ" }, {})).toBeNull();
-    expect(formatInr(2_568_000)).toBe("₹25.7L");
-    expect(formatInr(12_000_000)).toBe("₹1.2Cr");
-    expect(formatInr(45_000)).toBe("₹45,000");
-  });
-  it("converts between any two currencies via INR", () => {
-    const fx = { INR: 1, EUR: 100, BRL: 16 };
-    expect(convert({ amount: 16, currency: "BRL" }, "EUR", fx)).toBeCloseTo(2.56);
-    expect(convert({ amount: 1, currency: "XYZ" }, "EUR", fx)).toBeNull();
-    expect(approxIn({ amount: 20000, currency: "EUR" }, "BRL", fx)).toMatch(/^≈R\$125,000$/);
-    expect(approxIn({ amount: 1, currency: "EUR" }, "EUR", fx)).toBeNull();
-    expect(approxIn({ amount: 1, currency: "EUR" }, null, fx)).toBeNull();
-    expect(formatMoney({ amount: 2_568_000, currency: "INR" })).toBe("₹25.7L");
   });
 });
 
@@ -91,6 +73,17 @@ describe("filters", () => {
     const f = parseFilters({ kind: "senior", work_mode: "remote", visa: "yes" }, "job", GLOBAL_LENS, NOW);
     expect(f).toMatchObject({ seniority: "senior", workMode: "remote", visa: "yes" });
   });
+  it("applies work mode or remote only to the sections that show them", () => {
+    expect(parseFilters({ remote: "no", work_mode: "hybrid" }, "job", GLOBAL_LENS)).toMatchObject({ workMode: "hybrid" });
+    expect(parseFilters({ remote: "no" }, "job", GLOBAL_LENS).remote).toBeUndefined();
+    const studio = parseFilters({ remote: "no", work_mode: "hybrid" }, "organisation", GLOBAL_LENS);
+    expect([studio.remote, studio.workMode]).toEqual([undefined, undefined]);
+    for (const type of ["program", "opportunity", "event"] as const) {
+      expect(parseFilters({ remote: "no" }, type, GLOBAL_LENS).remote).toBe(false);
+      expect(parseFilters({ work_mode: "hybrid" }, type, GLOBAL_LENS).workMode).toBeUndefined();
+    }
+    expect(parseFilters({ remote: "yes" }, "resource", GLOBAL_LENS).remote).toBeUndefined();
+  });
   it("ignores a kind that doesn't belong to the type", () => {
     expect(parseFilters({ kind: "masters" }, "event", GLOBAL_LENS).kind).toBeUndefined();
   });
@@ -100,5 +93,33 @@ describe("filters", () => {
   });
   it("builds urls", () => {
     expect(withParams("/jobs", { lens: "india", page: "2" }, { page: null, kind: "mid" })).toBe("/jobs?lens=india&kind=mid");
+  });
+});
+
+describe("findPlaceSlug", () => {
+  const geo = {
+    regions: [{ slug: "south-asia", name: "South Asia", also_matches: [] }],
+    countries: [{ code: "CI", slug: "cote-d-ivoire", name: "Côte d'Ivoire", region: "Africa", currency: "XOF", groups: [] }],
+  };
+  it("matches a typed country or region, ignoring case and accents", () => {
+    expect(findPlaceSlug("  cote d'ivoire ", geo)).toBe("cote-d-ivoire");
+    expect(findPlaceSlug("South Asia", geo)).toBe("south-asia");
+  });
+  it("returns nothing for an empty or unknown name", () => {
+    expect(findPlaceSlug("", geo)).toBeUndefined();
+    expect(findPlaceSlug("Atlantis", geo)).toBeUndefined();
+  });
+});
+
+describe("place data", () => {
+  const rows = readFileSync("seed/countries.csv", "utf8").trim().split(/\r?\n/).slice(1).map((l) => l.split(","));
+  const geo = { regions: [], countries: rows.map(([code, name, region]) => ({ code, name, region, slug: slugify(name), currency: null, groups: [] })) };
+  const aliasList = Object.entries(aliases as Record<string, string[]>);
+  it("has no repeated code or name", () => {
+    expect(new Set(rows.map((r) => r[0])).size).toBe(rows.length);
+    expect(new Set(geo.countries.map((c) => c.slug)).size).toBe(rows.length);
+  });
+  it("points every alternative name at exactly one listed country", () => {
+    for (const [name, others] of aliasList) for (const other of others) expect(findPlaceSlug(other, geo), other).toBe(slugify(name));
   });
 });

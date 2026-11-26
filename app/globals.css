@@ -1,5 +1,29 @@
 @import "tailwindcss";
 
+/* Space at each side of the page. On laptops it grows with the window, so narrower screens (many Windows
+   laptops are 1280–1366px wide) keep margins in proportion to the wider ones. */
+:root {
+  --page-gutter: 1rem;
+}
+@media (min-width: 40rem) {
+  :root {
+    --page-gutter: 2rem;
+  }
+}
+@media (min-width: 64rem) {
+  :root {
+    --page-gutter: clamp(2rem, 6.5vw, 6rem);
+  }
+}
+
+/* The page column: at most 76rem (1216px) of content, centred, never closer to the edge than the gutter. */
+@utility page-width {
+  width: 100%;
+  max-width: calc(76rem + 2 * var(--page-gutter));
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+
 /* ============================================================================
    DESIGN TOKENS — see DESIGN.md
    Three view modes set on <html data-theme="paper|night|blueprint">.
@@ -13,11 +37,11 @@
   --ink: #1e1e1e;
   --ink-muted: rgb(30 30 30 / 0.6);
   --line: #dadad6;
-  /* accent: paper-squares red; text on solid red is ink (white fails AA) */
-  --accent: #f04a30;
+  /* accent: a deepened paper-squares red, so white text on solid fills is easy to read (AA) */
+  --accent: #c8321a;
   --accent-text: #c8321a;
-  --accent-soft: rgb(240 74 48 / 0.15);
-  --on-accent: #1e1e1e;
+  --accent-soft: rgb(200 50 26 / 0.15);
+  --on-accent: #ffffff;
   /* secondary palette (paper squares): fills and marks only, never small text */
   --swatch-1: #f04a30; /* red */
   --swatch-2: #387eb2; /* blue */
@@ -271,7 +295,7 @@ a { text-underline-offset: 3px; }
   text-transform: uppercase;
   letter-spacing: 0.01em;
 }
-/* Nav at 14px: keeps all seven sections on one row beside search (the header is capped at 1280px). */
+/* Nav at 14px: keeps all seven sections on one row beside search (content is capped at 1216px). */
 @utility text-nav-s {
   font-family: var(--font-text);
   font-size: 14px;
@@ -428,3 +452,9 @@ a { text-underline-offset: 3px; }
 .field:hover { border-color: var(--ink); }
 .field:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--ink); }
 .field::placeholder { color: var(--ink-muted); }
+
+/* Touch screens: iOS Safari zooms the page into any field with text under 16px. Unlayered and
+   !important so it wins over .field and the text-size utilities. */
+@media (pointer: coarse) {
+  input, select, textarea { font-size: 16px !important; }
+}

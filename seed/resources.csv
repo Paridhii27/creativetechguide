@@ -127,3 +127,51 @@ Generative Hut,https://www.generativehut.com,Tutorials and articles on generativ
 Web Audio API (MDN),https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API,MDN’s reference and guides for audio in the browser.,library,,Mozilla,,true,sound-music-tech|web-development,,,true
 ml5.js reference,https://docs.ml5js.org,Documentation and examples for ml5.js.,library,,,,true,machine-learning|creative-coding,,,true
 Hugging Face Learn,https://huggingface.co/learn,"Free courses on machine learning, diffusion models and more.",library,,Hugging Face,,true,machine-learning|ai,,,true
+ArtAsiaPacific,https://www.artasiapacific.com,"English-language magazine, established 1993, covering contemporary art and culture from Asia, the Pacific and the Middle East.",magazine,,ArtAsiaPacific,,,installation|research,,Hong Kong,true
+ART iT,https://www.art-it.asia/en/,Bilingual Japanese-English platform with interviews and reviews on contemporary art in Japan and Asia.,magazine,,,,,installation|research,,Japan,true
+Tokyo Art Beat,https://www.tokyoartbeat.com,"Bilingual guide to exhibitions across Japan, with art news, reviews and interviews.",directory,,,,,installation,Tokyo,Japan,true
+SHIFT,https://www.shift.jp.org/en/,"International online magazine on creative culture, published from Japan.",magazine,,,,,graphic-design|motion-design|installation,,Japan,true
+CBCNET,https://www.cbc-net.com,"Japanese creative portal with interviews, news and creative job listings.",magazine,,,,,graphic-design|web-development|creative-coding,,Japan,true
+CINRA,https://www.cinra.net,"Japanese-language media on music, art, film and culture.",magazine,,CINRA,,,creative-direction|sound-music-tech,,Japan,true
+Media Arts Current Contents,https://mediag.bunka.go.jp,"Japanese government-run site with news, columns and event listings on media art, games, animation and manga.",archive,,"Agency for Cultural Affairs, Japan",,true,game-design|motion-design|research,,Japan,true
+Make: Japan,https://makezine.jp,"Japanese edition of Make, covering making, electronics and Maker Faire Tokyo.",magazine,,,,,physical-computing|robotics,,Japan,true
+FabLab Japan Network,https://www.fablabjapan.org,Network connecting fab labs and making activity in Japan and abroad.,community,,,,,physical-computing,,Japan,false
+NEORT,https://neort.io,Platform for publishing and discovering digital artworks.,community,,,,,generative-art|creative-coding,,Japan,true
+Effekseer,https://effekseer.github.io/en/,Open-source tool for creating particle effects for games and real-time work.,tool,,,,true,3d-real-time|game-design|technical-art,,Japan,true
+Live2D Cubism,https://www.live2d.com/en/,Software for animating original 2D drawings.,tool,,Live2D,,,motion-design|game-design,,Japan,true
+VRoid Studio,https://vroid.com/en/studio,Application for creating 3D humanoid avatar models.,tool,,pixiv,,,3d-real-time|spatial-xr|game-design,,Japan,true
+obniz,https://iot.obniz.com,Japanese IoT hardware platform for controlling devices from code and APIs.,tool,,obniz,,,physical-computing,,Japan,true
+Neocha,https://neocha.com,Magazine on culture and creativity in Asia.,magazine,,,,,graphic-design|creative-direction,,China,true
+RADII,https://radii.co,Independent media platform on culture and changemakers bridging East and West.,magazine,,,,,creative-direction,,China,true
+M5Stack,https://www.m5stack.com,Modular IoT development kits for rapid prototyping.,tool,,M5Stack,,false,physical-computing|design-engineering,,China,true
+Seeed Studio Wiki,https://wiki.seeedstudio.com,Documentation and tutorials for Seeed’s open hardware boards and sensors.,library,,Seeed Studio,,true,physical-computing|robotics,,China,true
+DFRobot,https://www.dfrobot.com,"Open-source hardware, kits and robotics parts.",tool,,DFRobot,,false,physical-computing|robotics,,China,true
+XinCheJian,https://xinchejian.com,Hackerspace in Shanghai.,community,,,,,physical-computing,Shanghai,China,false
+Dim Sum Labs,https://www.dimsumlabs.com,"Hackerspace in Hong Kong, running since 2011.",community,,,,,physical-computing,Hong Kong,Hong Kong,false
+Creative Coding TW,https://creativecoding.in,"Taiwanese collection of interaction design examples, tutorials and industry resources.",community,,,,true,creative-coding|interaction-design,,Taiwan,true
+ArtsEquator,https://artsequator.com,Platform for writing and discussion on the arts in Southeast Asia.,magazine,,,,,research,,Singapore,true
+ASEF culture360,https://culture360.asef.org,"Open calls, funding guides and arts news connecting Asia and Europe.",directory,,Asia-Europe Foundation,,true,research,Singapore,Singapore,true
+STIRworld,https://www.stirworld.com,"Magazine on architecture, design and art, including technology and competitions.",magazine,,STIR,,,architecture-spatial|installation|product-design,,India,true
+TAKE on Art,https://takeonartmagazine.com,"English-language magazine on contemporary South Asian art, culture and criticism, since 2009.",magazine,,,,,research|installation,,India,true
+ART India,https://artindiamag.com,Indian art news magazine.,magazine,,,,,research,,India,true
+Algorave India,https://algorave.in,Collective of computational artists in India working in live coding and creative coding.,community,,,,,creative-coding|sound-music-tech|generative-art,,India,true
+Runway Journal,https://runway.org.au,Australian journal for contemporary and experimental art.,journal,,,,,research,,Australia,true
+Artlink,https://www.artlink.com.au,Magazine on contemporary art of Australia and the Asia Pacific.,magazine,,,,,research,,Australia,true
+RealTime archive,https://www.realtime.org.au,"Archive of the Australian arts publication that ran from 1994 to 2018, covering contemporary and media arts practice.",archive,,,,true,research|sound-music-tech|installation,,Australia,true
+Disclaimer,https://disclaimer.org.au,"Australian journal for writing on listening and sound, published by Liquid Architecture.",journal,,,,true,research|sound-music-tech,,Australia,true
+un Projects,https://unprojects.org.au,Australian publisher of un Magazine on contemporary art.,magazine,,un Projects,,,research,Melbourne,Australia,true
+Memo,https://www.memoreview.net,Weekly art criticism from Australia.,magazine,,,,,research,,Australia,true
+Assemble Papers,https://assemblepapers.com.au,"Online publication from Australia on small-footprint living across design, architecture, urbanism and the environment.",magazine,,,,true,architecture-spatial,Melbourne,Australia,true
+Design Institute of Australia,https://www.design.org.au,National membership body for professional designers in Australia.,community,,,,,product-design|graphic-design,,Australia,true
+Connected Community HackerSpace,https://www.hackmelbourne.org,Hackerspace in Melbourne.,community,,,,,physical-computing,Melbourne,Australia,false
+Design Indaba,https://www.designindaba.com,South African design publication and platform promoting creativity for social change.,magazine,,Design Indaba,,,product-design|graphic-design,Cape Town,South Africa,true
+Bubblegum Club,https://bubblegumclub.org,South African platform covering contemporary culture and art.,magazine,,,,,creative-direction,,South Africa,true
+Between 10and5,https://10and5.com,"South African source on culture, fashion, art, design and music.",magazine,,,,,graphic-design|creative-direction,,South Africa,true
+ArtThrob,https://artthrob.co.za,South African contemporary visual arts publication with news and reviews.,magazine,,ArtThrob,,,research,,South Africa,true
+Chimurenga,https://chimurengachronic.co.za,"Pan-African gazette from South Africa, in print and online.",magazine,,Chimurenga,,,research,Cape Town,South Africa,true
+Contemporary And,https://contemporaryand.com/en,"Platform and online magazines on international contemporary art with a focus on African perspectives, founded in 2013.",magazine,,,,true,research,,,true
+OkayAfrica,https://www.okayafrica.com,"Digital platform for African culture, music, art and news.",magazine,,OkayAfrica,,true,creative-direction|sound-music-tech,,,true
+Nataal,https://nataal.com,"Media brand on contemporary African fashion, music, arts and society.",magazine,,,,,wearables-fashion-tech|creative-direction,,,true
+Make Games South Africa,https://makegamessa.com,Community site for South African game developers.,community,,,,,game-design,,South Africa,true
+Animation SA,https://animationsa.org,Membership organisation for the South African animation industry.,community,,,,,motion-design,,South Africa,true
+Geekulcha,https://geekulcha.com,South African youth technology community.,community,,,,,web-development|physical-computing,,South Africa,true

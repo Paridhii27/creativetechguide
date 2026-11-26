@@ -144,9 +144,23 @@ describe.skipIf(!configured)("RLS", () => {
       const { data } = await service.from("entries").select("visibility").eq("id", ids.alicePrivate).single();
       expect(data!.visibility).toBe("private");
     });
-    it("approving the version an admin saw does nothing once the owner has changed it", async () => {
+    it("the owner cannot edit or withdraw it while it waits for review", async () => {
+      const before = (await service.from("entries").select("title,url,status,updated_at").eq("id", ids.alicePrivate).single()).data;
+      for (const change of [{ title: "swapped" }, { url: `https://example.com/rls/${run}/swapped` }, { status: "draft" }]) {
+        await alice.from("entries").update(change).eq("id", ids.alicePrivate);
+      }
+      expect((await service.from("entries").select("title,url,status,updated_at").eq("id", ids.alicePrivate).single()).data).toEqual(before);
+    });
+    it("the owner can edit and suggest again after a rejection", async () => {
+      const { data: made } = await alice.from("entries").insert(entry({ owner_id: ids.alice, visibility: "private", status: "pending_review" })).select("id").single();
+      createdEntries.push(made!.id);
+      expect((await admin.from("entries").update({ status: "rejected" }).eq("id", made!.id)).error).toBeNull();
+      expect((await alice.from("entries").update({ title: "fixed", status: "draft" }).eq("id", made!.id).select("id")).data).toHaveLength(1);
+      expect((await alice.from("entries").update({ status: "pending_review" }).eq("id", made!.id).select("id")).data).toHaveLength(1);
+    });
+    it("approving the version an admin saw does nothing once it has changed", async () => {
       const seen = (await admin.from("entries").select("updated_at").eq("id", ids.alicePrivate).single()).data!.updated_at;
-      expect((await alice.from("entries").update({ title: "swapped" }).eq("id", ids.alicePrivate)).error).toBeNull();
+      expect((await admin.from("entries").update({ title: "changed" }).eq("id", ids.alicePrivate)).error).toBeNull();
       const { data, error } = await admin.from("entries").update({ status: "approved" }).eq("id", ids.alicePrivate).eq("updated_at", seen).select("id");
       expect(error).toBeNull();
       expect(data).toHaveLength(0);

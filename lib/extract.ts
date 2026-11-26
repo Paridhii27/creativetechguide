@@ -230,7 +230,8 @@ const DISCIPLINE_HINTS: Record<string, RegExp> = {
   "machine-learning": /\b(machine learning|deep learning|neural net|computer vision)\b/i,
   "architecture-spatial": /\b(architecture|spatial design|exhibition design|scenograph)/i,
   "wearables-fashion-tech": /\b(wearables?|fashion tech|e-textiles?|smart textiles?)\b/i,
-  production: /\b(producer|production manager|project manager|project management|studio manager)\b/i,
+  // Labelled "Production Design": sets, staging and show design, not producing or managing.
+  production: /\b(production design(?:er)?|set design(?:er)?|stage design(?:er)?|show design(?:er)?)\b/i,
 };
 
 export function suggestDisciplines(haystack: string, allowed?: string[]): string[] {

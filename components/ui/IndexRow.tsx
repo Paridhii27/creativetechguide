@@ -73,13 +73,14 @@ export function IndexRow({
   return (
     <li
       style={swatch ? ({ "--row-wash": tintVar(swatch, 10) } as CSSProperties) : undefined}
-      className={`group grid grid-cols-[3.5rem_minmax(0,1fr)] items-start gap-x-4 border-b border-line px-3 py-5 transition-colors hover:bg-[var(--row-wash,var(--surface))] sm:grid-cols-[4.5rem_minmax(0,1fr)_6.5rem] sm:gap-x-6 ${muted ? "opacity-60" : ""}`}
+      className={`group relative grid grid-cols-[3.5rem_minmax(0,1fr)] items-start gap-x-4 border-b border-line px-3 py-5 transition-colors hover:bg-[var(--row-wash,var(--surface))] sm:grid-cols-[4.5rem_minmax(0,1fr)_6.5rem] sm:gap-x-6 ${muted ? "opacity-60" : ""}`}
     >
       <Thumb src={image} title={title} fit={imageFit} swatch={swatch} className="aspect-square w-full" />
 
       <div className="min-w-0">
         {kicker && <div className="text-micro mb-1.5 text-ink-muted">{kicker}</div>}
-        <Link href={href} className="text-body font-semibold leading-snug text-ink decoration-1 underline-offset-4 group-hover:underline">
+        {/* The title link stretches over the whole row (its ::after), so a click anywhere opens the entry. */}
+        <Link href={href} className="text-body font-semibold leading-snug text-ink decoration-1 underline-offset-4 group-hover:underline after:absolute after:inset-0">
           {title}
         </Link>
         {tags && <div className="mt-2.5 flex flex-wrap gap-1.5">{tags}</div>}

@@ -3,7 +3,7 @@
 A directory and research tool for creative technology, experience design and design-technology work worldwide, seen through a **geographic lens** that each user chooses:
 
 - **Global lens:** the field as a whole: studios, programmes, jobs, calls, publications and events anywhere.
-- **Place lens (any country or region):** the same catalogue filtered and annotated for that place: things based there, *and* things elsewhere that are open and practical for someone there (eligibility, remote options, visa sponsorship, costs in the local currency, scholarships for applicants from there). India was the original lens and remains a first-class one.
+- **Place lens (any country or region):** the same catalogue filtered and annotated for that place: things based there, *and* things elsewhere that are open and practical for someone there (eligibility, remote options, visa sponsorship, scholarships for applicants from there). India was the original lens and remains a first-class one.
 
 The lens is a top-level switch in the UI (**Global**, or a country/region picker) that changes the default filters, sorting and visible fields. It is a filter over one catalogue, not separate databases.
 
@@ -49,21 +49,23 @@ All tables use `uuid` primary keys and `created_at` / `updated_at` timestamps.
 
 Type-specific fields in `data`:
 - **organisation:** `org_kind` (studio, company, collective, lab, institution, funder, festival_org), `size`, `hires_design_technologists` (bool), `careers_url`, `instagram`, `notable_projects[]`
-- **program** (education): `program_kind` (Masters, PhD, postgrad_diploma, Bachelors, short_course, summer_school, online_course), `institution_id` (an organisation), `degree_name`, `duration_months`, `mode` (in_person/online/hybrid), `language`, `tuition` (`{amount, currency, per}`), `tuition_inr_estimate`, `application_deadlines[]` (each `{round, date, source_text}`), `intake_month`, `scholarships[]` (`{name, url, open_worldwide, eligible_countries[]}`), `portfolio_required`, `admission_requirements` (short text), `notable_alumni_or_faculty[]`, `curriculum_tags[]`
-- **job:** `role_title`, `organisation_id`, `seniority` (intern, junior, mid, senior, lead), `employment` (full_time, part_time, contract, freelance), `work_mode` (onsite, hybrid, remote), `remote_regions[]` (where remote applicants may live), `visa_sponsorship` (yes/no/unknown), `salary` (`{min, max, currency, period}` or null), `posted_at`, `closes_at`, `apply_url`, `skills[]` (e.g. TouchDesigner, Unity, Unreal, p5.js, three.js, Arduino, ML)
+- **program** (education): `program_kind` (Masters, PhD, postgrad_diploma, Bachelors, short_course, summer_school, online_course), `institution_id` (an organisation), `degree_name`, `duration_months`, `mode` (in_person/online/hybrid), `language`, `application_deadlines[]` (each `{round, date, source_text}`), `intake_month`, `scholarships[]` (`{name, url, open_worldwide, eligible_countries[]}`), `portfolio_required`, `admission_requirements` (short text), `notable_alumni_or_faculty[]`, `curriculum_tags[]`
+- **job:** `role_title`, `organisation_id`, `seniority` (intern, junior, mid, senior, lead), `employment` (full_time, part_time, contract, freelance), `work_mode` (onsite, hybrid, remote), `remote_regions[]` (where remote applicants may live), `visa_sponsorship` (yes/no/unknown), `posted_at`, `closes_at`, `apply_url`, `skills[]` (e.g. TouchDesigner, Unity, Unreal, p5.js, three.js, Arduino, ML)
 - **opportunity** (open calls for work/art, not jobs): `opp_kind` (open_call, commission, residency, grant, fellowship, competition, call_for_papers, festival_submission), `deadline` (date), `deadline_source_text` (the exact sentence the deadline came from), `eligibility_countries[]` (countries, regions or groups such as EU; only when restricted) or `open_worldwide` (bool), `ineligible_countries[]` (explicit exclusions), `fee` (none/amount/unknown), `stipend_or_budget`, `travel_covered` (bool/unknown), `apply_url`, `organisation_id`
 - **resource:** `resource_kind` (magazine, journal, book, article, newsletter, podcast, talk, tool, library, archive, community, directory), `author`, `publisher`, `frequency`, `is_free`
 - **event:** `event_kind` (festival, conference, exhibition, meetup, workshop, hackathon, degree_show), `start_date`, `end_date`, `recurring` (bool), `venue`, `submission_opportunity_id` (link to its open call, if any)
 
 ### Geographic lens rules
-Countries and regions are data (`countries`: code, name, region, currency, groups such as EU/Commonwealth; `regions`: name and wider names that include it, such as Asia, APAC, EMEA). A lens is `global` or the slug of a country or region. Relevance is computed at query time for the chosen place (SQL `place_relevance()` for filtering/sorting, `lib/relevance.ts` for badges; keep them in step, `tests/relevance-cases.ts` covers both):
+Countries and regions are data (`countries`: code, name, region, groups such as EU/Commonwealth; `regions`: name and wider names that include it, such as Asia, APAC, EMEA). A lens is `global` or the slug of a country or region. Relevance is computed at query time for the chosen place (SQL `place_relevance()` for filtering/sorting, `lib/relevance.ts` for badges; keep them in step, `tests/relevance-cases.ts` covers both):
 - `based_in`: the entry's country is the lens country (or, for a region lens, is in that region).
 - `not_open`: the lens place is in `ineligible_countries` (an explicit exclusion beats everything below).
 - `open_to`: at least one holds: `is_remote` and `remote_regions` names the place, its region, a group it belongs to or Worldwide; `open_worldwide = true`; `visa_sponsorship = yes`; `eligibility_countries` names the place/region/group; a scholarship is open worldwide or lists the place.
 - `not_open`: otherwise, if `eligibility_countries` is non-empty, or the entry is remote for listed regions only.
 - `unknown`: otherwise. Show it with an "eligibility unclear" label rather than hiding it.
 
-In a place lens: hide `not_open` by default (the relevance filter can show them), sort based-in first then open-to, show eligibility badges prominently, and in a country lens add an approximate conversion of costs to that country's currency (store the original; convert at display time from the daily `fx_rates` table, which is INR-based). In the Global lens, show everything with original currencies and no place-specific sorting.
+In a place lens: hide `not_open` by default (the relevance filter can show them), sort based-in first then open-to and show eligibility badges prominently. In the Global lens, show everything with no place-specific sorting.
+
+**No costs:** do not collect, display, filter on or convert tuition, salaries or other prices in a currency; this information is too hard to source reliably. Free-text open-call `fee` and `stipend_or_budget` stay. The `fx_rates` table and `countries.currency` column are unused leftovers in the database.
 
 ### `user_entry_state`: My Layer on top of any entry
 `user_id`, `entry_id`, `saved` (bool), `note` (text), `personal_tags` (`text[]`), `application_status` (enum: `none`, `interested`, `applying`, `applied`, `interviewing`, `rejected`, `accepted`), `reminder_at`. This one tracker covers open calls, jobs and programme applications. Unique on (`user_id`, `entry_id`).
@@ -101,14 +103,14 @@ Build in this order. Finish and test each milestone before starting the next.
 - Supabase schema, migrations, RLS policies, and seed script (reads `seed/*.csv`)
 - Auth (magic link) and a profile row on first login
 - Lens switch (Global, or any country or region), remembered per user and in the URL
-- Browse pages, one per type (Studios & Companies, Programmes, Jobs, Open Calls, Publications & Resources, Events), each with type-specific filters: region/country/city, discipline, remote, `india_relevance`, deadline or date window, and for programmes, `program_kind` and tuition range; for jobs, seniority, work mode and visa sponsorship
+- Browse pages, one per type (Studios & Companies, Programmes, Jobs, Open Calls, Publications & Resources, Events), each with type-specific filters: region/country/city, discipline, remote, `india_relevance`, deadline or date window, and for programmes, `program_kind`; for jobs, seniority, work mode and visa sponsorship
 - Full-text search across all types
 - Entry detail page
 
 ### M2: My Layer and URL drop
 - A global drop zone: drag a URL, paste one, or press a keyboard shortcut to open an "add URL" box
 - `/api/unfurl`: fetch the page server-side and extract title, description, OG image, favicon and visible text (cap at about 20k characters)
-- `/api/classify`: send the unfurled data to Claude and return `{type, title, summary, city, country, is_remote, disciplines[], data{...}, confidence}` as JSON validated with zod, choosing among all six types (a university course page → `program`, a careers listing → `job`). Never invent deadlines, fees, salaries or eligibility: use `unknown` when unsure, and always fill the matching `*_source_text` when a deadline is given. If the page lists several items (e.g. a careers page with five roles, or a university page with two programmes), return an array and let the user pick which to save.
+- `/api/classify`: send the unfurled data to Claude and return `{type, title, summary, city, country, is_remote, disciplines[], data{...}, confidence}` as JSON validated with zod, choosing among all six types (a university course page → `program`, a careers listing → `job`). Never invent deadlines, fees or eligibility: use `unknown` when unsure, and always fill the matching `*_source_text` when a deadline is given. If the page lists several items (e.g. a careers page with five roles, or a university page with two programmes), return an array and let the user pick which to save.
 - Confirmation sheet: the user edits the suggested fields, then saves to My Layer, with a toggle to "suggest to the Map"
 - Duplicate check: if the URL is already on the Map, open that entry instead and save it to My Layer
 - Save, note, personal tags, collections, and application status on any entry
@@ -117,7 +119,7 @@ Build in this order. Finish and test each milestone before starting the next.
 ### M3: Views for understanding the industry
 - World map view (MapLibre) of organisations, programmes and events, zooming to the lens place when one is chosen
 - One deadline calendar across open calls, programme application rounds and job closing dates, plus subscribable `.ics` feeds (public per type and lens, and personal for saved items)
-- Programme comparison: pick 2–4 programmes and compare duration, cost (converted to the lens currency in a country lens), deadlines, portfolio requirement and scholarships side by side
+- Programme comparison: pick 2–4 programmes and compare duration, deadlines, portfolio requirement and scholarships side by side
 - Insights page: counts by region/city × discipline, open calls per month, jobs by skill, which organisations hire design technologists, and lens place vs. global comparisons
 - Admin review queue: approve, edit or reject pending entries one at a time, with keyboard shortcuts
 

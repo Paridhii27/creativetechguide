@@ -11,7 +11,8 @@ import { IndexGroup, IndexRow } from "@/components/ui/IndexRow";
 import { CatalogueCard, CatalogueRow } from "@/components/ui/CatalogueRow";
 import { Card } from "@/components/ui/Card";
 import { AnnotationBox, LayerStack, Specimen } from "@/components/ui/hud";
-import { Accent, BentoCard, BentoGrid, BigStat, NavBar, PageTitle } from "@/components/ui/layout";
+import { Accent, BentoCard, BentoGrid, BigStat, PageTitle } from "@/components/ui/layout";
+import { NavBar } from "@/components/ui/NavBar";
 import { BentoToggleDemo, LensToggleDemo } from "./Demos";
 import { Globe } from "@/components/ui/Globe";
 
@@ -56,7 +57,7 @@ const TYPE: { token: string; spec: string; sample: ReactNode; cls: string }[] = 
   { token: "micro", spec: "Instrument Sans 500 wdth 85 · 10 · upper · 0.08em", cls: "text-micro", sample: "[ Core disciplines ] · 12.9716° N 77.5946° E · 21:04 IST" },
 ];
 
-const NAV = [...SECTIONS.map((s) => ({ href: `/${s.slug}`, label: s.label, active: s.slug === "open-calls" })), { href: "/search", label: "Search the website" }];
+const NAV = [...SECTIONS.map((s) => ({ href: `/${s.slug}`, label: s.label, active: s.slug === "open-calls" })), { href: "/search", label: "Search the website", active: false }];
 
 /* -------------------------------------------------------------------------- */
 
@@ -362,14 +363,19 @@ export default function StyleguidePage() {
         <Sub title="Top bar" note="Quiet top strip (CHANGE VIEW left, account links right); wordmark with the lens and URL drop as the main row; sections below with search at the far right.">
           <div className="border border-line px-4 sm:px-6">
             <NavBar
-              items={NAV}
+              nav={NAV.map((i) => (
+                <a
+                  key={i.label}
+                  href={i.href}
+                  aria-current={i.active ? "page" : undefined}
+                  className={`text-nav-s whitespace-nowrap border-b-2 pb-5 text-ink max-lg:border-b-0 max-lg:border-l-2 max-lg:py-3 max-lg:pl-3 ${i.active ? "border-accent" : "border-transparent hover:border-line"}`}
+                >
+                  {i.label}
+                </a>
+              ))}
               utility={<><span>My Layer</span><span>Review queue</span><span>Sign out</span></>}
-              right={
-                <>
-                  <LensToggleDemo />
-                  <PillButton variant="primary">+ Drop URL</PillButton>
-                </>
-              }
+              lens={<LensToggleDemo />}
+              actions={<PillButton variant="primary">+ Drop URL</PillButton>}
             />
             <div className="h-6" />
           </div>

@@ -64,10 +64,10 @@ describe("entry form", () => {
     expect(d).not.toHaveProperty("open_worldwide");
   });
 
-  it("builds programme tuition with an INR estimate and a deadline round", () => {
-    const v = EntryForm.parse(fd({ type: "program", title: "MA X", kind: "masters", tuition_amount: "24000", tuition_currency: "gbp", deadline_date: "2027-02-01", deadline_round: "R1" }));
-    const d = buildData(v, { inrPerUnit: 107, organisationId: "org-1" });
-    expect(d).toMatchObject({ program_kind: "masters", institution_id: "org-1", tuition: { amount: 24000, currency: "GBP", per: "year" }, tuition_inr_estimate: 2568000 });
+  it("builds a programme deadline round", () => {
+    const v = EntryForm.parse(fd({ type: "program", title: "MA X", kind: "masters", deadline_date: "2027-02-01", deadline_round: "R1" }));
+    const d = buildData(v, { organisationId: "org-1" });
+    expect(d).toMatchObject({ program_kind: "masters", institution_id: "org-1" });
     expect(d.application_deadlines).toEqual([{ round: "R1", date: "2027-02-01", source_text: null }]);
   });
 

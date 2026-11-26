@@ -1,4 +1,5 @@
 import { sectionForEntry, type Entry } from "@/lib/types";
+import { placeName } from "./places";
 
 export const SITE_NAME = "Field Guide: Creative Technology";
 export const SITE_DESCRIPTION =
@@ -27,7 +28,7 @@ function place(e: Entry) {
   if (!e.city && !e.country) return undefined;
   return {
     "@type": "Place",
-    name: [e.city, e.country].filter(Boolean).join(", "),
+    name: placeName(e.city, e.country),
     address: { "@type": "PostalAddress", addressLocality: e.city ?? undefined, addressRegion: e.state ?? undefined, addressCountry: e.country ?? undefined },
   };
 }

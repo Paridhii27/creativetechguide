@@ -8,7 +8,7 @@ import AddForm from "@/app/add/AddForm";
 import Bookmarklet from "@/components/Bookmarklet";
 import { Accent, PageTitle } from "@/components/ui/layout";
 import { BracketLabel, Mark } from "@/components/ui/primitives";
-import { getCountryNames, getDisciplines, getFxTable, getPlaces, getToolNames } from "@/lib/db/entries";
+import { getCountryNames, getDisciplines, getPlaces, getToolNames } from "@/lib/db/entries";
 import { getCurrentUser } from "@/lib/db/profiles";
 import { isAdmin, listMyEntries, pendingReviewCount } from "@/lib/db/mylayer";
 import { layerInsights } from "@/lib/insights";
@@ -40,7 +40,7 @@ const VIEWS: { key: ViewKey; label: string; note: string; empty: string; swatch:
   {
     key: "pending",
     label: "Suggested",
-    note: "Waiting for review. Only you and admins can see these until they’re approved.",
+    note: "Waiting for review, so they can’t be edited. Only you and admins can see these until they’re approved.",
     empty: "Nothing waiting for review. Use “Suggest to the Map” on a private entry to send it in.",
     swatch: 4,
     own: (e) => e.status === "pending_review",
@@ -62,9 +62,8 @@ export default async function MyLayerPage({ searchParams }: { searchParams: Prom
   if (!user) redirect("/login?next=/me");
   const sp = await searchParams;
   const lens = await resolveLens(sp.lens);
-  const [{ own, saved }, fx, admin, reviewCount, places, countries, disciplines, tools] = await Promise.all([
+  const [{ own, saved }, admin, reviewCount, places, countries, disciplines, tools] = await Promise.all([
     listMyEntries(),
-    getFxTable(),
     isAdmin(),
     pendingReviewCount(),
     getPlaces(),
@@ -204,7 +203,7 @@ export default async function MyLayerPage({ searchParams }: { searchParams: Prom
             <EntryList
               entries={items[view]}
               lens={lens}
-              fx={fx}
+             
               empty={current.empty}
               actionsFor={(e) => (
                 <EntryActions

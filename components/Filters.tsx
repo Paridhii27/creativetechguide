@@ -1,6 +1,6 @@
 import SearchField from "./ui/SearchField";
 import AutoSubmit from "./AutoSubmit";
-import { WINDOWS, type Params } from "@/lib/filters";
+import { REMOTE_TYPES, WINDOWS, type Params } from "@/lib/filters";
 import { humanize, KINDS, type Discipline, type EntryType, type Lens } from "@/lib/types";
 
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
@@ -76,7 +76,7 @@ export default function Filters({
           <Select name="visa" label="Visa sponsorship" value={v("visa")} options={[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "unknown", label: "Unknown" }]} />
         </>
       )}
-      {!placeless && <Select name="remote" label="Remote / online" value={v("remote")} options={[{ value: "yes", label: "Remote or online" }, { value: "no", label: "In person" }]} />}
+      {REMOTE_TYPES.includes(type) && <Select name="remote" label="Remote / In person" value={v("remote")} options={[{ value: "yes", label: "Remote / Online" }, { value: "no", label: "In person" }]} />}
       {lens.kind !== "global" && !placeless && (
         <Select
           name="relevance"

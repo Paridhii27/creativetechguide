@@ -1,3 +1,4 @@
+import aliases from "./place-aliases.json";
 import type { Geo, Lens, PlaceLens, Relevance } from "./types";
 
 export const LENS_COOKIE = "fg_lens";
@@ -53,6 +54,17 @@ export function buildLens(slug: string | undefined, geo: Geo): Lens | undefined 
     } satisfies PlaceLens;
   }
   return undefined;
+}
+
+/** Other names people type, keyed by the name in the countries table. */
+const ALIASES: Record<string, string[]> = aliases;
+
+/** The lens slug for a typed country or region name or common alternative (case and accents ignored), or undefined. */
+export function findPlaceSlug(typed: string, geo: Geo): string | undefined {
+  const wanted = slugify(typed);
+  if (!wanted) return undefined;
+  const named = [...geo.countries, ...geo.regions].find((p) => p.slug === wanted || slugify(p.name) === wanted);
+  return named?.slug ?? geo.countries.find((c) => ALIASES[c.name]?.some((a) => slugify(a) === wanted))?.slug;
 }
 
 export const isPlaceLens = (l: Lens): l is PlaceLens => l.kind !== "global";

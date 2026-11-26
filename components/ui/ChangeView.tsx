@@ -7,7 +7,7 @@ import { isViewMode, VIEW_MODE_KEY, VIEW_MODE_LABELS, VIEW_MODES, type ViewMode 
  * whichever mode is active. Values from DESIGN.md.
  */
 const PREVIEW: Record<ViewMode, { bg: string; ink: string; accent: string; hint: string }> = {
-  paper: { bg: "#FCFCFC", ink: "#1E1E1E", accent: "#F04A30", hint: "Black on white, like a printed guide" },
+  paper: { bg: "#FCFCFC", ink: "#1E1E1E", accent: "#C8321A", hint: "Black on white, like a printed guide" },
   night: { bg: "#050505", ink: "#F2F2F2", accent: "#EAFD57", hint: "Dark instrument panel with chartreuse details" },
   blueprint: { bg: "#FCFCFC", ink: "#3449B2", accent: "#3449B2", hint: "All one blue, like a technical drawing" },
 };
@@ -46,6 +46,13 @@ export function ChangeView({ className = "" }: { className?: string }) {
       document.documentElement.dataset.theme = m;
     }
     setMode(m as ViewMode);
+    // The header has a second switch in the phone menu: follow whichever one is used.
+    const watch = new MutationObserver(() => {
+      const next = document.documentElement.dataset.theme;
+      if (isViewMode(next)) setMode(next);
+    });
+    watch.observe(document.documentElement, { attributeFilter: ["data-theme"] });
+    return () => watch.disconnect();
   }, []);
 
   function choose(next: ViewMode) {

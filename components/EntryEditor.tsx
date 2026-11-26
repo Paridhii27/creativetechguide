@@ -8,13 +8,11 @@ import { KINDS, SECTIONS, TOOL_KIND, humanize, kindsForSection, type Discipline,
 
 export type FormValues = Record<string, string | string[] | boolean | undefined>;
 
-const CURRENCIES = ["INR", "USD", "EUR", "GBP", "CAD", "AUD", "JPY", "SGD", "DKK", "KRW"];
 
 type Spec =
   | { kind: "text" | "url" | "date" | "number"; name: string; label: string; hint?: string; placeholder?: string; key?: boolean; list?: string }
   | { kind: "select"; name: string; label: string; options: string[] }
   | { kind: "tri"; name: string; label: string }
-  | { kind: "money"; names: [amount: string, currency: string, extra?: string]; label: string; extra?: "per" | "max" };
 
 const ORG = (label = "Organisation"): Spec => ({ kind: "text", name: "organisation_name", label, hint: "Links to it if it's already on the Map." });
 const APPLY: Spec = { kind: "url", name: "apply_url", label: "Apply link", placeholder: "Defaults to the page link" };
@@ -33,7 +31,6 @@ const FIELDS: Record<EntryType, Spec[]> = {
     { kind: "number", name: "duration_months", label: "Duration (months)" },
     { kind: "select", name: "mode", label: "Mode", options: ["in_person", "online", "hybrid"] },
     { kind: "tri", name: "portfolio_required", label: "Portfolio required?" },
-    { kind: "money", names: ["tuition_amount", "tuition_currency", "tuition_per"], label: "Tuition", extra: "per" },
     { kind: "text", name: "deadline_round", label: "Application round", placeholder: "Round 1" },
     { kind: "text", name: "scholarship_name", label: "Scholarship" },
     { kind: "tri", name: "scholarship_open_worldwide", label: "Scholarship open worldwide?" },
@@ -48,7 +45,6 @@ const FIELDS: Record<EntryType, Spec[]> = {
     { kind: "select", name: "work_mode", label: "Work mode", options: ["onsite", "hybrid", "remote"] },
     { kind: "text", name: "remote_regions", label: "Remote from", hint: "Comma-separated, e.g. Worldwide, or Europe, India" },
     { kind: "tri", name: "visa_sponsorship", label: "Visa sponsorship" },
-    { kind: "money", names: ["salary_min", "salary_currency", "salary_max"], label: "Salary", extra: "max" },
     { kind: "text", name: "skills", label: "Skills", hint: "Comma-separated: TouchDesigner, Unity, p5.js…" },
     APPLY,
   ],
@@ -87,7 +83,7 @@ const TOOL_FIELDS: Spec[] = [
 
 const SOURCE_TEXT: Spec = { kind: "text", name: "deadline_source_text", label: "Where the date comes from", hint: "The sentence on the page that states the date." };
 
-const namesOf = (s: Spec) => ("names" in s ? s.names.filter(Boolean) as string[] : [s.name]);
+const namesOf = (s: Spec) => [s.name];
 const asText = (v: FormValues[string]) => (Array.isArray(v) ? v.join(", ") : typeof v === "string" ? v : "");
 const isFilled = (v: FormValues[string]) => (Array.isArray(v) ? v.length > 0 : typeof v === "string" ? v.trim() !== "" && v !== "unknown" : !!v);
 
@@ -124,28 +120,6 @@ function SpecField({ spec, values, errors }: { spec: Spec; values: FormValues; e
           </select>
         </Field>
       );
-    case "money": {
-      const [amount, currency, extra] = spec.names;
-      return (
-        <Field label={spec.label} name={amount} error={errors[amount] ?? (extra ? errors[extra] : undefined)}>
-          <div className="flex gap-2">
-            <input id={amount} name={amount} inputMode="decimal" placeholder={spec.extra === "max" ? "Min" : "Amount"} defaultValue={v(amount)} className="field" />
-            {spec.extra === "max" && extra && <input name={extra} inputMode="decimal" placeholder="Max" defaultValue={v(extra)} className="field" />}
-            <select name={currency} defaultValue={v(currency)} className="field w-24">
-              <option value="">—</option>
-              {CURRENCIES.map((c) => <option key={c}>{c}</option>)}
-            </select>
-            {spec.extra === "per" && extra && (
-              <select name={extra} defaultValue={v(extra) || "year"} className="field w-28">
-                <option value="year">/ year</option>
-                <option value="course">/ course</option>
-                <option value="term">/ term</option>
-              </select>
-            )}
-          </div>
-        </Field>
-      );
-    }
     default:
       return (
         <Field label={spec.label} name={spec.name} error={errors[spec.name]} hint={spec.hint} wide={spec.name === "deadline_source_text"}>
@@ -303,7 +277,7 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
           <Field label="City" name="city">
             <input id="city" name="city" list="cities" value={city} onChange={(e) => onCity(e.target.value)} autoComplete="off" className="field" />
           </Field>
-          <Field label="Country" name="country">
+          <Field label="Country / region" name="country">
             <input id="country" name="country" list="countries" value={country} onChange={(e) => { setCountry(e.target.value); countryAuto.current = false; }} autoComplete="off" className="field" />
           </Field>
         </div>
@@ -313,7 +287,7 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
             {extraRows.map((r, i) => (
               <div key={r.id} className="flex gap-2">
                 <input name="extra_city" list="cities" placeholder="City" value={r.city} onChange={(e) => onRowCity(r.id, e.target.value)} autoComplete="off" aria-label={`Other place ${i + 1} city`} className="field" />
-                <input name="extra_country" list="countries" placeholder="Country" value={r.country} onChange={(e) => patchRow(r.id, { country: e.target.value, auto: false })} autoComplete="off" aria-label={`Other place ${i + 1} country`} className="field" />
+                <input name="extra_country" list="countries" placeholder="Country / region" value={r.country} onChange={(e) => patchRow(r.id, { country: e.target.value, auto: false })} autoComplete="off" aria-label={`Other place ${i + 1} country or region`} className="field" />
                 <button type="button" onClick={() => setExtraRows((rows) => rows.filter((x) => x.id !== r.id))} aria-label={`Remove other place ${i + 1}`} className="px-2 text-ink-muted hover:text-ink">✕</button>
               </div>
             ))}
@@ -377,7 +351,7 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
           ) : (
             <label className="flex items-start gap-2 text-body-s">
               <input type="checkbox" name="suggest" className="mt-1" />
-              <span><strong>Suggest to the Map.</strong> It stays private until it&apos;s reviewed and approved, then everyone can see it.</span>
+              <span><strong>Suggest to the Map.</strong> It stays private until it&apos;s reviewed and approved, then everyone can see it. You can&apos;t edit it while it&apos;s being reviewed, so check the details first.</span>
             </label>
           )}
         </fieldset>

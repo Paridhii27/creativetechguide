@@ -23,9 +23,8 @@ POM Fukuoka 2027 (Politics of the Machines),https://groups.google.com/g/nime-com
 STRP Festival,https://strp.nl,"Eindhoven festival for art, technology and society.",festival,Eindhoven,Netherlands,false,true,,installation|ai,,,
 GLOW Eindhoven,https://gloweindhoven.nl,Annual light art festival across Eindhoven.,festival,Eindhoven,Netherlands,false,true,,installation|projection-mapping,,,
 Signal Festival,https://www.signalfestival.com,"Prague festival of light, projection mapping and digital art.",festival,Prague,Czechia,false,true,,projection-mapping|installation,,,
-Resonate,https://resonate.io,"Belgrade festival and conference on music, art and technology.",festival,Belgrade,Serbia,false,true,,creative-coding|sound-music-tech,,,
 Node Forum for Digital Arts,https://nodeforum.org,"Frankfurt event of workshops, talks and exhibitions around vvvv and digital art.",festival,Frankfurt,Germany,false,true,,creative-coding|installation,,,
-Scopitone,https://www.stereolux.org,Nantes festival of digital arts and electronic music by Stereolux.,festival,Nantes,France,false,true,,installation|sound-music-tech,,,
+Scopitone,https://stereolux.org/scopitone,Nantes festival of digital arts and electronic music by Stereolux.,festival,Nantes,France,false,true,,installation|sound-music-tech,,,
 WRO Media Art Biennale,https://wrocenter.pl,Wrocław biennale of media art.,exhibition,Wrocław,Poland,false,true,,installation|research,,,
 Mapping Festival,https://mappingfestival.ch,Geneva festival of audiovisual and digital art.,festival,Geneva,Switzerland,false,true,,projection-mapping|sound-music-tech,,,
 Venice Immersive,https://www.labiennale.org/en/cinema,Immersive and XR section of the Venice Film Festival.,festival,,Italy,false,true,,spatial-xr|experience-design,,,
@@ -46,8 +45,7 @@ Sharjah Biennial,https://www.sharjahart.org/sharjah-biennial,Biennial of contemp
 India Design ID,https://www.indiadesignid.com,"New Delhi design week for interiors, products and design.",exhibition,New Delhi,India,false,true,,experience-design,,,
 UXINDIA,https://www.ux-india.org,India’s long-running international conference on user experience design.,conference,,India,false,true,,interaction-design|service-design,,,
 India Game Developer Conference,https://www.indiagdc.com,Annual conference for game developers in India.,conference,Hyderabad,India,false,true,,game-design,,,
-Kala Ghoda Arts Festival,https://www.kalaghodaassociation.com,Mumbai multidisciplinary arts festival.,festival,Mumbai,India,false,true,,installation,,,
-Experimenta Triennial,https://experimenta.org,"Australian triennial of media art, touring nationally.",exhibition,Melbourne,Australia,false,true,,installation|research,Experimenta,,
+Kala Ghoda Arts Festival,https://kalaghodaassociation.com,Mumbai multidisciplinary arts festival.,festival,Mumbai,India,false,true,,installation,,,
 Machine Dreams: Rainforest (DATALAND),https://dataland.art/exhibitions/machine-dreams-rainforest,"DATALAND's opening show by Refik Anadol Studio, turning rainforest data into immersive image, sound, scent and interaction across five galleries.",exhibition,Los Angeles,United States,false,false,"DATALAND, The Grand LA",ai|installation|data-visualisation,Refik Anadol Studio,2026-06-20,2027-01-31
 Computer Worlds (Centre Pompidou × West Bund),https://www.centrepompidou.fr/en/offer-to-professionals/press-area/computer-worlds,Group show of around 180 works from the Centre Pompidou collection tracing digital art from the 1950s to AI and NFTs.,exhibition,Shanghai,China,false,false,West Bund Museum,generative-art|ai|research,,2026-09-24,2027-02-14
 Silver Egg. The Eros of Media Art (ZKM),https://zkm.de/en/2026/07/silver-egg-the-eros-of-media-art,"About 50 international media art works on Eros, spanning robotics, the senses, energy and ecology.",exhibition,Karlsruhe,Germany,false,false,"ZKM | Center for Art and Media, Atrium 8+9",installation|physical-computing|research,ZKM Center for Art and Media,2026-07-04,2027-02-21
@@ -67,3 +65,40 @@ European Media Art Festival (EMAF) 2027,https://www.emaf.de,"40th edition of Osn
 Thessaloniki Documentary Festival 2027,https://filmfestival.gr,"29th Thessaloniki Documentary Festival, including an Immersive (XR/AR/VR) competition.",festival,Thessaloniki,Greece,false,true,,spatial-xr,,2027-03-04,2027-03-14
 AWE (Augmented World Expo),https://www.awexr.com,"Large annual conference and expo for AR, VR and spatial computing.",conference,Long Beach,United States,false,true,,spatial-xr,,,
 Unreal Fest,https://www.unrealengine.com/en-US/events,"Epic Games’ conferences for Unreal Engine users, held in several cities a year.",conference,,,false,true,,3d-real-time|game-design,,,
+Sapporo International Art Festival 2027,https://siaf.jp/en/,City-wide art festival in Sapporo.,festival,Sapporo,Japan,,true,,installation|research,,2027-01-16,2027-02-21
+9th Yokohama Triennale,https://www.yokohamatriennale.jp/english/,Triennial international exhibition of contemporary art.,exhibition,Yokohama,Japan,,true,,installation,,2027-04-23,2027-09-12
+Aichi Triennale,https://aichitriennale.jp/en/,International art festival held in Aichi every three years.,festival,Nagoya,Japan,,true,,installation,,,
+BitSummit,https://bitsummit.org/en/,Annual indie game festival in Kyoto.,festival,Kyoto,Japan,,true,Miyako Messe,game-design,,,
+Tokyo Game Show,https://tgs.cesa.or.jp/,"Annual game exhibition at Makuhari Messe, near Tokyo.",exhibition,Tokyo,Japan,,true,Makuhari Messe,game-design|3d-real-time,,,
+Maker Faire Tokyo,https://makezine.jp/event/,"Annual fair for makers, electronics and DIY technology.",festival,Tokyo,Japan,,true,,physical-computing|robotics,,,
+G-STAR,https://www.gstar.or.kr/eng,Annual game exhibition and conference in Korea.,exhibition,Busan,South Korea,,true,,game-design|3d-real-time,,,
+ifva,https://ifva.com,Hong Kong Arts Centre programme and festival incubating film and visual media in Asia.,festival,Hong Kong,Hong Kong,,true,,motion-design,,,
+Digital Art Festival Taipei,https://www.digitalartfestival.tw,"Annual digital art festival with exhibitions, performances and awards.",festival,Taipei,Taiwan,,true,,installation|sound-music-tech|generative-art,,,
+Singapore Design Week,https://designsingapore.org/events/singapore-design-week/,Annual design festival led by the DesignSingapore Council.,festival,Singapore,Singapore,,true,,product-design|experience-design,,,
+Singapore Art Week,https://www.artweek.sg,Annual January celebration of visual arts organised by the National Arts Council.,festival,Singapore,Singapore,,true,,installation,,,
+Singapore Biennale,https://singaporebiennale.org,Biennial contemporary art exhibition across Singapore.,exhibition,Singapore,Singapore,,true,,installation,,,
+Bangkok Design Week 2027,https://www.bangkokdesignweek.com/bkkdw2027,Design festival across Bangkok.,festival,Bangkok,Thailand,,true,,experience-design|installation|product-design,,2027-02-18,2027-02-28
+Bangkok Art Biennale,https://www.bkkartbiennale.com,Biennial contemporary art exhibition in Bangkok.,exhibition,Bangkok,Thailand,,true,,installation,,,
+Chiang Mai Design Week 2026,https://www.chiangmaidesignweek.com/cmdw2026,Design festival in northern Thailand.,festival,Chiang Mai,Thailand,,true,,product-design|experience-design,,2026-12-05,2026-12-13
+Art Dubai 2027,https://www.artdubai.ae,Annual art fair in Dubai.,exhibition,Dubai,United Arab Emirates,,true,Madinat Jumeirah,installation,,2027-04-07,2027-04-11
+Dubai Design Week,https://www.dubaidesignweek.ae,"Annual design festival with installations, exhibitions and workshops.",festival,Dubai,United Arab Emirates,,true,,product-design|installation,,,
+Sharjah Architecture Triennial,https://sharjaharchitecture.org,"Triennial on architecture and urbanism across the Middle East, Africa and Asia.",exhibition,Sharjah,United Arab Emirates,,true,,architecture-spatial|research,,,
+Pune Design Festival,https://www.punedesignfestival.com,"Annual design conference bringing together designers, industry and students.",conference,Pune,India,,true,,product-design|ui-ux-design,,,
+Dark Mofo 2027,https://darkmofo.net.au,Mid-winter arts festival in Tasmania.,festival,Hobart,Australia,,true,,installation|sound-music-tech,,2027-06-09,2027-06-22
+Illuminate Adelaide 2027,https://www.illuminateadelaide.com,"Winter festival of light, art and technology events across Adelaide’s streets and venues.",festival,Adelaide,Australia,,true,,installation|projection-mapping,,2027-06-30,2027-07-18
+Melbourne Design Week,https://designweek.melbourne,"Annual 11-day design programme of talks, tours, exhibitions and workshops in Melbourne.",festival,Melbourne,Australia,,true,,product-design|architecture-spatial|installation,,,
+PAX Aus 2027,https://aus.paxsite.com,Games and gaming culture show in Melbourne.,exhibition,Melbourne,Australia,,true,MCEC,game-design,,2027-10-08,2027-10-10
+OzCHI,https://www.ozchi.org,Australasia’s annual human-computer interaction research conference.,conference,,Australia,,true,,interaction-design|research,,,
+Fremantle Biennale,https://fremantlebiennale.com.au,Biennial festival of site-responsive contemporary art in Western Australia.,festival,Perth,Australia,,true,,installation,,,
+Fak’ugesi Festival,https://www.fakugesi.co.za/#festival,African digital and innovation festival in Johannesburg.,festival,Johannesburg,South Africa,,true,,creative-coding|game-design|sound-music-tech,Fak’ugesi,,
+Cairotronica,https://www.cairotronica.com,"Biennial new media arts festival in Cairo spanning art, technology, society and emerging media.",festival,Cairo,Egypt,,true,,installation|creative-coding|research,,,
+Cairo Video Festival,https://medrar.org/#cairo-video-festival,Video and media art festival in Cairo run by Medrar.,festival,Cairo,Egypt,,true,,motion-design,Medrar,,
+D-CAF,https://d-caf.org,Multidisciplinary contemporary arts festival in downtown Cairo.,festival,Cairo,Egypt,,true,,installation,,,
+Dakar Biennale 2026,https://biennaledakar.org,16th Biennale of contemporary African art in Dakar.,exhibition,Dakar,Senegal,,true,,installation,,2026-11-19,2026-12-19
+ART X Lagos 2027,https://www.artxlagos.com,Annual art fair in Lagos.,exhibition,Lagos,Nigeria,,true,,installation,,2027-11-04,2027-11-07
+LagosPhoto,https://www.lagosphotofestival.com,International photography art festival in Lagos.,festival,Lagos,Nigeria,,true,,research,,,
+Addis Foto Fest,https://addisfotofest.com,Photography festival in Ethiopia.,festival,,Ethiopia,,true,,research,,,
+Nyege Nyege Festival,https://nyegenyege.com,"Annual music, art and culture festival in Jinja.",festival,Jinja,Uganda,,true,,sound-music-tech,,,
+Deep Learning Indaba,https://deeplearningindaba.com,Annual gathering of Africa’s machine learning and AI community; the host changes each year.,conference,,,,true,,ai|machine-learning|research,,,
+Africa Tech Festival,https://africatechfestival.com,Annual technology conference and exhibition in Cape Town.,conference,Cape Town,South Africa,,true,,ai,,,
+Design Week South Africa,https://designweeksouthafrica.com,Calendar of design events in Johannesburg and Cape Town.,festival,,South Africa,,true,,product-design|graphic-design,,,

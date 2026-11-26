@@ -13,6 +13,9 @@ export const WINDOWS = [
   { value: "365", label: "Next 12 months" },
 ] as const;
 
+/** Sections that filter by remote/online or in person. Jobs use work mode instead. */
+export const REMOTE_TYPES: EntryType[] = ["program", "opportunity", "event"];
+
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || undefined;
 
 /** Turn URL search params into validated browse filters. Unknown values are dropped. */
@@ -20,7 +23,8 @@ export function parseFilters(p: Params, type: EntryType | undefined, lens: Lens,
   const f: BrowseFilters = { type, lens: lens.slug, limit: PAGE_SIZE };
   f.q = one(p.q)?.slice(0, 200);
   f.discipline = one(p.discipline);
-  const remote = one(p.remote);
+  // Only where the filter is shown (or across all types in search), so an old link can't apply one invisibly.
+  const remote = !type || REMOTE_TYPES.includes(type) ? one(p.remote) : undefined;
   if (remote === "yes") f.remote = true;
   if (remote === "no") f.remote = false;
   const rel = one(p.relevance);

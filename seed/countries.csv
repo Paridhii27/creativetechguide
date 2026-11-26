@@ -31,7 +31,6 @@ QA,Qatar,Middle East,QAR,GCC
 KW,Kuwait,Middle East,KWD,GCC
 BH,Bahrain,Middle East,BHD,GCC
 OM,Oman,Middle East,OMR,GCC
-IL,Israel,Middle East,ILS,
 JO,Jordan,Middle East,JOD,Global South
 LB,Lebanon,Middle East,LBP,Global South
 TR,Turkey,Middle East,TRY,
@@ -110,3 +109,93 @@ BR,Brazil,Latin America,BRL,South America|Global South
 AU,Australia,Oceania,AUD,Commonwealth
 NZ,New Zealand,Oceania,NZD,Commonwealth
 FJ,Fiji,Oceania,FJD,Commonwealth|Pacific Islands|Global South
+MO,Macau,East Asia,MOP,
+KP,North Korea,East Asia,KPW,Global South
+BN,Brunei,Southeast Asia,BND,Commonwealth|ASEAN
+TL,Timor-Leste,Southeast Asia,USD,ASEAN|Global South
+TJ,Tajikistan,Central Asia,TJS,Global South
+TM,Turkmenistan,Central Asia,TMT,Global South
+IQ,Iraq,Middle East,IQD,Global South
+SY,Syria,Middle East,SYP,Global South
+YE,Yemen,Middle East,YER,Global South
+PS,Palestine,Middle East,,Global South
+AO,Angola,Africa,AOA,Global South
+BJ,Benin,Africa,XOF,West Africa|Global South
+BW,Botswana,Africa,BWP,Commonwealth|Global South
+BF,Burkina Faso,Africa,XOF,West Africa|Global South
+BI,Burundi,Africa,BIF,East Africa|Global South
+CV,Cabo Verde,Africa,CVE,West Africa|Global South
+CF,Central African Republic,Africa,XAF,Global South
+TD,Chad,Africa,XAF,Global South
+KM,Comoros,Africa,KMF,East Africa|Global South
+CG,Republic of the Congo,Africa,XAF,Global South
+CD,Democratic Republic of the Congo,Africa,CDF,Global South
+DJ,Djibouti,Africa,DJF,East Africa|Global South
+GQ,Equatorial Guinea,Africa,XAF,Global South
+ER,Eritrea,Africa,ERN,East Africa|Global South
+SZ,Eswatini,Africa,SZL,Commonwealth|Global South
+GA,Gabon,Africa,XAF,Commonwealth|Global South
+GM,Gambia,Africa,GMD,Commonwealth|West Africa|Global South
+GN,Guinea,Africa,GNF,West Africa|Global South
+GW,Guinea-Bissau,Africa,XOF,West Africa|Global South
+LS,Lesotho,Africa,LSL,Commonwealth|Global South
+LR,Liberia,Africa,LRD,West Africa|Global South
+LY,Libya,Africa,LYD,MENA|North Africa|Global South
+MG,Madagascar,Africa,MGA,East Africa|Global South
+MW,Malawi,Africa,MWK,Commonwealth|East Africa|Global South
+ML,Mali,Africa,XOF,West Africa|Global South
+MR,Mauritania,Africa,MRU,West Africa|Global South
+MU,Mauritius,Africa,MUR,Commonwealth|East Africa|Global South
+MZ,Mozambique,Africa,MZN,Commonwealth|East Africa|Global South
+NA,Namibia,Africa,NAD,Commonwealth|Global South
+NE,Niger,Africa,XOF,West Africa|Global South
+ST,São Tomé and Príncipe,Africa,STN,Global South
+SC,Seychelles,Africa,SCR,Commonwealth|East Africa|Global South
+SL,Sierra Leone,Africa,SLE,Commonwealth|West Africa|Global South
+SO,Somalia,Africa,SOS,East Africa|Global South
+SS,South Sudan,Africa,SSP,East Africa|Global South
+SD,Sudan,Africa,SDG,MENA|North Africa|Global South
+TG,Togo,Africa,XOF,Commonwealth|West Africa|Global South
+ZM,Zambia,Africa,ZMW,Commonwealth|East Africa|Global South
+AL,Albania,Europe,ALL,Eastern Europe
+AD,Andorra,Europe,EUR,
+AZ,Azerbaijan,Europe,AZN,Eastern Europe
+BY,Belarus,Europe,BYN,Eastern Europe
+BA,Bosnia and Herzegovina,Europe,BAM,Eastern Europe
+XK,Kosovo,Europe,EUR,Eastern Europe
+LI,Liechtenstein,Europe,CHF,EEA|Schengen
+MD,Moldova,Europe,MDL,Eastern Europe
+MC,Monaco,Europe,EUR,
+ME,Montenegro,Europe,EUR,Eastern Europe
+MK,North Macedonia,Europe,MKD,Eastern Europe
+RU,Russia,Europe,RUB,Eastern Europe
+SM,San Marino,Europe,EUR,
+VA,Vatican City,Europe,EUR,
+GL,Greenland,Europe,DKK,
+AG,Antigua and Barbuda,Latin America,XCD,Caribbean|Commonwealth|Global South
+BS,Bahamas,Latin America,BSD,Caribbean|Commonwealth|Global South
+BB,Barbados,Latin America,BBD,Caribbean|Commonwealth|Global South
+BZ,Belize,Latin America,BZD,Caribbean|Commonwealth|Global South
+DM,Dominica,Latin America,XCD,Caribbean|Commonwealth|Global South
+SV,El Salvador,Latin America,USD,Global South
+GD,Grenada,Latin America,XCD,Caribbean|Commonwealth|Global South
+GY,Guyana,Latin America,GYD,South America|Caribbean|Commonwealth|Global South
+HT,Haiti,Latin America,HTG,Caribbean|Global South
+HN,Honduras,Latin America,HNL,Global South
+NI,Nicaragua,Latin America,NIO,Global South
+PR,Puerto Rico,Latin America,USD,Caribbean
+KN,Saint Kitts and Nevis,Latin America,XCD,Caribbean|Commonwealth|Global South
+LC,Saint Lucia,Latin America,XCD,Caribbean|Commonwealth|Global South
+VC,Saint Vincent and the Grenadines,Latin America,XCD,Caribbean|Commonwealth|Global South
+SR,Suriname,Latin America,SRD,South America|Caribbean|Global South
+KI,Kiribati,Oceania,AUD,Commonwealth|Pacific Islands|Global South
+MH,Marshall Islands,Oceania,USD,Pacific Islands|Global South
+FM,Micronesia,Oceania,USD,Pacific Islands|Global South
+NR,Nauru,Oceania,AUD,Commonwealth|Pacific Islands|Global South
+PW,Palau,Oceania,USD,Pacific Islands|Global South
+PG,Papua New Guinea,Oceania,PGK,Commonwealth|Pacific Islands|Global South
+WS,Samoa,Oceania,WST,Commonwealth|Pacific Islands|Global South
+SB,Solomon Islands,Oceania,SBD,Commonwealth|Pacific Islands|Global South
+TO,Tonga,Oceania,TOP,Commonwealth|Pacific Islands|Global South
+TV,Tuvalu,Oceania,AUD,Commonwealth|Pacific Islands|Global South
+VU,Vanuatu,Oceania,VUV,Commonwealth|Pacific Islands|Global South

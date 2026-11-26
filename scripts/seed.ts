@@ -46,10 +46,7 @@ async function main() {
   await must(db.from("countries").upsert(countries, { onConflict: "code" }), "countries");
   const places = read("places.csv").map((r) => ({ city: r.city, state: str(r.state), country: r.country, region: r.region, lat: num(r.lat), lng: num(r.lng) }));
   await must(db.from("places").upsert(places, { onConflict: "city,country" }), "places");
-  const fx = read("fx_rates.csv").map((r) => ({ currency: r.currency, inr_per_unit: Number(r.inr_per_unit), as_of: addDays(0) }));
-  await must(db.from("fx_rates").upsert(fx, { onConflict: "currency,as_of" }), "fx_rates");
-  const fxTable = Object.fromEntries(fx.map((r) => [r.currency, r.inr_per_unit]));
-  console.log(`taxonomy: ${regions.length} regions, ${countries.length} countries, ${places.length} places, ${fx.length} fx rates`);
+  console.log(`taxonomy: ${regions.length} regions, ${countries.length} countries, ${places.length} places`);
 
   const geo = (city?: string, country?: string) => {
     const p = places.find((x) => x.city === city && (!country || x.country === country));
@@ -144,7 +141,6 @@ async function main() {
       data: compact({
         role_title: str(r.role_title), organisation_id: orgIds.get(r.organisation) ?? null, seniority: str(r.seniority), employment: str(r.employment),
         work_mode: str(r.work_mode), remote_regions: list(r.remote_regions), visa_sponsorship: triState(r.visa_sponsorship),
-        salary: r.salary_min || r.salary_max ? { min: num(r.salary_min), max: num(r.salary_max), currency: r.salary_currency, period: r.salary_period || "year" } : null,
         posted_at: str(r.posted_at), closes_at: str(r.closes_at), apply_url: r.url, skills: list(r.skills),
       }),
     });
@@ -162,7 +158,6 @@ async function main() {
       data: compact({
         role_title: r.role_title, organisation_id: orgId, seniority: r.seniority, employment: r.employment, work_mode: r.work_mode,
         remote_regions: list(r.remote_regions), visa_sponsorship: triState(r.visa_sponsorship),
-        salary: r.salary_min ? { min: num(r.salary_min), max: num(r.salary_max), currency: r.salary_currency, period: r.salary_period } : null,
         posted_at: addDays(-3), closes_at: addDays(Number(r.closes_in_days)), apply_url: r.url, skills: list(r.skills),
       }),
     });
@@ -180,13 +175,11 @@ async function main() {
   }
   const dprogs = read("demo/programs.csv");
   for (const r of dprogs) {
-    const tuition = r.tuition_amount ? { amount: Number(r.tuition_amount), currency: r.tuition_currency, per: r.tuition_per } : null;
-    const rate = tuition ? fxTable[tuition.currency] : undefined;
     await upsertEntry({
       type: "program", title: r.title, url: r.url, summary: r.summary, is_remote: bool(r.is_remote) ?? false, disciplines: list(r.disciplines), ...geo(r.city, r.country),
       data: compact({
         program_kind: r.program_kind, degree_name: str(r.degree_name), duration_months: num(r.duration_months), mode: r.mode,
-        portfolio_required: bool(r.portfolio_required), tuition, tuition_inr_estimate: tuition && rate ? Math.round(tuition.amount * rate) : null,
+        portfolio_required: bool(r.portfolio_required),
         application_deadlines: [{ round: r.deadline_round, date: addDays(Number(r.deadline_in_days)), source_text: `Demo: ${r.deadline_round} closes in ${r.deadline_in_days} days.` }],
         scholarships: r.scholarship_name ? [compact({ name: r.scholarship_name, url: r.url, eligible_countries: list(r.scholarship_eligible_countries), open_worldwide: bool(r.scholarship_open_worldwide) })] : [],
       }),

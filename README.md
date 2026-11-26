@@ -60,7 +60,7 @@ Requires Node 20+ (this machine has Node 22 at `~/.local/node/bin`; run `export 
 
 - `supabase/migrations/`: schema, RLS policies, triggers (`india_relevance`, `key_date`, approval publishes) and the `browse_entries` search/filter function
 - `lib/db/`: all database access; UI never calls Supabase directly
-- `lib/`: types, lens rules, filter parsing, dates/urgency, money/currency conversion, relevance rules
+- `lib/`: types, lens rules, filter parsing, dates/urgency, relevance rules
 - `app/[section]`: browse pages (`/studios`, `/programmes`, `/jobs`, `/open-calls`, `/resources`, `/events`)
 - `app/entry/[id]`, `app/search`, `app/login`, `app/auth/*`
 - `seed/`: taxonomy (disciplines, places with coordinates, FX rates) and starter entries; `seed/demo/` is fake data
@@ -68,9 +68,9 @@ Requires Node 20+ (this machine has Node 22 at `~/.local/node/bin`; run `export 
 ## Notes
 
 - **Lens** is a slug (`global`, a country such as `india` or `brazil`, or a region such as `europe`) resolved from `?lens=` → cookie → `global`. Switching saves the cookie and `profiles.preferred_lens`, which is restored on sign-in. Countries and regions live in the `countries` / `regions` tables (seeded from `seed/countries.csv` and `seed/regions.csv`).
-- **A place lens** hides entries not open to that place (the relevance filter can show them), sorts Based in → Open to → unclear, shows eligibility badges, and in a country lens adds an approximate conversion to that country's currency. **Global** shows everything with original currencies and no badges.
+- **A place lens** hides entries not open to that place (the relevance filter can show them), sorts Based in → Open to → unclear, shows eligibility badges. **Global** shows everything with no badges.
 - Relevance is computed at query time by `place_relevance()` in SQL (for filtering and sorting) and `lib/relevance.ts` (for badges). `tests/relevance-cases.ts` holds one set of cases that both are tested against.
-- **FX rates** in `seed/fx_rates.csv` are rough placeholders. A daily rates job is still to do (CLAUDE.md asks before adding paid services, so pick a free source).
+- **No costs:** tuition, salary and currency conversion are not collected or shown (hard to source reliably). The `fx_rates` table and `countries.currency` column remain in the database, unused.
 - `seed/jobs.csv` holds real listings checked on employers' own job boards (Nov 2026). Jobs go stale fast: re-check or remove them, or wait for the M4 ingestion and archive jobs.
 - Seed entries have no invented fees or deadlines: those are "unknown" until verified or ingested.
 - Public entry URLs must be unique. Where a programme, event or call only has its organisation's homepage, the seed adds a `#fragment` (e.g. `https://www.nid.edu/#mdes-interaction-design`). Replace these with real deep links when you have them.

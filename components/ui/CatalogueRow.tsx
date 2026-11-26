@@ -25,14 +25,14 @@ export function CatalogueRow({ title, description, href, swatch, children }: { t
 /** Cut-out image on a soft palette ground, caption in `micro`, small "View" link. */
 export function CatalogueCard({ href, title, image, label, caption, swatch, fit = "contain" }: { href: string; title: string; image?: string | null; label?: ReactNode; caption?: ReactNode; /** ground colour; defaults to the plain surface */ swatch?: Swatch; fit?: "cover" | "contain" }) {
   return (
-    <li className="group flex min-w-0 flex-col">
+    <li className="group relative flex min-w-0 flex-col">
       <Link href={href} className="relative block" aria-label={title}>
         <Thumb src={image} title={title} fit={fit} swatch={swatch} className="aspect-[4/5] w-full" />
         {label && <span className={`text-micro absolute top-2 left-2 ${image ? "text-ink" : "text-on-swatch"}`}>{label}</span>}
       </Link>
       <div className="mt-2 flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <Link href={href} className="text-body-s block font-semibold leading-tight text-ink group-hover:underline">
+          <Link href={href} className="text-body-s block font-semibold leading-tight text-ink group-hover:underline after:absolute after:inset-0">
             {title}
           </Link>
           {caption && <div className="text-micro mt-1 text-ink-muted">{caption}</div>}

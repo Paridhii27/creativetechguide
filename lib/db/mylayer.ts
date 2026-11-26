@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { buildData, extraPlaces, mergeData, type EntryFormValues } from "@/lib/entry-input";
 import type { Entry, Status } from "@/lib/types";
+import { canEditEntry } from "@/lib/permissions";
 
 export type ApplicationStatus = "none" | "interested" | "applying" | "applied" | "interviewing" | "rejected" | "accepted";
 export interface UserEntryState {
@@ -74,13 +75,6 @@ async function toolIdFor(name?: string): Promise<string | undefined> {
   return data?.[0]?.id;
 }
 
-async function inrRate(currency?: string): Promise<number | undefined> {
-  if (!currency) return undefined;
-  const supabase = await createClient();
-  const { data } = await supabase.from("fx_rates").select("inr_per_unit").eq("currency", currency.toUpperCase()).order("as_of", { ascending: false }).limit(1);
-  return data?.[0] ? Number(data[0].inr_per_unit) : undefined;
-}
-
 export const isAdmin = cache(async (): Promise<boolean> => {
   const { supabase, user } = await client();
   if (!user) return false;
@@ -97,7 +91,7 @@ export async function createEntry(v: EntryFormValues): Promise<{ id: string } | 
     if (dup) return { duplicate: dup };
   }
   const admin = v.publish && (await isAdmin());
-  const [place, organisationId, inrPerUnit, toolId, locations] = await Promise.all([placeFor(v.city, v.country), orgIdFor(v.organisation_name), inrRate(v.tuition_currency), toolIdFor(v.tool_name), resolveExtraPlaces(v)]);
+  const [place, organisationId, toolId, locations] = await Promise.all([placeFor(v.city, v.country), orgIdFor(v.organisation_name), toolIdFor(v.tool_name), resolveExtraPlaces(v)]);
   const row = {
     type: v.type,
     title: v.title,
@@ -117,7 +111,7 @@ export async function createEntry(v: EntryFormValues): Promise<{ id: string } | 
     owner_id: user.id,
     visibility: admin ? ("public" as const) : ("private" as const),
     status: admin ? ("approved" as Status) : v.suggest ? ("pending_review" as Status) : ("draft" as Status),
-    data: { ...buildData(v, { organisationId, inrPerUnit, toolId }), ...(locations.length ? { locations } : {}) },
+    data: { ...buildData(v, { organisationId, toolId }), ...(locations.length ? { locations } : {}) },
   };
   const { data, error } = await supabase.from("entries").insert(row).select("id").single();
   if (error) return { error: error.code === "23505" ? "An entry with this URL is already on the Map." : error.message };
@@ -126,9 +120,9 @@ export async function createEntry(v: EntryFormValues): Promise<{ id: string } | 
 }
 
 /**
- * Edit an entry from the Edit form. Owners can always edit their own private entries (a rejected
- * one goes back to draft); admins can edit anything. Status, visibility and owner never change here. RLS enforces
- * the same rules, so this check only gives a friendlier message.
+ * Edit an entry from the Edit form. Owners can edit their own private entries, except while one is waiting for
+ * review (a rejected one goes back to draft); admins can edit anything. Status, visibility and owner never change
+ * here. RLS enforces the same rules, so this check only gives a friendlier message.
  */
 export async function updateEntry(id: string, v: EntryFormValues): Promise<{ id: string } | { error: string }> {
   const { supabase, user } = await client();
@@ -136,9 +130,11 @@ export async function updateEntry(id: string, v: EntryFormValues): Promise<{ id:
   const { data: existing } = await supabase.from("entries").select("id,type,data,owner_id,visibility,status").eq("id", id).maybeSingle();
   if (!existing) return { error: "Entry not found." };
   const admin = await isAdmin();
-  if (!admin && !(existing.owner_id === user.id && existing.visibility === "private")) return { error: "You can only edit your own private entries." };
-  const [place, organisationId, inrPerUnit, toolId, locations] = await Promise.all([placeFor(v.city, v.country), orgIdFor(v.organisation_name), inrRate(v.tuition_currency), toolIdFor(v.tool_name), resolveExtraPlaces(v)]);
-  const fresh = { ...buildData(v, { organisationId, inrPerUnit, toolId }), ...(locations.length ? { locations } : {}) };
+  if (!canEditEntry(existing, user.id, admin)) {
+    return { error: existing.status === "pending_review" ? "This entry is waiting for review, so it can't be edited." : "You can only edit your own private entries." };
+  }
+  const [place, organisationId, toolId, locations] = await Promise.all([placeFor(v.city, v.country), orgIdFor(v.organisation_name), toolIdFor(v.tool_name), resolveExtraPlaces(v)]);
+  const fresh = { ...buildData(v, { organisationId, toolId }), ...(locations.length ? { locations } : {}) };
   const patch = {
     type: v.type,
     title: v.title,

@@ -6,7 +6,7 @@ import EntryIndex from "@/components/EntryIndex";
 import EntryCatalogue from "@/components/EntryCatalogue";
 import { PageTitle } from "@/components/ui/layout";
 import { BracketLabel } from "@/components/ui/primitives";
-import { browseEntries, getDisciplines, getFxTable } from "@/lib/db/entries";
+import { browseEntries, getDisciplines } from "@/lib/db/entries";
 import { mySavedIds } from "@/lib/db/mylayer";
 import { currentPage, parseFilters, type Params } from "@/lib/filters";
 import { resolveLens } from "@/lib/lens-server";
@@ -36,7 +36,7 @@ export default async function SectionPage({ params, searchParams }: { params: Pr
   const sp = await searchParams;
   const lens = await resolveLens(sp.lens);
   const filters = { ...parseFilters(sp, section.type, lens), ...(section.kind ? { kind: section.kind, remote: undefined, relevance: undefined } : {}), excludeKind: section.excludeKind };
-  const [{ entries, hasMore, total }, disciplines, fx, savedIds] = await Promise.all([browseEntries({ ...filters, withTotal: true }), getDisciplines(), getFxTable(), mySavedIds()]);
+  const [{ entries, hasMore, total }, disciplines, savedIds] = await Promise.all([browseEntries({ ...filters, withTotal: true }), getDisciplines(), mySavedIds()]);
   const page = currentPage(sp);
 
   const q = typeof sp.q === "string" ? sp.q : undefined;
@@ -71,7 +71,7 @@ export default async function SectionPage({ params, searchParams }: { params: Pr
           {catalogue ? (
             <EntryCatalogue entries={entries} lens={lens} disciplines={disciplines} query={q} empty={empty} savedIds={savedIds} placeless={!!section.kind} />
           ) : (
-            <EntryIndex type={section.type} entries={entries} lens={lens} fx={fx} disciplines={disciplines} query={q} empty={empty} savedIds={savedIds} />
+            <EntryIndex type={section.type} entries={entries} lens={lens} disciplines={disciplines} query={q} empty={empty} savedIds={savedIds} />
           )}
           <Pager path={`/${section.slug}`} params={sp} page={page} hasMore={hasMore} total={total} />
         </div>

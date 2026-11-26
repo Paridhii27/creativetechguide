@@ -5,7 +5,6 @@ import { createClient } from "@/lib/supabase/server";
 import { createClient as createAnonClient, type SupabaseClient } from "@supabase/supabase-js";
 import { isSupabaseConfigured, SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/supabase/env";
 import { SECTIONS, TOOL_KIND, type Country, type Discipline, type Entry, type EntryType, type Geo, type Place, type Region, type Relevance } from "@/lib/types";
-import type { FxTable } from "@/lib/money";
 
 export interface BrowseFilters {
   type?: EntryType;
@@ -179,33 +178,49 @@ export async function getCountryNames(): Promise<string[]> {
   return (data ?? []).map((c) => c.name as string);
 }
 
-const readDisciplines = cachedReference("disciplines", async (supabase): Promise<Discipline[]> => {
+// Change the key after editing discipline names in a migration, so a deploy doesn't serve the old cached list.
+const readDisciplines = cachedReference("disciplines-v2", async (supabase): Promise<Discipline[]> => {
   const { data, error } = await supabase.from("disciplines").select("slug,label").order("sort_order");
   if (error) throw new Error(`disciplines query failed: ${error.message}`);
   return (data ?? []) as Discipline[];
 });
 
-export const getDisciplines = cache(() => orFallback(readDisciplines, []));
+/** Disciplines no longer offered anywhere, even while their row is still in the table. */
+const RETIRED_DISCIPLINES = new Set(["creative-tech-management"]);
 
-const readFxTable = cachedReference("fx-table", async (supabase): Promise<FxTable> => {
-  const { data, error } = await supabase.from("fx_rates").select("currency,inr_per_unit,as_of").order("as_of", { ascending: false });
-  if (error) throw new Error(`fx_rates query failed: ${error.message}`);
-  const fx: FxTable = { INR: 1 };
-  for (const r of data ?? []) if (fx[r.currency] == null) fx[r.currency] = Number(r.inr_per_unit);
-  return fx;
-});
+export const getDisciplines = cache(async () => (await orFallback(readDisciplines, [])).filter((d) => !RETIRED_DISCIPLINES.has(d.slug)));
 
-/** Latest INR rate per currency. Without it, costs just show in their original currency. */
-export const getFxTable = () => orFallback(readFxTable, { INR: 1 });
+/** Names (lowercased) of the countries where a public entry has its main place or another office. */
+async function readEntryCountries(supabase: SupabaseClient): Promise<Set<string>> {
+  const names = new Set<string>();
+  // Page through in chunks of 1000 (PostgREST's default cap).
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await supabase
+      .from("entries")
+      .select("country,locations:data->locations")
+      .eq("visibility", "public")
+      .eq("status", "approved")
+      .order("id")
+      .range(from, from + 999);
+    if (error) throw new Error(`entry countries query failed: ${error.message}`);
+    for (const e of data ?? []) {
+      const offices = Array.isArray(e.locations) ? (e.locations as { country?: string | null }[]) : [];
+      for (const c of [e.country as string | null, ...offices.map((l) => l?.country)]) if (c) names.add(c.toLowerCase());
+    }
+    if ((data?.length ?? 0) < 1000) return names;
+  }
+}
 
-const readGeo = cachedReference("geo", async (supabase): Promise<Geo> => {
-  const [r, c] = await Promise.all([
+const readGeo = cachedReference("geo-v3", async (supabase): Promise<Geo> => {
+  const [r, c, used] = await Promise.all([
     supabase.from("regions").select("slug,name,also_matches").order("sort_order"),
     supabase.from("countries").select("code,slug,name,region,currency,groups").order("name"),
+    readEntryCountries(supabase),
   ]);
   const error = r.error ?? c.error;
   if (error) throw new Error(`regions/countries query failed: ${error.message}`);
-  return { regions: (r.data ?? []) as Region[], countries: (c.data ?? []) as Country[] };
+  const countries = ((c.data ?? []) as Country[]).map((x) => ({ ...x, hasEntries: used.has(x.name.toLowerCase()) }));
+  return { regions: (r.data ?? []) as Region[], countries };
 });
 
 /** Countries and regions for the lens picker and relevance rules. */

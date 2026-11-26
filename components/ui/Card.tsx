@@ -38,9 +38,7 @@ export function Card({
 }) {
   return (
     <article className="group relative flex flex-col border border-line bg-bg transition-colors hover:border-ink">
-      <Link href={href} className="block" tabIndex={-1} aria-hidden>
-        <Thumb src={image} title={title} fit={imageFit} swatch={swatch} className={`w-full ${image && imageFit === "cover" ? "aspect-[16/10]" : "aspect-[5/2]"}`} />
-      </Link>
+      <Thumb src={image} title={title} fit={imageFit} swatch={swatch} className={`w-full ${image && imageFit === "cover" ? "aspect-[16/10]" : "aspect-[5/2]"}`} />
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div className="flex items-center justify-between gap-2">
           {location ? <LocationLabel>{location}</LocationLabel> : <span />}
@@ -51,7 +49,7 @@ export function Card({
             </span>
           )}
         </div>
-        <Link href={href} className="text-wordmark text-ink group-hover:underline decoration-1 underline-offset-4">
+        <Link href={href} className="text-wordmark text-ink group-hover:underline decoration-1 underline-offset-4 after:absolute after:inset-0">
           {title}
         </Link>
         {description && <p className="text-body-s line-clamp-3 text-ink-muted">{description}</p>}
@@ -62,7 +60,7 @@ export function Card({
             {eligibility}
           </div>
         )}
-        {footer}
+        {footer && <div className="relative z-10">{footer}</div>}
       </div>
     </article>
   );

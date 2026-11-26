@@ -1,10 +1,8 @@
 import type { ReactNode } from "react";
 import { daysUntil } from "@/lib/dates";
 import { getEntriesByIds } from "@/lib/db/entries";
-import { costLine } from "@/lib/cost";
 import { entryPicture } from "@/lib/icon";
 import { DEFAULT_BAND_LABELS, groupByDeadline, type BandLabels } from "@/lib/index-groups";
-import type { FxTable } from "@/lib/money";
 import { locationLabel } from "@/lib/places";
 import { placeRelevance } from "@/lib/relevance";
 import { entrySwatch, TYPE_SWATCH } from "@/lib/swatch";
@@ -28,14 +26,13 @@ const orgIdOf = (e: Entry) => (e.data.institution_id ?? e.data.organisation_id) 
 
 /**
  * Time-based entries as an index table grouped by date band (knowledge-publication reference).
- * Each row's own type decides its colour, kind chip, date label and cost line, so mixed lists
+ * Each row's own type decides its colour, kind chip, date label, so mixed lists
  * (the home page's "Closing soon") work too; `type` only picks the heading words.
  */
 export default async function EntryIndex({
   type,
   entries,
   lens,
-  fx,
   disciplines,
   query,
   empty,
@@ -45,7 +42,6 @@ export default async function EntryIndex({
   type?: EntryType;
   entries: Entry[];
   lens: Lens;
-  fx: FxTable;
   disciplines?: Discipline[];
   query?: string;
   empty: ReactNode;
@@ -78,7 +74,6 @@ export default async function EntryIndex({
             const org = orgId ? orgs[orgId]?.title.replace(/^\[Demo\]\s*/, "") : undefined;
             const kindValue = e.data[KINDS[e.type].field];
             const kind = typeof kindValue === "string" ? humanize(kindValue) : null;
-            const cost = costLine(e, lens, fx);
             const swatch = entrySwatch(e);
             const pic = entryPicture(e);
             const endDate = typeof e.data.end_date === "string" ? e.data.end_date : null;
@@ -119,7 +114,6 @@ export default async function EntryIndex({
                 status={<DeadlineMark date={e.key_date} label={dateLabelFor(e.type) ?? "Date"} event={e.type === "event"} endDate={endDate} />}
                 meta={
                   <>
-                    {cost && <span className="text-body-s order-first basis-full pb-1 text-ink">{cost}</span>}
                     {lens.kind !== "global" && !isTool(e) && <EligibilityTag relevance={placeRelevance(e, lens)} place={lens.label} />}
                     {locationLabel(e) && (
                       <LocationLabel className="ml-1">

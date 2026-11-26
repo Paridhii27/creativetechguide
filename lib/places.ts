@@ -1,16 +1,22 @@
 import { isTool, type Entry } from "./types";
 
+/** "City, Country", naming a place once when both are the same ("Hong Kong", "Singapore"). */
+export function placeName(city?: string | null, country?: string | null): string {
+  const same = city && country && city.trim().toLowerCase() === country.trim().toLowerCase();
+  return (same ? [country] : [city, country]).filter(Boolean).join(", ");
+}
+
 /** Other offices stored in data.locations, as "City, Country" strings. */
 export function extraPlaceNames(e: Pick<Entry, "data">): string[] {
   const list = Array.isArray(e.data?.locations) ? (e.data.locations as { city?: string | null; country?: string | null }[]) : [];
-  return list.map((l) => [l?.city, l?.country].filter(Boolean).join(", ")).filter(Boolean);
+  return list.map((l) => placeName(l?.city, l?.country)).filter(Boolean);
 }
 
 /** The main place, then other offices: all of them with `all`, otherwise "+N more". */
 export function locationLabel(e: Pick<Entry, "city" | "country" | "is_remote"> & { type?: Entry["type"]; data?: Entry["data"] }, opts: { all?: boolean } = {}): string {
   // Tools are digital and not tied to a place: no location at all.
   if (e.type && e.data && isTool({ type: e.type, data: e.data })) return "";
-  const main = [e.city, e.country].filter(Boolean).join(", ");
+  const main = placeName(e.city, e.country);
   const extra = e.data ? extraPlaceNames({ data: e.data }) : [];
   const place = opts.all ? [main, ...extra].filter(Boolean).join(" · ") : `${main}${main && extra.length ? ` +${extra.length} more` : ""}`;
   if (e.is_remote && place) return `${place} · Remote`;

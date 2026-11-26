@@ -18,6 +18,8 @@ export interface Country {
   region: string;
   currency: string | null;
   groups: string[];
+  /** At least one public entry is based there. The lens picker lists only these; others are typed in. */
+  hasEntries?: boolean;
 }
 
 export interface Geo {
@@ -46,12 +48,6 @@ export interface PlaceLens {
 
 export type Visibility = "public" | "private";
 export type Status = "draft" | "pending_review" | "approved" | "rejected" | "archived";
-
-export interface Money {
-  amount: number;
-  currency: string;
-  per?: string;
-}
 
 export interface Entry {
   id: string;

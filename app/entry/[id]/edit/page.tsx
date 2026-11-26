@@ -7,6 +7,7 @@ import { getCountryNames, getDisciplines, getEntriesByIds, getEntry, getPlaces, 
 import { getCurrentUser } from "@/lib/db/profiles";
 import { isAdmin } from "@/lib/db/mylayer";
 import { entryToFormValues } from "@/lib/entry-input";
+import { canEditEntry } from "@/lib/permissions";
 
 export const metadata: Metadata = { title: "Edit entry", robots: { index: false } };
 
@@ -16,8 +17,7 @@ export default async function EditEntryPage({ params }: { params: Promise<{ id: 
   if (!user) redirect(`/login?next=${encodeURIComponent(`/entry/${id}/edit`)}`);
   const [e, admin, places, countries, disciplines, tools] = await Promise.all([getEntry(id), isAdmin(), getPlaces(), getCountryNames(), getDisciplines(), getToolNames()]);
   if (!e) notFound();
-  const canEdit = admin || (e.owner_id === user.id && e.visibility === "private");
-  if (!canEdit) redirect(`/entry/${id}`);
+  if (!canEditEntry(e, user.id, admin)) redirect(`/entry/${id}`);
 
   const orgId = [e.data.organisation_id, e.data.institution_id].find((x): x is string => typeof x === "string");
   const toolId = typeof e.data.tool_id === "string" ? e.data.tool_id : undefined;

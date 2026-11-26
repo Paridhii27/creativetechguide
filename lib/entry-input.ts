@@ -44,9 +44,6 @@ export const EntryForm = z
     degree_name: opt,
     duration_months: optNum,
     mode: opt,
-    tuition_amount: optNum,
-    tuition_currency: opt,
-    tuition_per: opt,
     deadline_round: opt,
     deadline_date: optDate,
     deadline_source_text: opt,
@@ -61,10 +58,6 @@ export const EntryForm = z
     work_mode: opt,
     remote_regions: list,
     visa_sponsorship: triState,
-    salary_min: optNum,
-    salary_max: optNum,
-    salary_currency: opt,
-    salary_period: opt,
     closes_at: optDate,
     skills: list,
     // opportunity
@@ -98,26 +91,23 @@ const yn = (v: "yes" | "no" | "unknown") => (v === "yes" ? true : v === "no" ? f
 const compact = (o: Record<string, unknown>) =>
   Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined && v !== null && v !== "" && !(Array.isArray(v) && v.length === 0)));
 
-/** Build the type-specific `data` jsonb. Linked ids and INR estimates are filled in by the caller. */
-export function buildData(v: EntryFormValues, ctx: { organisationId?: string; inrPerUnit?: number; toolId?: string }): Record<string, unknown> {
+/** Build the type-specific `data` jsonb. Linked ids are filled in by the caller. */
+export function buildData(v: EntryFormValues, ctx: { organisationId?: string; toolId?: string }): Record<string, unknown> {
   return { ...typeData(v, ctx), ...(v.icon ? { icon: v.icon } : {}) };
 }
 
-function typeData(v: EntryFormValues, ctx: { organisationId?: string; inrPerUnit?: number; toolId?: string }): Record<string, unknown> {
+function typeData(v: EntryFormValues, ctx: { organisationId?: string; toolId?: string }): Record<string, unknown> {
   const t: EntryType = v.type;
   switch (t) {
     case "organisation":
       return compact({ org_kind: v.kind, hires_design_technologists: yn(v.hires_design_technologists), careers_url: v.careers_url, instagram: v.instagram?.replace(/^@/, "") });
-    case "program": {
-      const tuition = v.tuition_amount != null && v.tuition_currency ? { amount: v.tuition_amount, currency: v.tuition_currency.toUpperCase(), per: v.tuition_per ?? "year" } : undefined;
+    case "program":
       return compact({
         program_kind: v.kind,
         institution_id: ctx.organisationId,
         degree_name: v.degree_name,
         duration_months: v.duration_months,
         mode: v.mode,
-        tuition,
-        tuition_inr_estimate: tuition && ctx.inrPerUnit ? Math.round(tuition.amount * ctx.inrPerUnit) : undefined,
         application_deadlines: v.deadline_date ? [{ round: v.deadline_round ?? "Main round", date: v.deadline_date, source_text: v.deadline_source_text ?? null }] : [],
         portfolio_required: yn(v.portfolio_required),
         scholarships: v.scholarship_name
@@ -125,7 +115,6 @@ function typeData(v: EntryFormValues, ctx: { organisationId?: string; inrPerUnit
           : [],
         apply_url: v.apply_url,
       });
-    }
     case "job":
       return compact({
         role_title: v.role_title ?? v.title,
@@ -135,7 +124,6 @@ function typeData(v: EntryFormValues, ctx: { organisationId?: string; inrPerUnit
         work_mode: v.work_mode,
         remote_regions: v.remote_regions,
         visa_sponsorship: v.visa_sponsorship,
-        salary: v.salary_currency && (v.salary_min != null || v.salary_max != null) ? { min: v.salary_min ?? null, max: v.salary_max ?? null, currency: v.salary_currency.toUpperCase(), period: v.salary_period ?? "year" } : undefined,
         closes_at: v.closes_at,
         apply_url: v.apply_url ?? v.url,
         skills: v.skills,
@@ -203,16 +191,12 @@ export function entryToFormValues(e: { type: EntryType; title: string; summary: 
     case "program": {
       const round = (Array.isArray(d.application_deadlines) ? d.application_deadlines[0] : undefined) as { round?: string; date?: string; source_text?: string } | undefined;
       const sch = (Array.isArray(d.scholarships) ? d.scholarships[0] : undefined) as { name?: string; url?: string; open_worldwide?: boolean; eligible_countries?: string[] } | undefined;
-      const t = d.tuition as { amount?: number; currency?: string; per?: string } | undefined;
       return {
         ...base,
         degree_name: s(d.degree_name),
         duration_months: s(d.duration_months),
         mode: s(d.mode),
         portfolio_required: tri(d.portfolio_required),
-        tuition_amount: s(t?.amount),
-        tuition_currency: t?.currency,
-        tuition_per: t?.per,
         deadline_round: round?.round,
         deadline_date: round?.date,
         deadline_source_text: round?.source_text ?? undefined,
@@ -223,7 +207,6 @@ export function entryToFormValues(e: { type: EntryType; title: string; summary: 
       };
     }
     case "job": {
-      const sal = d.salary as { min?: number; max?: number; currency?: string; period?: string } | null | undefined;
       return {
         ...base,
         role_title: s(d.role_title) !== e.title ? s(d.role_title) : undefined,
@@ -231,10 +214,6 @@ export function entryToFormValues(e: { type: EntryType; title: string; summary: 
         work_mode: s(d.work_mode),
         remote_regions: joined(d.remote_regions),
         visa_sponsorship: tri(d.visa_sponsorship),
-        salary_min: s(sal?.min),
-        salary_max: s(sal?.max),
-        salary_currency: sal?.currency,
-        salary_period: sal?.period,
         closes_at: s(d.closes_at),
         skills: joined(d.skills),
       };
@@ -277,8 +256,8 @@ export function extraPlaces(v: Pick<EntryFormValues, "extra_city" | "extra_count
 /** data keys the form owns per type; anything else already stored (e.g. notable_projects) is kept on edit. */
 export const FORM_DATA_KEYS: Record<EntryType, string[]> = {
   organisation: ["locations", "icon", "org_kind", "hires_design_technologists", "careers_url", "instagram"],
-  program: ["locations", "icon", "program_kind", "institution_id", "degree_name", "duration_months", "mode", "tuition", "tuition_inr_estimate", "portfolio_required", "apply_url"],
-  job: ["locations", "icon", "role_title", "organisation_id", "seniority", "employment", "work_mode", "remote_regions", "visa_sponsorship", "salary", "closes_at", "apply_url", "skills"],
+  program: ["locations", "icon", "program_kind", "institution_id", "degree_name", "duration_months", "mode", "portfolio_required", "apply_url"],
+  job: ["locations", "icon", "role_title", "organisation_id", "seniority", "employment", "work_mode", "remote_regions", "visa_sponsorship", "closes_at", "apply_url", "skills"],
   opportunity: ["locations", "icon", "opp_kind", "organisation_id", "deadline", "deadline_source_text", "open_worldwide", "eligibility_countries", "ineligible_countries", "fee", "stipend_or_budget", "travel_covered", "apply_url"],
   resource: ["locations", "icon", "resource_kind", "author", "publisher", "frequency", "is_free", "tool_id"],
   event: ["locations", "icon", "event_kind", "start_date", "end_date", "recurring", "venue", "organisation_id"],

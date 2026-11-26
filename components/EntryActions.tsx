@@ -33,7 +33,7 @@ export default function EntryActions({ entryId, updatedAt, signedIn, saved: init
 
   if (!signedIn)
     return (
-      <a href={`/login?next=/entry/${entryId}`} className="text-label text-ink underline underline-offset-4">
+      <a href={`/login?next=/entry/${entryId}`} className="text-label inline-block py-1.5 text-ink underline underline-offset-4">
         Sign in to save this
       </a>
     );
@@ -47,7 +47,8 @@ export default function EntryActions({ entryId, updatedAt, signedIn, saved: init
   return (
     <div className="space-y-2">
       <div className={`flex flex-wrap gap-2 ${pending ? "opacity-60" : ""}`}>
-        {(isAdmin || (isOwner && visibility === "private")) && (
+        {/* Mirrors canEditEntry: owners lose Edit while their suggestion is being reviewed. */}
+        {(isAdmin || (isOwner && visibility === "private" && status !== "pending_review")) && (
           <a href={`/entry/${entryId}/edit`} className={btn}>Edit</a>
         )}
         {!compact && <button
@@ -71,13 +72,18 @@ export default function EntryActions({ entryId, updatedAt, signedIn, saved: init
         )}
         {/* Users suggest; the admin publishes directly (below), so never sees Suggest. */}
         {!isAdmin && isOwner && visibility === "private" && (status === "draft" || status === "rejected") && (
-          <button disabled={pending} className={btn} onClick={() => run(() => suggestAction(entryId))}>
+          <button
+            disabled={pending}
+            className={btn}
+            title="You can't edit it while it's being reviewed."
+            onClick={() => confirm("Suggest this to the Map? You won't be able to edit it while it's being reviewed.") && run(() => suggestAction(entryId))}
+          >
             {status === "rejected" ? "Suggest again" : "Suggest to the Map"}
           </button>
         )}
         {!isAdmin && isOwner && status === "pending_review" && (
           <span
-            title="The admin will approve or reject it. It stays private until then."
+            title="The admin will approve or reject it. Until then it stays private and can't be edited."
             className={`inline-flex items-center rounded-full border border-dashed border-line text-ink-muted ${compact ? "text-tag px-2.5 py-1" : "text-label px-3.5 py-1.5"}`}
           >
             Waiting for review

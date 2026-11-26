@@ -13,13 +13,13 @@ import LinkChecks, { LinkChecksFrame } from "@/components/LinkChecks";
 import UnreviewedLink from "@/components/UnreviewedLink";
 import { getCurrentUser } from "@/lib/db/profiles";
 import { getUserState, isAdmin } from "@/lib/db/mylayer";
-import { getDisciplines, getEntriesByIds, getEntry, getFxTable, getRelatedEntries, getToolResources } from "@/lib/db/entries";
+import { getDisciplines, getEntriesByIds, getEntry, getRelatedEntries, getToolResources } from "@/lib/db/entries";
 import { formatDate } from "@/lib/dates";
 import { entryJsonLd, isIndexable, jsonLdScript, SITE_NAME } from "@/lib/seo";
 import { entryPicture } from "@/lib/icon";
 import { resolveLens } from "@/lib/lens-server";
-import { approxIn, formatMoney, isMoney, type FxTable } from "@/lib/money";
-import { humanize, isTool, KINDS, sectionForEntry, type Entry, type Lens } from "@/lib/types";
+import { humanize, isTool, KINDS, sectionForEntry, type Entry } from "@/lib/types";
+import { canEditEntry } from "@/lib/permissions";
 
 type Fact = [label: string, value: React.ReactNode];
 
@@ -27,14 +27,7 @@ const yesNo = (v: unknown) => (v === true || v === "yes" ? "Yes" : v === false |
 const listOf = (v: unknown) => (Array.isArray(v) && v.length ? v.join(", ") : null);
 const str = (v: unknown) => (typeof v === "string" && v ? humanize(v) : null);
 
-function money(v: unknown, lens: Lens, fx: FxTable): string | null {
-  if (!isMoney(v)) return null;
-  const orig = `${formatMoney(v)}${v.per ? ` per ${v.per}` : ""}`;
-  const conv = approxIn(v, lens.currency, fx);
-  return conv ? `${orig} (${conv})` : orig;
-}
-
-function facts(e: Entry, lens: Lens, fx: FxTable, linked: Record<string, Entry>, unreviewed: boolean): Fact[] {
+function facts(e: Entry, linked: Record<string, Entry>, unreviewed: boolean): Fact[] {
   const d = e.data;
   const link = (id: unknown) => {
     const o = typeof id === "string" ? linked[id] : undefined;
@@ -60,7 +53,6 @@ function facts(e: Entry, lens: Lens, fx: FxTable, linked: Record<string, Entry>,
         ["Duration", d.duration_months ? `${d.duration_months} months` : null],
         ["Mode", str(d.mode)],
         ["Language", d.language as string],
-        ["Tuition", money(d.tuition, lens, fx)],
         ["Intake", d.intake_month as string],
         ["Portfolio required", d.portfolio_required == null ? null : yesNo(d.portfolio_required)],
         ["Admission requirements", d.admission_requirements as string],
@@ -97,11 +89,6 @@ function facts(e: Entry, lens: Lens, fx: FxTable, linked: Record<string, Entry>,
       ];
     }
     case "job": {
-      const s = d.salary as { min?: number; max?: number; currency?: string; period?: string } | null;
-      const salary =
-        s?.currency && (s.min != null || s.max != null)
-          ? [s.min, s.max].filter((x) => x != null).map((a) => money({ amount: a!, currency: s.currency! }, lens, fx)).join(" – ") + (s.period ? ` per ${s.period}` : "")
-          : null;
       return [
         ["Organisation", link(d.organisation_id)],
         ["Role", d.role_title as string],
@@ -110,7 +97,6 @@ function facts(e: Entry, lens: Lens, fx: FxTable, linked: Record<string, Entry>,
         ["Work mode", str(d.work_mode)],
         ["Remote from", listOf(d.remote_regions)],
         ["Visa sponsorship", yesNo(d.visa_sponsorship)],
-        ["Salary", salary],
         ["Posted", typeof d.posted_at === "string" ? formatDate(d.posted_at) : null],
         ["Skills", listOf(d.skills)],
       ];
@@ -172,8 +158,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
   if (!e) notFound();
   const d = e.data;
   const linkIds = [d.organisation_id, d.institution_id, d.submission_opportunity_id, d.tool_id].filter((x): x is string => typeof x === "string");
-  const [fx, linked, related, user, userState, admin, disciplines] = await Promise.all([
-    getFxTable(),
+  const [linked, related, user, userState, admin, disciplines] = await Promise.all([
     getEntriesByIds(linkIds),
     e.type === "organisation" ? getRelatedEntries(e.id) : isTool(e) ? getToolResources(e.id) : Promise.resolve([]),
     getCurrentUser(),
@@ -189,7 +174,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
   const isPublic = e.visibility === "public" && e.status === "approved";
   // Someone else's entry that isn't on the Map yet (a suggestion under review): its links need a second look.
   const unreviewed = !isPublic && e.owner_id !== user?.id;
-  const rows = facts(e, lens, fx, linked, unreviewed).filter(([, v]) => v != null && v !== "");
+  const rows = facts(e, linked, unreviewed).filter(([, v]) => v != null && v !== "");
 
   const swatch = entrySwatch(e);
   const pic = entryPicture(e);
@@ -209,7 +194,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
           <Mark swatch={swatch} size={7} />
           Saved to your layer.{" "}
           {e.status === "pending_review" ? "It's waiting for review." : e.visibility === "public" ? "It's live on the Map." : admin ? "It's private. Publish it to the Map whenever you're ready." : "It's private. Suggest it to the Map whenever you're ready."}{" "}
-          {(admin || e.visibility === "private") && <><Link href={`/entry/${e.id}/edit`} className="underline underline-offset-4">Edit details</Link> · </>}
+          {canEditEntry(e, user?.id, admin) && <><Link href={`/entry/${e.id}/edit`} className="underline underline-offset-4">Edit details</Link> · </>}
           <Link href="/add" className="underline underline-offset-4">Add another</Link>
         </p>
       )}
@@ -222,7 +207,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
       {e.visibility === "private" && e.owner_id === user?.id ? (
         <Link href="/me" className="text-label text-ink-muted hover:text-ink">← My Layer</Link>
       ) : (
-        <Link href={`/${section.slug}?lens=${lens.slug}`} className="text-label text-ink-muted hover:text-ink">← {section.label}</Link>
+        <Link href={`/${section.slug}?lens=${lens.slug}`} className="text-label inline-block py-1.5 text-ink-muted hover:text-ink">← {section.label}</Link>
       )}
 
       {/* Fetching the links takes a few seconds, so the page doesn't wait for it. */}
@@ -315,8 +300,8 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
                   title="Location"
                   swatch={5}
                   rows={[
-                    ...(e.city ? [{ label: "City", value: e.city }] : []),
-                    ...(e.country ? [{ label: "Country", value: e.country }] : []),
+                    ...(e.city && e.city.toLowerCase() !== e.country?.toLowerCase() ? [{ label: "City", value: e.city }] : []),
+                    ...(e.country ? [{ label: "Country / region", value: e.country }] : []),
                     ...(e.is_remote ? [{ label: "Remote", value: "Yes" }] : []),
                   ]}
                 />
@@ -327,7 +312,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
                 </AnnotationBox>
               )}
               {e.disciplines.length > 0 && (
-                <AnnotationBox title="Core disciplines" swatch={3} rows={e.disciplines.map((t, i) => ({ label: String(i + 1).padStart(2, "0"), value: humanize(t) }))} />
+                <AnnotationBox title="Core disciplines" swatch={3} rows={e.disciplines.map((t, i) => ({ label: String(i + 1).padStart(2, "0"), value: disciplineLabel.get(t) ?? humanize(t) }))} />
               )}
             </div>
           </div>
@@ -346,14 +331,14 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
             )}
           </div>
           <div className="mt-4">
-            <EntryList entries={related} lens={lens} fx={fx} empty={<>Nothing linked yet. When you add a library, tutorial or community, choose {e.title} under &ldquo;For tool&rdquo;.</>} />
+            <EntryList entries={related} lens={lens} empty={<>Nothing linked yet. When you add a library, tutorial or community, choose {e.title} under &ldquo;For tool&rdquo;.</>} />
           </div>
         </section>
       )}
       {!isTool(e) && related.length > 0 && (
         <section className="mt-20 max-w-[46rem]">
           <h2 className="text-heading text-ink">At {e.title}</h2>
-          <div className="mt-4"><EntryList entries={related} lens={lens} fx={fx} /></div>
+          <div className="mt-4"><EntryList entries={related} lens={lens} /></div>
         </section>
       )}
     </article>

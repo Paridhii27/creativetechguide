@@ -99,16 +99,16 @@ The site has **three view modes**, taken from the three versions of the specimen
 | `--ink` (all type) | `#1E1E1E` | `#F2F2F2` | `#3449B2` |
 | `--ink-muted` | `#1E1E1E` at 60% | `#F2F2F2` at 60% | `#3449B2` at 65% |
 | `--line` (hairlines, rules, grid) | `#DADAD6` | `#262626` | `#D4DCF0` |
-| `--accent` (shapes, lines, large type) | `#F04A30` signal red | `#EAFD57` chartreuse | `#3449B2` (same as ink) |
+| `--accent` (shapes, lines, large type) | `#C8321A` signal red | `#EAFD57` chartreuse | `#3449B2` (same as ink) |
 | `--accent-text` (accent used for small text) | `#C8321A` | `#EAFD57` | `#3449B2` |
-| `--accent-soft` (secondary HUD lines, inactive states) | `#F04A30` at 15% | `#7A8530` | `#E6EEFB` |
-| `--on-accent` (text on solid accent fills) | `#1E1E1E` | `#050505` | `#FCFCFC` |
+| `--accent-soft` (secondary HUD lines, inactive states) | `#C8321A` at 15% | `#7A8530` | `#E6EEFB` |
+| `--on-accent` (text on solid accent fills) | `#FFFFFF` | `#050505` | `#FCFCFC` |
 | `--grid` (faint background grid in specimen areas) | `#1E1E1E` at 4% | `#EAFD57` at 5% | `#3449B2` at 8% |
 | `--swatch-1…5` (secondary palette: fills, tiles, map dots, category marks; never small text) | red `#F04A30`, blue `#387EB2`, green `#7FB17E`, mustard `#DCB572`, pink `#DBAAAE` | coral `#D9777C`, sage `#7C9A8F`, pink `#D365A4`, cobalt `#5A78E6`, orange `#D86A48` | all `#3449B2` |
 | `--swatch-6`, `--swatch-7` (type colours for Publications & Resources and for Tools only) | violet `#8F6FCF`, teal `#2F9E9A` | sand `#CDB57E`, lavender `#A48FE0` | all `#3449B2` |
 | `--on-swatch` (text on palette fills) | `#1E1E1E` | `#050505` | `#FCFCFC` |
 
-All pairs above pass WCAG AA: ink on background is at least 7:1 in every mode, and `--accent-text` on background is at least 4.5:1. In Document mode, keep the brighter `#F04A30` for shapes, lines and large text only, and use `--accent-text` for small accent text. White on `#F04A30` fails AA, so text on solid red is ink. The Document palette comes from the "paper squares" reference (Figma node `19:132`), the Monitor palette from the soft gradient-tile reference (node `19:128`).
+All pairs above pass WCAG AA: ink on background is at least 7:1 in every mode, and `--accent-text` on background is at least 4.5:1. In Document mode, solid accent fills are the deeper `#C8321A` with white text; the brighter `#F04A30` is only a swatch (`--swatch-1`), never a ground for small text. The Document palette comes from the "paper squares" reference (Figma node `19:132`), the Monitor palette from the soft gradient-tile reference (node `19:128`).
 
 ### How each mode should feel
 - **Document** (default): mostly black on white, like a printed field guide. The red accent is rare: active states, urgent deadlines, specimen leader-line dots, the active lens. The paper-square colours (red, blue, green, mustard, pink) appear only as small fills and tiles.
@@ -146,9 +146,10 @@ More than 30 days: `--ink`. Under 30 days: `--accent` outline. Under 7 days: sol
 
 ## Layout and components
 - 12-column grid, wide outer margins, generous whitespace between sections but dense rows inside lists.
+- Page margins come from `--page-gutter` via the `page-width` utility: 16px on phones, 32px from `sm`, and 6.5% of the window (up to 96px) from `lg`, so smaller laptops keep proportionate margins. Content is capped at 1216px; the section row and search tighten below 1400px so they stay on one line.
 - Hairline borders (1px) instead of shadows. Square corners everywhere except bento cards and pills.
 - Buttons are pill-shaped (outlined, or solid ink for primary).
-- Navigation (as in Figma, with two changes: section links are set at 14px (`nav-s`) so all seven fit on one row beside search, and they wrap rather than scroll on narrow screens; search is a fixed field at the end of the row from `xl`, and an icon that opens it in a panel below the row on narrower screens): the wordmark "CREATIVE TECHNOLOGY" (`wordmark`) with "A Field Guide" (`accent-m`) beside or beneath it; then a nav row in `nav` style with 36px gaps: STUDIOS & COMPANIES · PROGRAMMES · JOBS · OPEN CALLS · PUBLICATIONS & RESOURCES · TOOLS · EVENTS · SEARCH THE WEBSITE. TOOLS is a browse page for resources where `resource_kind = 'tool'`. The **India / Global** lens toggle and the URL drop button sit at the right.
+- Navigation (as in Figma, with two changes: section links are set at 14px (`nav-s`) so all seven fit on one row beside search from `lg`; search is a fixed field at the end of the row from `xl`, and an icon that opens it in a panel below the row from `lg` to `xl`. Below `lg` (phones and tablets) the header is one row of wordmark, search icon and menu button, with the lens toggle beneath on phones and in that row from `sm`; search and the menu (section links, My Layer, the add button, view switch, account link) slide open under that row, one at a time, and the menu icon turns into a cross. The menu lists sections in two columns from `sm` and three from `md`): the wordmark "CREATIVE TECHNOLOGY" (`wordmark`) with "A Field Guide" (`accent-m`) beside or beneath it; then a nav row in `nav` style with 36px gaps: STUDIOS & COMPANIES · PROGRAMMES · JOBS · OPEN CALLS · PUBLICATIONS & RESOURCES · TOOLS · EVENTS · SEARCH THE WEBSITE. TOOLS is a browse page for resources where `resource_kind = 'tool'`. The **India / Global** lens toggle and the URL drop button sit at the right.
 - Tags in `tag` style as small outlined chips. Pill-shaped buttons in `nav` or `label` style.
 - Images are cut-out objects or tightly cropped work stills on light grey grounds. Use the entry's OG image or a screenshot, with a caption in `micro`.
 - Each card shows a small location label and, in the India lens, an eligibility badge (Based in India / Open to India / Eligibility unclear).

@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { parseHtml } from "@/lib/unfurl";
-import { findDeadline, parseDateText, suggestionsToFormValues } from "@/lib/extract";
+import { findDeadline, parseDateText, suggestDisciplines, suggestionsToFormValues } from "@/lib/extract";
 import { EntryForm, buildData, entryToFormValues, extraPlaces, formDataToObject, mergeData } from "@/lib/entry-input";
 import { dateChip } from "@/lib/dates";
 import { defaultIconChoice, entryIconUrl } from "@/lib/icon";
-import { countryForCity, extraPlaceNames, locationLabel } from "@/lib/places";
+import { countryForCity, extraPlaceNames, locationLabel, placeName } from "@/lib/places";
 
 describe("extractSuggestions via parseHtml", () => {
   it("reads an article's author and publisher, and leaves the rest out", () => {
@@ -148,6 +148,13 @@ describe("several places", () => {
   });
 });
 
+describe("production design discipline", () => {
+  it("is suggested for set and show design, not for producing or managing", () => {
+    expect(suggestDisciplines("Production designer for stage design on touring shows")).toEqual(["production"]);
+    expect(suggestDisciplines("Producer and project manager for the studio")).toEqual([]);
+  });
+});
+
 describe("role disciplines", () => {
   it("recognises product, UI/UX and motion roles from a job page", () => {
     const s = parseHtml("<title>Senior UI/UX Designer, Product Design team</title><p>Motion graphics and Figma.</p>", "https://x.example/jobs/9").suggested;
@@ -205,5 +212,13 @@ describe("edit round trip", () => {
     const merged = mergeData("program", "program", old, { ...fresh });
     expect(merged).toMatchObject({ program_kind: "phd", notable_alumni_or_faculty: ["A"] });
     expect(merged.application_deadlines).toEqual([{ round: "R1", date: "2027-01-10", source_text: null }, { round: "R2", date: "2027-03-01" }]);
+  });
+});
+
+describe("placeName", () => {
+  it("names a place once when the city and country or region match", () => {
+    expect(placeName("Hong Kong", "Hong Kong")).toBe("Hong Kong");
+    expect(placeName("Taipei", "Taiwan")).toBe("Taipei, Taiwan");
+    expect(placeName(null, "Singapore")).toBe("Singapore");
   });
 });

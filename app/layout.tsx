@@ -13,7 +13,7 @@ import NavLink from "@/components/NavLink";
 import NavSearch from "@/components/NavSearch";
 import GlobalDrop from "@/components/GlobalDrop";
 import { DuotoneFilters } from "@/components/ui/DuotoneFilters";
-import { NavBar } from "@/components/ui/layout";
+import { NavBar } from "@/components/ui/NavBar";
 import { PillLink } from "@/components/ui/primitives";
 import { VIEW_MODE_SCRIPT } from "@/lib/theme";
 import { Analytics } from "@vercel/analytics/next";
@@ -78,33 +78,33 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="flex min-h-screen flex-col">
         <DuotoneFilters />
         <header>
-          <div className="mx-auto max-w-7xl px-4 sm:px-8">
+          <div className="page-width">
             <NavBar
-              right={
+              lens={
+                <Suspense fallback={<div className="h-8 w-44" />}>
+                  <LensSwitch fallback={lens.slug} geo={geo} />
+                </Suspense>
+              }
+              // Your own things, grouped tight; the wider gap before them separates them from the lens.
+              actions={
                 <>
-                  <Suspense fallback={<div className="h-8 w-44" />}>
-                    <LensSwitch fallback={lens.slug} geo={geo} />
-                  </Suspense>
-                  {/* Your own things, grouped tight; the wider gap before them separates them from the lens. */}
-                  <div className="flex items-center gap-2">
-                    <PillLink className="h-8 flex-1 whitespace-nowrap py-0!" href={user ? "/me" : "/login?next=/me"} title="Your saves, your own entries and what you've suggested to the Map">
-                      My Layer
-                      {user && layerCount > 0 && <span className="text-tag -mr-1 rounded-full bg-accent px-1.5 py-px text-on-accent">{layerCount}</span>}
-                    </PillLink>
-                    {/* Adding links is for signed-in users only, so signed-out visitors don't get a button that just leads to sign in. */}
-                    {user && (
-                      <Link
-                        href="/add"
-                        aria-label="Add a link"
-                        title="Add a link (press N, or paste or drop a link anywhere)"
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-ink bg-ink text-bg transition-colors hover:bg-transparent hover:text-ink"
-                      >
-                        <svg aria-hidden viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" className="h-3.5 w-3.5">
-                          <path d="M8 2.5v11M2.5 8h11" />
-                        </svg>
-                      </Link>
-                    )}
-                  </div>
+                  <PillLink className="h-8 flex-1 whitespace-nowrap py-0!" href={user ? "/me" : "/login?next=/me"} title="Your saves, your own entries and what you've suggested to the Map">
+                    My Layer
+                    {user && layerCount > 0 && <span className="text-tag -mr-1 rounded-full bg-accent px-1.5 py-px text-on-accent">{layerCount}</span>}
+                  </PillLink>
+                  {/* Adding links is for signed-in users only, so signed-out visitors don't get a button that just leads to sign in. */}
+                  {user && (
+                    <Link
+                      href="/add"
+                      aria-label="Add a link"
+                      title="Add a link (press N, or paste or drop a link anywhere)"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-ink bg-ink text-bg transition-colors hover:bg-transparent hover:text-ink"
+                    >
+                      <svg aria-hidden viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" className="h-3.5 w-3.5">
+                        <path d="M8 2.5v11M2.5 8h11" />
+                      </svg>
+                    </Link>
+                  )}
                 </>
               }
               utility={
@@ -123,7 +123,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 )
               }
               search={
-                <Suspense fallback={<div className="h-9 w-full" />}>
+                <Suspense fallback={<div className="h-9 w-full max-lg:order-3 max-lg:mt-5 max-lg:ml-3 max-lg:h-10 max-lg:w-10" />}>
                   <NavSearch />
                 </Suspense>
               }
@@ -139,16 +139,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </header>
         {!isSupabaseConfigured() && (
           <div className="border-b border-line bg-surface">
-            <p className="text-body-s mx-auto max-w-7xl px-4 py-2 text-ink-muted sm:px-8">
+            <p className="text-body-s page-width py-2 text-ink-muted">
               Supabase isn&apos;t configured, so the catalogue is empty. Copy <code>.env.example</code> to <code>.env.local</code> and follow the README.
             </p>
           </div>
         )}
         {user && <GlobalDrop />}
         {/* Takes up any spare height, so the footer sits at the bottom of the screen on short pages too. */}
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-8">{children}</main>
+        <main className="page-width flex-1 py-10">{children}</main>
         <footer className="mt-16 border-t border-line">
-          <div className="text-micro mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-ink-muted sm:px-8">
+          <div className="text-micro page-width flex flex-wrap items-center justify-between gap-3 py-6 text-ink-muted">
             <span>Field Guide: Creative Technology. Entries are reviewed before going public.</span>
             <span>Open data under CC BY 4.0 (coming soon)</span>
           </div>
