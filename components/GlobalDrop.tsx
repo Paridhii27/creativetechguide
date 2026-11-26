@@ -1,11 +1,23 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { SECTIONS } from "@/lib/types";
 
 const URL_RE = /^https?:\/\/\S+$/i;
 const isTyping = (t: EventTarget | null) => t instanceof HTMLElement && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
 
-/** Drop or paste a link anywhere (outside text fields), or press N, to add an entry. */
+/** Pages you search or filter on, where a stray "n" is far more likely to be typing than a command. */
+const SEARCHING = new Set(["/search", ...SECTIONS.map((s) => `/${s.slug}`)]);
+
+/** N only counts as a shortcut when nothing is focused (not a field, menu, button or link) and no dropdown is open. */
+function isShortcut(e: KeyboardEvent) {
+  if (e.key.toLowerCase() !== "n" || e.metaKey || e.ctrlKey || e.altKey || e.repeat || e.isComposing || e.defaultPrevented) return false;
+  if (e.target !== document.body && e.target !== document.documentElement) return false;
+  // An open menu can be left without focus (Safari doesn't focus a button you click), so check for one too.
+  return !SEARCHING.has(window.location.pathname) && !document.querySelector('[aria-expanded="true"]');
+}
+
+/** Drop or paste a link anywhere (outside text fields) to add an entry. N does the same, away from search pages. */
 export default function GlobalDrop() {
   const router = useRouter();
   const [over, setOver] = useState(false);
@@ -21,7 +33,7 @@ export default function GlobalDrop() {
       }
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() === "n" && !e.metaKey && !e.ctrlKey && !e.altKey && !isTyping(e.target)) {
+      if (isShortcut(e)) {
         e.preventDefault();
         go();
       }

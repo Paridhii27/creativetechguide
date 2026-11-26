@@ -116,7 +116,7 @@ export default async function MyLayerPage({ searchParams }: { searchParams: Prom
           {/* Keyed on the last saved entry so the form clears once a save lands back here. */}
           <AddForm key={sp.added ?? "new"} inline initialUrl="" places={places} countries={countries} disciplines={disciplines} tools={tools} isAdmin={admin} />
           <p className="text-body-s mt-3 text-ink-muted">
-            You can also paste or drop a link anywhere on the site. Shortcut: <kbd className="text-tag border border-line px-1.5 py-0.5 text-ink">N</kbd>
+            You can also paste or drop a link anywhere on the site. Shortcut on this page: <kbd className="text-tag border border-line px-1.5 py-0.5 text-ink">N</kbd>
           </p>
         </div>
       </section>
