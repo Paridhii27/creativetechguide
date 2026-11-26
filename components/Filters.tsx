@@ -62,6 +62,13 @@ export default function Filters({
         <span className={c.label}>Keyword</span>
         <SearchField name="q" size="s" className="mt-1.5" defaultValue={v("q")} placeholder="e.g. TouchDesigner" />
       </label>
+      {/* Only while a city is chosen (from the home globe): empty the box to clear it. */}
+      {!placeless && v("city") && (
+        <label className={c.keyword}>
+          <span className={c.label}>City</span>
+          <SearchField key={v("city")} name="city" size="s" className="mt-1.5" defaultValue={v("city")} />
+        </label>
+      )}
       {/* Discipline leads the filters on every section, right after the keyword. */}
       <Select name="discipline" label="Discipline" value={v("discipline")} options={disciplines.map((d) => ({ value: d.slug, label: d.label }))} />
       {(kinds ?? KINDS[type].values).length > 0 && (

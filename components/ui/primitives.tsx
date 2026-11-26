@@ -119,12 +119,12 @@ export function LocationLabel({ children, className = "" }: { children: ReactNod
   );
 }
 
-/** Wordmark + tagline. */
+/** Wordmark, set like the home headline: serif italic lead-in, then the subject in display capitals. */
 export function Wordmark({ href = "/", stacked = false }: { href?: string; stacked?: boolean }) {
   return (
-    <Link href={href} className={`inline-flex text-ink ${stacked ? "flex-col gap-1 leading-none" : "flex-wrap items-baseline gap-x-2"}`}>
-      <span className="text-wordmark">Creative Technology</span>
-      <span className="text-accent-m text-ink-muted">A Field Guide</span>
+    <Link href={href} className={`text-wordmark inline-flex text-ink ${stacked ? "flex-col lg:text-[28px] lg:leading-[0.95]" : "flex-wrap items-baseline gap-x-2"}`}>
+      <span className="text-accent-display">A map of</span>{" "}
+      <span>Creative Technology</span>
     </Link>
   );
 }

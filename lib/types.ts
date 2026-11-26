@@ -124,9 +124,18 @@ export const sectionForEntry = (e: { type: EntryType; data: Record<string, unkno
 /** Kinds a section's filter and the add form offer. */
 export const kindsForSection = (s: Section): string[] => (s.kind ? [] : KINDS[s.type].values.filter((k) => k !== s.excludeKind));
 
+/** A city on the home page globe, with its public entries counted per section slug. */
+export interface MapPoint {
+  city: string;
+  country: string;
+  lat: number;
+  lng: number;
+  counts: Record<string, number>;
+}
+
 /** Sub-kind options per type (stored in data.*_kind). */
 export const KINDS: Record<EntryType, { field: string; values: string[] }> = {
-  organisation: { field: "org_kind", values: ["studio", "company", "collective", "lab", "institution", "funder", "festival_org"] },
+  organisation: { field: "org_kind", values: ["studio", "company", "collective", "lab", "institution", "funder", "community_organiser"] },
   program: { field: "program_kind", values: ["masters", "phd", "postgrad_diploma", "bachelors", "short_course", "summer_school", "online_course"] },
   job: { field: "seniority", values: ["intern", "junior", "mid", "senior", "lead"] },
   opportunity: { field: "opp_kind", values: ["open_call", "commission", "residency", "grant", "fellowship", "competition", "call_for_papers", "festival_submission"] },
@@ -134,4 +143,6 @@ export const KINDS: Record<EntryType, { field: string; values: string[] }> = {
   event: { field: "event_kind", values: ["festival", "conference", "exhibition", "meetup", "workshop", "hackathon", "degree_show"] },
 };
 
-export const humanize = (s: string) => s.replace(/_/g, " ").replace(/-/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+/** Names that spelling out the stored value wouldn't give. */
+const LABELS: Record<string, string> = { community_organiser: "Community & event organiser" };
+export const humanize = (s: string) => LABELS[s] ?? s.replace(/_/g, " ").replace(/-/g, " ").replace(/^\w/, (c) => c.toUpperCase());

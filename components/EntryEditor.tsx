@@ -229,7 +229,7 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
           {SECTIONS.map((s) => (
             <label key={s.slug} className={`text-label cursor-pointer rounded-full border px-3.5 py-1.5 transition-colors ${slug === s.slug ? "border-accent bg-accent text-on-accent" : "border-line text-ink-muted hover:border-ink hover:text-ink"}`}>
               <input type="radio" name="type" value={s.type} checked={slug === s.slug} onChange={() => setSlug(s.slug)} className="sr-only" />
-              {s.singular}
+              {s.slug === "resources" ? s.label : s.singular}
             </label>
           ))}
         </div>

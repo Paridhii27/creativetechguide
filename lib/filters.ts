@@ -23,6 +23,8 @@ export function parseFilters(p: Params, type: EntryType | undefined, lens: Lens,
   const f: BrowseFilters = { type, lens: lens.slug, limit: PAGE_SIZE };
   f.q = one(p.q)?.slice(0, 200);
   f.discipline = one(p.discipline);
+  // Set by the globe's city links; the filter column shows it so it can be cleared.
+  if (type) f.city = one(p.city)?.slice(0, 100);
   // Only where the filter is shown (or across all types in search), so an old link can't apply one invisibly.
   const remote = !type || REMOTE_TYPES.includes(type) ? one(p.remote) : undefined;
   if (remote === "yes") f.remote = true;

@@ -7,8 +7,8 @@ export interface PlaceGroup {
 }
 
 /**
- * The place half of the lens toggle: a pill that opens a hairline index in the site's own style
- * (like the search matches), in place of the browser's native select list.
+ * A button that opens a hairline index in the site's own style (like the search matches), in place of
+ * the browser's native select list. Used by the place half of the lens toggle and under the home globe.
  * Arrows, Home/End and first letters move through it; Escape or a click outside closes it.
  * The panel is positioned against the nearest `relative` ancestor and is exactly as wide as it.
  */
@@ -20,7 +20,19 @@ export default function PlaceMenu({
   other,
   disabled = false,
   className = "",
+  prefix,
+  ariaLabel,
+  above = false,
+  compact = false,
 }: {
+  /** a shorter list with tighter rows */
+  compact?: boolean;
+  /** a small caption inside the button, before the label */
+  prefix?: string;
+  /** what the button is called to screen readers; defaults to the lens wording */
+  ariaLabel?: string;
+  /** open the panel over what's above the button rather than below it */
+  above?: boolean;
   label: string;
   /** the selected option's value, or "" when the selection isn't in the list */
   value: string;
@@ -86,7 +98,8 @@ export default function PlaceMenu({
     next?.focus();
   }
 
-  const row = "text-body-s flex w-full items-center gap-3 px-4 py-2 text-left text-ink transition-colors hover:bg-surface focus-visible:bg-surface focus-visible:-outline-offset-2!";
+  const pad = compact ? "px-3" : "px-4";
+  const row = "text-body-s flex w-full items-center gap-3 text-left text-ink transition-colors hover:bg-surface focus-visible:bg-surface focus-visible:-outline-offset-2! " + (compact ? "px-3 py-1" : "px-4 py-2");
 
   return (
     // No positioning here, so the panel lines up with the whole toggle rather than this half of it.
@@ -104,10 +117,11 @@ export default function PlaceMenu({
         aria-expanded={open}
         aria-disabled={disabled}
         aria-controls={open ? panelId : undefined}
-        aria-label={`Lens: choose a country or region${value ? ` (now ${label})` : ""}`}
+        aria-label={ariaLabel ?? `Lens: choose a country or region${value ? ` (now ${label})` : ""}`}
         onClick={() => !disabled && setOpen((o) => !o)}
         className={`min-w-0 cursor-pointer gap-1 ${className}`}
       >
+        {prefix && <span aria-hidden className="text-micro mr-1 shrink-0 text-ink-muted">{prefix}</span>}
         <span className="truncate">{label}</span>
         <span aria-hidden className="text-body-s leading-none opacity-70">▾</span>
       </button>
@@ -116,12 +130,12 @@ export default function PlaceMenu({
         <div
           ref={panel}
           id={panelId}
-          className="absolute inset-x-0 top-full z-50 mt-2 border border-ink bg-bg"
+          className={`absolute inset-x-0 z-50 border border-ink bg-bg ${above ? "bottom-full mb-2" : "top-full mt-2"}`}
         >
-          <div className="max-h-[min(24rem,60vh)] overflow-y-auto overscroll-contain">
+          <div className={`overflow-y-auto overscroll-contain ${compact ? "max-h-[min(13rem,45vh)]" : "max-h-[min(24rem,60vh)]"}`}>
             {groups.map((g) => (
               <div key={g.label} role="group" aria-label={g.label}>
-                <p aria-hidden className="text-micro sticky top-0 border-b border-line bg-bg px-4 py-2 text-ink-muted">[ {g.label} ]</p>
+                <p aria-hidden className={`text-micro sticky top-0 border-b border-line bg-bg text-ink-muted ${pad} ${compact ? "py-1" : "py-2"}`}>[ {g.label} ]</p>
                 <ul className="divide-y divide-line border-b border-line">
                   {g.options.map((o) => {
                     const on = o.value === value;
@@ -136,7 +150,7 @@ export default function PlaceMenu({
                             close();
                             onSelect(o.value);
                           }}
-                          className={`${row} scroll-mt-8 ${on ? "bg-surface font-semibold" : ""}`}
+                          className={`${row} ${compact ? "scroll-mt-6" : "scroll-mt-8"} ${on ? "bg-surface font-semibold" : ""}`}
                         >
                           <span className="min-w-0 flex-1 truncate">{o.label}</span>
                           {on && <span aria-hidden className="h-2 w-2 shrink-0 bg-accent" />}

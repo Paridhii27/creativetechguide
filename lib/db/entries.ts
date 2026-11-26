@@ -4,7 +4,7 @@ import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAnonClient, type SupabaseClient } from "@supabase/supabase-js";
 import { isSupabaseConfigured, SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/supabase/env";
-import { SECTIONS, TOOL_KIND, type Country, type Discipline, type Entry, type EntryType, type Geo, type Place, type Region, type Relevance } from "@/lib/types";
+import { SECTIONS, sectionForEntry, TOOL_KIND, type Country, type Discipline, type Entry, type EntryType, type Geo, type MapPoint, type Place, type Region, type Relevance } from "@/lib/types";
 
 export interface BrowseFilters {
   type?: EntryType;
@@ -249,3 +249,32 @@ export async function listPublicEntriesForSitemap(): Promise<Pick<Entry, "id" | 
   }
   return out;
 }
+
+const readMapPoints = cachedReference("map-points-v1", async (supabase): Promise<MapPoint[]> => {
+  const cities = new Map<string, MapPoint>();
+  // Page through in chunks of 1000 (PostgREST's default cap).
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await supabase
+      .from("entries")
+      .select("type,city,country,lat,lng,kind:data->>resource_kind")
+      .eq("visibility", "public")
+      .eq("status", "approved")
+      .not("lat", "is", null)
+      .not("lng", "is", null)
+      .not("city", "is", null)
+      .order("id")
+      .range(from, from + 999);
+    if (error) throw new Error(`map points query failed: ${error.message}`);
+    for (const e of data ?? []) {
+      const key = `${e.city}|${e.country}`;
+      const p = cities.get(key) ?? { city: e.city as string, country: (e.country as string | null) ?? "", lat: Number(e.lat), lng: Number(e.lng), counts: {} };
+      const section = sectionForEntry({ type: e.type as EntryType, data: { resource_kind: e.kind } }).slug;
+      p.counts[section] = (p.counts[section] ?? 0) + 1;
+      cities.set(key, p);
+    }
+    if ((data?.length ?? 0) < 1000) return [...cities.values()];
+  }
+});
+
+/** Public entries gathered by city (main place only), for the home page globe. */
+export const getMapPoints = () => orFallback(readMapPoints, []);

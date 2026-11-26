@@ -1,13 +1,14 @@
 import Link from "next/link";
 import EntryIndex from "@/components/EntryIndex";
-import { AnnotationBox, Specimen } from "@/components/ui/hud";
-import { Globe } from "@/components/ui/Globe";
+import Meanings from "@/components/Meanings";
+import FieldGlobe from "@/components/FieldGlobe";
 import { Accent } from "@/components/ui/layout";
 import { BracketLabel, Mark } from "@/components/ui/primitives";
-import { browseEntries, countBySection } from "@/lib/db/entries";
+import { browseEntries, countBySection, getMapPoints } from "@/lib/db/entries";
 import { mySavedIds } from "@/lib/db/mylayer";
 import { addDays, daysUntil } from "@/lib/dates";
 import { resolveLens } from "@/lib/lens-server";
+import { isPlaceLens } from "@/lib/lens";
 import { sectionSwatch } from "@/lib/swatch";
 import { SECTIONS } from "@/lib/types";
 
@@ -24,8 +25,9 @@ const BLURB: Record<string, string> = {
 /** Home: specimen hero (visual-direction reference), section index, and the next 60 days of deadlines. */
 export default async function Home({ searchParams }: { searchParams: Promise<{ lens?: string }> }) {
   const lens = await resolveLens((await searchParams).lens);
-  const [counts, savedIds, deadlines] = await Promise.all([
+  const [counts, points, savedIds, deadlines] = await Promise.all([
     countBySection(),
+    getMapPoints(),
     mySavedIds(),
     Promise.all(
       (["opportunity", "job", "program"] as const).map((type) => browseEntries({ type, lens: lens.slug, dateFrom: addDays(0), dateTo: addDays(60), limit: 6 })),
@@ -42,11 +44,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
     <div className="flex flex-col gap-20">
       {/* HERO ------------------------------------------------------------- */}
       <section className="grid items-end gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,34rem)]">
-        <div>
+        <div className="@container">
           <BracketLabel className="text-ink-muted">Lens — {lens.label}</BracketLabel>
-          <h1 className="text-display-l mt-5 text-ink">
-            A field guide to <Accent>creative technology</Accent>
+          {/* Also capped to the column's width, so "Technology" never runs into the globe. */}
+          <h1 className="text-display-l mt-5 text-ink [font-size:min(clamp(48px,31.1px+4.51vw,96px),14cqw)]">
+            <Accent>A map of</Accent> <span className="block">Creative technology</span>
           </h1>
+          <Meanings lens={lens.slug} />
           <p className="text-body-l mt-6 max-w-xl text-ink-muted">
             Studios, programmes, jobs, open calls, publications and events in experience design and design technology. Pick a country or
             region in the lens to see what&apos;s based there or open to applicants from there.
@@ -57,35 +61,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
             until you suggest it to the Map.
           </p>
         </div>
-        <Specimen
-          label="The field"
-          aspect="1/1"
-          coords={lens.kind === "global" ? "All regions" : `Lens · ${lens.label}`}
-          annotations={[
-            {
-              id: "map",
-              swatch: 5,
-              anchor: { x: 40, y: 34 },
-              to: { x: 24, y: 16 },
-              via: { x: 24, y: 34 },
-              box: { x: 4, y: 8, w: 40 },
-              content: <AnnotationBox title="On the Map" swatch={5} rows={[{ label: "Entries", value: total.toLocaleString("en") }, { label: "Sections", value: SECTIONS.length }]} />,
-            },
-            {
-              id: "week",
-              swatch: 1,
-              anchor: { x: 62, y: 60 },
-              to: { x: 78, y: 76 },
-              via: { x: 78, y: 60 },
-              box: { x: 56, y: 76, w: 40 },
-              content: (
-                <AnnotationBox title="Closing" swatch={1} rows={[{ label: "This week", value: thisWeek }, { label: "60 days", value: upcoming.length }]} />
-              ),
-            },
-          ]}
-        >
-          <Globe />
-        </Specimen>
+        <FieldGlobe
+          key={lens.slug}
+          points={points}
+          total={total}
+          closing={{ week: thisWeek, sixtyDays: upcoming.length }}
+          lens={lens.slug}
+          lensLabel={lens.kind === "global" ? "All regions" : `Lens · ${lens.label}`}
+          home={isPlaceLens(lens) ? lens.homeCountries : []}
+        />
       </section>
 
       {/* SECTIONS --------------------------------------------------------- */}
