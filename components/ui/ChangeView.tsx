@@ -70,10 +70,7 @@ export function ChangeView({ className = "" }: { className?: string }) {
 
   return (
     <div className={`inline-flex items-center gap-2 ${className}`}>
-      <span id="view-mode-label" className="text-micro hidden text-ink-muted sm:inline">
-        View
-      </span>
-      <div role="radiogroup" aria-labelledby="view-mode-label" onKeyDown={onKeyDown} className="inline-flex h-7 rounded-full border border-line p-0.5">
+      <div role="radiogroup" aria-label="View" onKeyDown={onKeyDown} className="inline-flex h-8 flex-1 rounded-full border border-line p-0.5">
         {VIEW_MODES.map((m) => {
           const on = mode === m;
           return (
@@ -86,7 +83,7 @@ export function ChangeView({ className = "" }: { className?: string }) {
               tabIndex={on || (!mode && m === "paper") ? 0 : -1}
               title={PREVIEW[m].hint}
               onClick={() => choose(m)}
-              className={`text-tag inline-flex items-center gap-1.5 rounded-full px-2 transition-colors sm:px-2.5 ${on ? "bg-ink text-bg" : "text-ink-muted hover:text-ink"}`}
+              className={`text-tag inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-2 transition-colors sm:px-2.5 ${on ? "bg-ink text-bg" : "text-ink-muted hover:text-ink"}`}
             >
               <ModeChip mode={m} />
               {VIEW_MODE_LABELS[m]}

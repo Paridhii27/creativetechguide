@@ -34,7 +34,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       <div className="max-w-3xl">
         <form className="flex gap-2" action="/search">
           <input type="hidden" name="lens" value={lens.slug} />
-          <SearchField name="q" size="l" className="min-w-0 flex-1" defaultValue={q} autoFocus placeholder="Studios, programmes, tools, cities…" aria-label="Search" />
+          <SearchField key={q} name="q" size="l" className="min-w-0 flex-1" defaultValue={q} autoFocus placeholder="Studios, programmes, tools, cities…" aria-label="Search" />
           <button className="text-label shrink-0 rounded-full border border-ink bg-ink px-5 text-bg transition-colors hover:bg-transparent hover:text-ink">Search</button>
         </form>
         {q && (

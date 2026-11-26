@@ -11,7 +11,7 @@ export default function NavLink({ href, children, className = "" }: { href: stri
     <Link
       href={lens ? `${href}?lens=${lens}` : href}
       aria-current={active ? "page" : undefined}
-      className={`text-nav-s whitespace-nowrap border-b-2 pb-3 text-ink transition-colors ${active ? "border-accent" : "border-transparent hover:border-line"} ${className}`}
+      className={`text-nav-s whitespace-nowrap border-b-2 pb-5 text-ink transition-colors ${active ? "border-accent" : "border-transparent hover:border-line"} ${className}`}
     >
       {children}
     </Link>

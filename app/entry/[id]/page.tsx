@@ -10,7 +10,7 @@ import EntryList from "@/components/EntryList";
 import EntryActions from "@/components/EntryActions";
 import { getCurrentUser } from "@/lib/db/profiles";
 import { getUserState, isAdmin } from "@/lib/db/mylayer";
-import { getEntriesByIds, getEntry, getFxTable, getRelatedEntries, getToolResources } from "@/lib/db/entries";
+import { getDisciplines, getEntriesByIds, getEntry, getFxTable, getRelatedEntries, getToolResources } from "@/lib/db/entries";
 import { formatDate } from "@/lib/dates";
 import { entryJsonLd, isIndexable, jsonLdScript, SITE_NAME } from "@/lib/seo";
 import { entryPicture } from "@/lib/icon";
@@ -152,7 +152,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const title = e.title.replace(/^\[Demo\]\s*/, "");
   const description = e.summary ?? `${sectionForEntry(e).singular}${locationLabel(e) ? ` · ${locationLabel(e)}` : ""} on the ${SITE_NAME}.`;
   return {
-    title,
+    // The browser tab names the site, not the entry, so it's easy to find your way back among other tabs.
+    // Link previews (openGraph, twitter) still carry the entry's own name.
+    title: { absolute: "Map of Creative Technology" },
     description,
     alternates: { canonical: `/entry/${e.id}` },
     robots: isIndexable(e) ? undefined : { index: false, follow: false },
@@ -168,14 +170,16 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
   const lens = await resolveLens(sp.lens);
   const d = e.data;
   const linkIds = [d.organisation_id, d.institution_id, d.submission_opportunity_id, d.tool_id].filter((x): x is string => typeof x === "string");
-  const [fx, linked, related, user, userState, admin] = await Promise.all([
+  const [fx, linked, related, user, userState, admin, disciplines] = await Promise.all([
     getFxTable(),
     getEntriesByIds(linkIds),
     e.type === "organisation" ? getRelatedEntries(e.id) : isTool(e) ? getToolResources(e.id) : Promise.resolve([]),
     getCurrentUser(),
     getUserState(e.id),
     isAdmin(),
+    getDisciplines(),
   ]);
+  const disciplineLabel = new Map(disciplines.map((x) => [x.slug, x.label]));
   const section = sectionForEntry(e);
   const dateLabel = dateLabelFor(e.type);
   const applyUrl = (typeof d.apply_url === "string" && d.apply_url) || e.url;
@@ -235,7 +239,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
             {e.title.startsWith("[Demo]") && <Tag tone="muted">Demo</Tag>}
             {e.disciplines.map((t) => (
               <Link key={t} href={`/${section.slug}?discipline=${t}&lens=${lens.slug}`} className="transition-opacity hover:opacity-70">
-                <DisciplineTag name={t} label={humanize(t)} />
+                <DisciplineTag name={t} label={disciplineLabel.get(t) ?? humanize(t)} />
               </Link>
             ))}
           </div>

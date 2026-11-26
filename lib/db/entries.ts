@@ -1,4 +1,5 @@
 import "server-only";
+import { unstable_cache } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAnonClient } from "@supabase/supabase-js";
 import { isSupabaseConfigured, SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/supabase/env";
@@ -157,14 +158,33 @@ export async function getDisciplines(): Promise<Discipline[]> {
   return (data ?? []) as Discipline[];
 }
 
-/** Latest INR rate per currency. */
+/**
+ * Rates change once a day, so they're kept in Next's data cache and shared by every visitor, not read again on each
+ * page. A signed-out client because a cached read can't depend on cookies; anyone may read fx_rates. A failed read
+ * throws, so it is never cached.
+ */
+const readFxTable = unstable_cache(
+  async (): Promise<FxTable> => {
+    const supabase = createAnonClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
+    const { data, error } = await supabase.from("fx_rates").select("currency,inr_per_unit,as_of").order("as_of", { ascending: false });
+    if (error) throw new Error(`fx_rates query failed: ${error.message}`);
+    const fx: FxTable = { INR: 1 };
+    for (const r of data ?? []) if (fx[r.currency] == null) fx[r.currency] = Number(r.inr_per_unit);
+    return fx;
+  },
+  ["fx-table"],
+  { revalidate: 3600 },
+);
+
+/** Latest INR rate per currency, at most an hour old. Without it, costs just show in their original currency. */
 export async function getFxTable(): Promise<FxTable> {
   if (!isSupabaseConfigured()) return { INR: 1 };
-  const supabase = await createClient();
-  const { data } = await supabase.from("fx_rates").select("currency,inr_per_unit,as_of").order("as_of", { ascending: false });
-  const fx: FxTable = { INR: 1 };
-  for (const r of data ?? []) if (fx[r.currency] == null) fx[r.currency] = Number(r.inr_per_unit);
-  return fx;
+  try {
+    return await readFxTable();
+  } catch (e) {
+    console.error(e);
+    return { INR: 1 };
+  }
 }
 
 /** Countries and regions for the lens picker and relevance rules. */

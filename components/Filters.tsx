@@ -13,8 +13,7 @@ const c = {
     "text-body-s mt-1.5 w-full appearance-none rounded-none border border-line bg-bg py-2 pr-7 pl-2.5 text-ink transition-colors hover:border-ink focus:border-ink",
   keyword: "block",
   actions: "flex items-center gap-2 border-t border-line pt-5",
-  apply: "text-label rounded-full border border-ink bg-ink px-3.5 py-1.5 text-bg transition-colors hover:bg-transparent hover:text-ink",
-  clear: "text-label rounded-full border border-transparent px-3.5 py-1.5 text-ink-muted hover:text-ink",
+  clear: "text-label py-1.5 text-ink-muted hover:text-ink",
 };
 
 function Select({ name, label, value, options }: { name: string; label: string; value: string; options: { value: string; label: string }[] }) {
@@ -92,8 +91,7 @@ export default function Filters({
         />
       )}
       <div className={c.actions}>
-        <button className={c.apply}>Apply</button>
-        <a href={`?lens=${lens.slug}`} className={c.clear}>Clear</a>
+        <a href={`?lens=${lens.slug}`} className={c.clear}>Clear filters</a>
       </div>
     </AutoSubmit>
   );

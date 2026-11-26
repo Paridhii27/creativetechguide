@@ -164,6 +164,33 @@ describe.skipIf(!configured)("RLS", () => {
     });
   });
 
+  describe("removing things", () => {
+    it("only admins can archive or delete what's on the Map, even for the person who added it", async () => {
+      // alicePrivate was approved above, so it's now a public entry that alice owns.
+      for (const client of [alice, bob]) {
+        for (const id of [ids.alicePrivate, ids.publicApproved]) {
+          await client.from("entries").update({ status: "archived" }).eq("id", id);
+          await client.from("entries").delete().eq("id", id);
+        }
+      }
+      const { data } = await service.from("entries").select("status").in("id", [ids.alicePrivate, ids.publicApproved]);
+      expect(data).toEqual([{ status: "approved" }, { status: "approved" }]);
+    });
+    it("a user can delete their own private entry", async () => {
+      const { data: mine } = await bob.from("entries").insert(entry({ owner_id: ids.bob })).select("id").single();
+      createdEntries.push(mine!.id);
+      expect((await bob.from("entries").delete().eq("id", mine!.id)).error).toBeNull();
+      expect((await service.from("entries").select("id").eq("id", mine!.id)).data).toHaveLength(0);
+    });
+    it("removing a save from your layer leaves the entry on the Map", async () => {
+      const state = { user_id: ids.bob, entry_id: ids.publicApproved };
+      expect((await bob.from("user_entry_state").upsert({ ...state, saved: true }, { onConflict: "user_id,entry_id" })).error).toBeNull();
+      expect((await bob.from("user_entry_state").upsert({ ...state, saved: false }, { onConflict: "user_id,entry_id" })).error).toBeNull();
+      expect((await bob.from("user_entry_state").select("saved").eq("entry_id", ids.publicApproved)).data).toEqual([{ saved: false }]);
+      expect((await anon.from("entries").select("id").eq("id", ids.publicApproved)).data).toHaveLength(1);
+    });
+  });
+
   describe("My Layer", () => {
     it("user_entry_state is private to its owner", async () => {
       const { error } = await alice.from("user_entry_state").insert({ user_id: ids.alice, entry_id: ids.publicApproved, saved: true, note: "secret" });

@@ -30,16 +30,16 @@ export default function LensSwitch({ fallback, geo }: { fallback: string; geo: G
   }
 
   // Same outer height as the My Layer pill beside it (border + 2px inset + a py-1 segment = its py-1.5).
-  const pill = (active: boolean) => `${segmentClass(active)} flex h-full items-center py-0! px-3.5!`;
+  const pill = (active: boolean) => `${segmentClass(active)} flex h-full flex-auto items-center justify-center py-0! px-3.5!`;
 
   return (
     <div className="flex items-center gap-3">
       {/* No visible "Lens" label: Global / a place reads on its own; the tooltip and aria-label explain it. */}
-      <div role="group" aria-label="Geographic lens" title="Lens: see the field globally, or from one country or region" className={`flex h-8 items-center rounded-full border border-line p-0.5 transition-opacity ${pending ? "opacity-60" : ""}`}>
+      <div role="group" aria-label="Geographic lens" title="Lens: see the field globally, or from one country or region" className={`flex h-8 flex-1 items-center rounded-full border border-line p-0.5 transition-opacity ${pending ? "opacity-60" : ""}`}>
         <button type="button" aria-pressed={isGlobal} onClick={() => choose("global")} className={pill(isGlobal)}>
           Global
         </button>
-        <label className={`relative flex max-w-48 cursor-pointer items-center gap-1 ${pill(!isGlobal)}`}>
+        <label className={`relative flex min-w-0 max-w-56 cursor-pointer gap-1 ${pill(!isGlobal)}`}>
           <span className="truncate">{place ?? "Choose a place"}</span>
           <span aria-hidden className="text-body-s leading-none opacity-70">▾</span>
           <select

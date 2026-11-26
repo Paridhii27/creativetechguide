@@ -14,7 +14,7 @@ interface Props {
   visibility: Visibility;
   /** My Layer rows: hide the Save toggle (your own entries are always in your layer). */
   compact?: boolean;
-  /** shown on My Layer itself: no "In My Layer" link */
+  /** shown on My Layer itself: no "In My Layer" link, and the save toggle reads as removal */
   inLayer?: boolean;
 }
 
@@ -50,7 +50,8 @@ export default function EntryActions({ entryId, signedIn, saved: initialSaved, i
         )}
         {!compact && <button
           disabled={pending}
-          className={saved ? solid : btn}
+          title={saved ? "Remove from My Layer. The entry itself isn't changed." : undefined}
+          className={saved && !inLayer ? solid : btn}
           onClick={() =>
             run(async () => {
               const err = await toggleSavedAction(entryId, !saved);
@@ -59,7 +60,7 @@ export default function EntryActions({ entryId, signedIn, saved: initialSaved, i
             })
           }
         >
-          {saved ? "Saved ✓" : "Save to My Layer"}
+          {saved ? (inLayer ? "Remove from My Layer" : "Saved ✓") : "Save to My Layer"}
         </button>}
         {!compact && saved && !inLayer && (
           <Link href="/me?view=saved" className={btn}>

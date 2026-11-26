@@ -22,7 +22,7 @@ interface UnfurlResult {
   error?: string;
 }
 
-export default function AddForm({ initialUrl, places, countries, disciplines, tools, initialTool, isAdmin }: { initialUrl: string; places: Place[]; countries: string[]; disciplines: Discipline[]; tools: string[]; initialTool?: string; isAdmin: boolean }) {
+export default function AddForm({ initialUrl, places, countries, disciplines, tools, initialTool, isAdmin, inline }: { initialUrl: string; places: Place[]; countries: string[]; disciplines: Discipline[]; tools: string[]; initialTool?: string; isAdmin: boolean; /** Embedded in another page (My Layer) rather than on /add. */ inline?: boolean }) {
   const [url, setUrl] = useState(initialUrl);
   const [fetching, setFetching] = useState(false);
   const [result, setResult] = useState<UnfurlResult | null>(null);
@@ -50,6 +50,13 @@ export default function AddForm({ initialUrl, places, countries, disciplines, to
     } finally {
       setFetching(false);
     }
+  }
+
+  function reset() {
+    setUrl("");
+    setResult(null);
+    setShowForm(false);
+    setSavedDup(null);
   }
 
   useEffect(() => {
@@ -94,16 +101,16 @@ export default function AddForm({ initialUrl, places, countries, disciplines, to
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://… a studio, programme, job, open call, event or article"
           aria-label="Link"
-          autoFocus={!initialUrl}
+          autoFocus={!initialUrl && !inline}
           className="field text-body"
         />
         <div className="flex gap-2">
           <button disabled={fetching || !url.trim()} className="text-label whitespace-nowrap rounded-full border border-ink bg-ink px-4 py-2 text-bg transition-colors hover:bg-transparent hover:text-ink disabled:opacity-50">
-            {fetching ? "Fetching…" : "Fetch details"}
+            {fetching ? "Fetching…" : "Add"}
           </button>
-          {!showForm && (
-            <button type="button" onClick={() => setShowForm(true)} className="text-label whitespace-nowrap rounded-full border border-ink px-4 py-2 text-ink transition-colors hover:bg-ink hover:text-bg">
-              Add by hand
+          {inline && (showForm || result) && (
+            <button type="button" onClick={reset} className="text-label whitespace-nowrap px-2 py-2 text-ink-muted underline hover:text-ink">
+              Cancel
             </button>
           )}
         </div>

@@ -26,7 +26,8 @@ export async function generateMetadata({ params }: { params: Promise<{ section: 
   const s = sectionForSlug((await params).section);
   if (!s) return { title: "Not found", robots: { index: false } };
   // Filtered and lens views share one canonical URL, so search engines index the section once.
-  return { title: s.label, description: INTRO[s.slug], alternates: { canonical: `/${s.slug}` }, openGraph: { title: s.label, description: INTRO[s.slug], url: `/${s.slug}` } };
+  // The tab shows just the section name, without the site suffix.
+  return { title: { absolute: s.label }, description: INTRO[s.slug], alternates: { canonical: `/${s.slug}` }, openGraph: { title: s.label, description: INTRO[s.slug], url: `/${s.slug}` } };
 }
 
 export default async function SectionPage({ params, searchParams }: { params: Promise<{ section: string }>; searchParams: Promise<Params> }) {

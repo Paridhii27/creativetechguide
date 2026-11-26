@@ -51,7 +51,7 @@ const WEBSITE_JSON_LD = {
 
 /** Account pill in the top strip, matching the view-mode switch beside it (outlined, tag-size text, small icon). */
 const ACCOUNT_PILL =
-  "text-tag inline-flex h-7 items-center gap-1.5 rounded-full border border-line px-3 text-ink transition-colors hover:border-ink";
+  "text-tag inline-flex h-8 w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line px-3 text-ink transition-colors hover:border-ink";
 
 function UserIcon() {
   return (
@@ -75,7 +75,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <script dangerouslySetInnerHTML={{ __html: VIEW_MODE_SCRIPT }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(WEBSITE_JSON_LD) }} />
       </head>
-      <body className="min-h-screen">
+      <body className="flex min-h-screen flex-col">
         <DuotoneFilters />
         <header>
           <div className="mx-auto max-w-7xl px-4 sm:px-8">
@@ -87,7 +87,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   </Suspense>
                   {/* Your own things, grouped tight; the wider gap before them separates them from the lens. */}
                   <div className="flex items-center gap-2">
-                    <PillLink className="h-8 py-0!" href={user ? "/me" : "/login?next=/me"} title="Your saves, your own entries and what you've suggested to the Map">
+                    <PillLink className="h-8 flex-1 whitespace-nowrap py-0!" href={user ? "/me" : "/login?next=/me"} title="Your saves, your own entries and what you've suggested to the Map">
                       My Layer
                       {user && layerCount > 0 && <span className="text-tag -mr-1 rounded-full bg-accent px-1.5 py-px text-on-accent">{layerCount}</span>}
                     </PillLink>
@@ -145,7 +145,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </div>
         )}
         {user && <GlobalDrop />}
-        <main className="mx-auto max-w-7xl px-4 py-10 sm:px-8">{children}</main>
+        {/* Takes up any spare height, so the footer sits at the bottom of the screen on short pages too. */}
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-8">{children}</main>
         <footer className="mt-16 border-t border-line">
           <div className="text-micro mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-ink-muted sm:px-8">
             <span>Field Guide: Creative Technology. Entries are reviewed before going public.</span>

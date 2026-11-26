@@ -76,35 +76,38 @@ export function NavBar({
       {/* One masthead row: the two-line wordmark on the left, every control in a single right-hand column.
           The column's top line is the quiet settings corner (view mode, account); the line beneath holds the
           lens and your own things. Both lines end flush right, so the controls read as one block. */}
-      <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-5 pt-6 pb-5">
+      <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-8 pt-10 pb-11">
         <Wordmark stacked />
-        <div className="flex flex-col items-start gap-3 sm:items-end">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 sm:justify-end">
+        {/* From sm up the two lines share two columns, so each control lines up with the one under it. */}
+        <div className="flex flex-col items-start gap-3 sm:grid sm:grid-cols-[auto_auto] sm:gap-x-3">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 sm:col-span-2 sm:grid sm:grid-cols-subgrid sm:items-stretch">
             <ChangeView />
             {utility && <div className="flex items-center text-ink-muted">{utility}</div>}
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 sm:justify-end">
-            {lensLabel && <span className="text-micro text-ink-muted">Lens — {lensLabel}</span>}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 sm:col-span-2 sm:grid sm:grid-cols-subgrid sm:items-stretch">
+            {lensLabel && <span className="text-micro text-ink-muted sm:col-span-2">Lens — {lensLabel}</span>}
             {right}
           </div>
         </div>
       </div>
       {/* Section row: links wrap onto a second line rather than scroll; search keeps its own slot at the end. */}
       <div className="flex items-end justify-between gap-x-6">
-        <nav aria-label="Sections" className="-mb-px flex min-w-0 flex-1 flex-wrap gap-x-6 gap-y-1 xl:gap-x-8">
+        <nav aria-label="Sections" className="-mb-px flex min-w-0 flex-1 flex-wrap gap-x-6 gap-y-2 xl:gap-x-8">
           {nav}
           {!nav && items.map((i) => (
             <Link
               key={i.href}
               href={i.href}
               aria-current={i.active ? "page" : undefined}
-              className={`text-nav-s whitespace-nowrap border-b-2 pb-3 transition-colors ${i.active ? "border-accent text-ink" : "border-transparent text-ink hover:border-line"}`}
+              className={`text-nav-s whitespace-nowrap border-b-2 pb-5 transition-colors ${i.active ? "border-accent text-ink" : "border-transparent text-ink hover:border-line"}`}
             >
               {i.label}
             </Link>
           ))}
         </nav>
-        {search && <div className="relative z-10 mb-2 shrink-0">{search}</div>}
+        {/* A box as tall as one line of link text, lifted by the links' bottom padding and underline (less the nav's -1px),
+            so whatever height the search is, it centres on the text. */}
+        {search && <div className="relative z-10 mb-[21px] flex h-[1.05rem] shrink-0 items-center">{search}</div>}
       </div>
     </div>
   );

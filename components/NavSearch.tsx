@@ -29,7 +29,7 @@ export default function NavSearch() {
   const root = useRef<HTMLFormElement>(null);
   const input = useRef<HTMLInputElement>(null);
 
-  const [q, setQ] = useState(pathname === "/search" ? (params.get("q") ?? "") : "");
+  const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
   const [results, setResults] = useState<Result[]>([]);
   const [hasMore, setHasMore] = useState(false);
@@ -40,6 +40,12 @@ export default function NavSearch() {
   const openAndFocus = () => {
     setOpen(true);
     requestAnimationFrame(() => input.current?.focus());
+  };
+
+  // A search is over once you've gone somewhere with it or dismissed it: the field starts empty next time.
+  const finish = () => {
+    setOpen(false);
+    setQ("");
   };
 
   const term = q.trim();
@@ -74,11 +80,11 @@ export default function NavSearch() {
     };
   }, [term, lens]);
 
-  // Close on navigation and on clicks outside.
-  useEffect(() => setOpen(false), [pathname, params]);
+  // Finish on navigation and on clicks outside.
+  useEffect(finish, [pathname, params]);
   useEffect(() => {
     const onDown = (e: MouseEvent) => {
-      if (!root.current?.contains(e.target as Node)) setOpen(false);
+      if (!root.current?.contains(e.target as Node)) finish();
     };
     const onKey = (e: KeyboardEvent) => {
       const el = e.target as HTMLElement;
@@ -99,7 +105,7 @@ export default function NavSearch() {
   // Options: each result, then "See all results".
   const count = results.length + 1;
   const go = (href: string) => {
-    setOpen(false);
+    finish();
     input.current?.blur();
     router.push(href);
   };
@@ -108,7 +114,7 @@ export default function NavSearch() {
     if (e.key === "Escape") {
       // Stop the browser's own "clear the search field" on Escape: its input event would reopen the panel.
       e.preventDefault();
-      setOpen(false);
+      finish();
       // Below xl the field is about to hide: hand focus back to the button that opened it.
       if (toggle.current && getComputedStyle(toggle.current).display !== "none") toggle.current.focus();
       else input.current?.blur();
@@ -202,7 +208,7 @@ export default function NavSearch() {
             <ul id={listId} role="listbox" aria-label="Search results" className="divide-y divide-line">
               {results.map((r, i) => (
                 <li key={r.id} id={optionId(i)} role="option" aria-selected={active === i}>
-                  <Link href={`/entry/${r.id}`} className={row(i)} onMouseEnter={() => setActive(i)} onClick={() => setOpen(false)}>
+                  <Link href={`/entry/${r.id}`} className={row(i)} onMouseEnter={() => setActive(i)} onClick={finish}>
                     <Mark swatch={r.swatch} size={8} className="mt-1.5" />
                     <span className="min-w-0">
                       <span className="text-body-s block truncate font-semibold text-ink">{r.title}</span>
@@ -222,7 +228,7 @@ export default function NavSearch() {
                   href={allHref}
                   className={`text-label flex items-center justify-between gap-3 px-4 py-3 text-ink ${active === results.length ? "bg-surface" : "hover:bg-surface"}`}
                   onMouseEnter={() => setActive(results.length)}
-                  onClick={() => setOpen(false)}
+                  onClick={finish}
                 >
                   <span className="truncate">See all results for &ldquo;{term}&rdquo;</span>
                   <span aria-hidden>→</span>
