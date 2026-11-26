@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { saveEntryAction, toggleSavedAction } from "@/app/actions/entries";
 import EntryEditor, { type FormValues } from "@/components/EntryEditor";
 import { guessType, suggestionsToFormValues, type Suggested } from "@/lib/extract";
+import { linkProblem, withScheme } from "@/lib/links";
 import type { Discipline, Place } from "@/lib/types";
 
 interface Page {
@@ -32,21 +33,23 @@ export default function AddForm({ initialUrl, places, countries, disciplines, to
 
   async function fetchUrl(target = url) {
     if (!target.trim()) return;
-    let u = target.trim();
-    if (!/^https?:\/\//i.test(u)) u = `https://${u}`;
+    const u = withScheme(target);
+    const problem = linkProblem(u);
+    setResult(problem ? { page: null, existing: null, error: problem } : null);
+    setShowForm(false);
+    if (problem) return;
     setUrl(u);
     setFetching(true);
-    setResult(null);
     try {
       const res = await fetch("/api/unfurl", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ url: u }) });
       const json = (await res.json()) as UnfurlResult;
-      setResult(res.ok ? json : { page: null, existing: null, error: json.error ?? "Couldn't fetch that link." });
+      setResult(res.ok ? json : { page: null, existing: null, error: json.error ?? "Something went wrong. Please try again." });
       if (res.ok) {
         setShowForm(!json.existing);
       }
     } catch {
-      setResult({ page: null, existing: null, warning: "Couldn't reach that page. You can still add it by hand." });
-      setShowForm(true);
+      // Our own server didn't answer, so the link hasn't been checked yet.
+      setResult({ page: null, existing: null, error: "We couldn't check that link. Check your connection and try again." });
     } finally {
       setFetching(false);
     }
@@ -116,7 +119,7 @@ export default function AddForm({ initialUrl, places, countries, disciplines, to
         </div>
       </form>
 
-      {result?.error && <p className="text-body-s text-accent-text">{result.error}</p>}
+      {result?.error && <p role="alert" className="text-body-s text-accent-text">{result.error}</p>}
       {result?.warning && <p className="text-body-s text-ink-muted">{result.warning} Fill in the details below.</p>}
 
       {duplicate && (

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { isPrivateAddress, normaliseUrl, parseHtml } from "@/lib/unfurl";
+import { badLinkMessage, isPrivateAddress, normaliseUrl, parseHtml, UnfurlError, unreadableLinkMessage } from "@/lib/unfurl";
+import { linkProblem, withScheme } from "@/lib/links";
 import { EntryForm, buildData, formDataToObject } from "@/lib/entry-input";
 
 describe("unfurl parser", () => {
@@ -45,6 +46,23 @@ describe("normaliseUrl", () => {
   it("drops tracking params and the bare trailing slash, lowercases host", () => {
     expect(normaliseUrl("https://Example.COM/?utm_source=x")).toBe("https://example.com");
     expect(normaliseUrl("https://example.com/jobs/1?ref=hn&id=2")).toBe("https://example.com/jobs/1?id=2");
+  });
+});
+
+describe("link checks", () => {
+  it.each(["asdfgh", "hello world", "www", "foo..com", "example.123", "mailto:a@b.com", "javascript:alert(1)", "ftp://example.com", "http://", "localhost:3000"])("turns away %s", (raw) => {
+    expect(linkProblem(withScheme(raw))).toBeTruthy();
+  });
+  it.each(["example.com", "https://sub.example.co.in/jobs?id=1#apply", "example.com:8080/x", "https://münchen.de", "http://example.museum."])("accepts %s", (raw) => {
+    expect(linkProblem(withScheme(raw))).toBeNull();
+  });
+  it("blocks missing sites and pages, but not pages that merely wouldn't load", () => {
+    expect(badLinkMessage(new UnfurlError("x", "no_such_host"))).toBeTruthy();
+    expect(badLinkMessage(new UnfurlError("x", "http", 404))).toBeTruthy();
+    for (const e of [new UnfurlError("x", "http", 403), new UnfurlError("x", "http", 503), new TypeError("fetch failed")]) {
+      expect(badLinkMessage(e)).toBeNull();
+      expect(unreadableLinkMessage(e)).not.toMatch(/fetch|HTTP|\d{3}/);
+    }
   });
 });
 

@@ -30,6 +30,9 @@ export function PageTitle({ eyebrow, kicker, title, meta, aside }: { eyebrow?: R
   );
 }
 
+/** The list pages' grid: a narrow left column for notes or controls, content in the wide one. Stacks below lg. */
+export const SIDEBAR_GRID = "grid gap-y-8 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-x-28 xl:gap-x-36";
+
 /* Segmented pill toggle (lens toggle, bento toggles). Active option is a solid accent fill. */
 
 export function segmentClass(active: boolean) {

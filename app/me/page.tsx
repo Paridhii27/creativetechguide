@@ -5,7 +5,6 @@ import EntryList from "@/components/EntryList";
 import EntryActions from "@/components/EntryActions";
 import LayerInsights from "@/components/LayerInsights";
 import AddForm from "@/app/add/AddForm";
-import Bookmarklet from "@/components/Bookmarklet";
 import { Accent, PageTitle } from "@/components/ui/layout";
 import { BracketLabel, Mark } from "@/components/ui/primitives";
 import { getCountryNames, getDisciplines, getPlaces, getToolNames } from "@/lib/db/entries";
@@ -117,7 +116,7 @@ export default async function MyLayerPage({ searchParams }: { searchParams: Prom
           {/* Keyed on the last saved entry so the form clears once a save lands back here. */}
           <AddForm key={sp.added ?? "new"} inline initialUrl="" places={places} countries={countries} disciplines={disciplines} tools={tools} isAdmin={admin} />
           <p className="text-body-s mt-3 text-ink-muted">
-            Or paste or drop a link anywhere on the site, press <kbd className="text-tag border border-line px-1.5 py-0.5 text-ink">N</kbd>, or drag <Bookmarklet /> to your bookmarks bar.
+            You can also paste or drop a link anywhere on the site. Shortcut: <kbd className="text-tag border border-line px-1.5 py-0.5 text-ink">N</kbd>
           </p>
         </div>
       </section>

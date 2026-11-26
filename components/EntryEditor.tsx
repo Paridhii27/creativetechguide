@@ -1,5 +1,5 @@
 "use client";
-import { useActionState, useRef, useState } from "react";
+import { startTransition, useActionState, useRef, useState } from "react";
 import type { SaveState } from "@/app/actions/entries";
 import { Monogram } from "@/components/Monogram";
 import { defaultIconChoice, type IconChoice } from "@/lib/icon";
@@ -212,7 +212,15 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
   const moreHasError = more.some((s) => namesOf(s).some((n) => errors[n]));
 
   return (
-    <form action={formAction} className="space-y-8">
+    // Submitted by hand: with `action={formAction}` React clears the fields even when the save is refused.
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const fd = new FormData(e.currentTarget);
+        startTransition(() => formAction(fd));
+      }}
+      className="space-y-8"
+    >
       {Object.entries(hidden).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
 
       <fieldset className="space-y-3">

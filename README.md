@@ -2,7 +2,7 @@
 
 A directory and research tool for creative technology, experience design and design-technology work, seen through a **geographic lens**: Global, or any country or region. See `CLAUDE.md` for the full brief and milestones.
 
-**Status:** M1 done. M2 partly done: add entries from a URL (`/add`, drop/paste a link anywhere, press **N**, or the bookmarklet on `/me`), My Layer (`/me`), save, suggest to the Map, duplicate check, and an admin review queue (`/admin/review`).
+**Status:** M1 done. M2 partly done: add entries from a URL (`/add`, drop/paste a link anywhere, or press **N**), My Layer (`/me`), save, suggest to the Map, duplicate check, and an admin review queue (`/admin/review`).
 Not yet: Claude classification (`/api/classify`, needs `ANTHROPIC_API_KEY`), multi-item pages, notes, personal tags, collections and application tracking.
 
 ## Adding entries

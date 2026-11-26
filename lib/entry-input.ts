@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ICON_CHOICES } from "./icon";
+import { linkProblem } from "./links";
 import { ENTRY_TYPES, KINDS, type EntryType } from "./types";
 
 /** Form → entry. Every type-specific field is optional; unknowns stay unknown (never invented). */
@@ -8,7 +9,12 @@ const opt = z
   .trim()
   .transform((s) => (s === "" ? undefined : s))
   .optional();
-const optUrl = opt.refine((v) => !v || /^https?:\/\/\S+$/i.test(v), "Must be a full http(s) link");
+const optUrl = opt.superRefine((v, ctx) => {
+  const problem = v ? linkProblem(v) : null;
+  if (problem) ctx.addIssue({ code: "custom", message: problem });
+});
+/** Pictures come from the fetched page, not the user, so they only need to be web links. */
+const optImageUrl = opt.refine((v) => !v || /^https?:\/\/\S+$/i.test(v), "Must be a full http(s) link");
 const optDate = opt.refine((v) => !v || /^\d{4}-\d{2}-\d{2}$/.test(v), "Use YYYY-MM-DD");
 const optNum = opt.refine((v) => !v || Number.isFinite(Number(v)), "Must be a number").transform((v) => (v ? Number(v) : undefined));
 const triState = z.enum(["yes", "no", "unknown"]).catch("unknown");
@@ -20,8 +26,8 @@ export const EntryForm = z
     url: optUrl,
     title: z.string().trim().min(2, "Give it a title").max(300),
     summary: opt.refine((v) => !v || v.length <= 1000, "Keep the summary under 1000 characters"),
-    image_url: optUrl,
-    favicon_url: optUrl,
+    image_url: optImageUrl,
+    favicon_url: optImageUrl,
     icon: z.enum(ICON_CHOICES).optional().catch(undefined),
     city: opt,
     country: opt,

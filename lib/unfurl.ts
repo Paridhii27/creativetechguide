@@ -120,6 +120,35 @@ export function parseHtml(html: string, baseUrl: string): Omit<Unfurled, "url"> 
   };
 }
 
+/** Why a link can't be added at all, in plain language, or null if the failure doesn't prove the link is wrong. */
+export function badLinkMessage(e: unknown): string | null {
+  if (!(e instanceof UnfurlError)) return null;
+  if (e.kind === "no_such_host") return "We couldn't find a website at that address. Check the spelling and try again.";
+  if (e.kind === "refused") return "That address isn't a public website, so it can't be added.";
+  if (e.kind === "http" && (e.status === 404 || e.status === 410)) return "That page doesn't exist on this website. Check the link and try again.";
+  return null;
+}
+
+/** Why a real-looking link couldn't be read, in plain language. The user can still fill the entry in by hand. */
+export function unreadableLinkMessage(e: unknown): string {
+  if (e instanceof UnfurlError) {
+    if (e.kind === "not_html") return "That link points to a file rather than a web page, so we couldn't read its details.";
+    if (e.kind === "http" && (e.status === 401 || e.status === 403 || e.status === 429)) return "That website didn't let us read the page.";
+  }
+  return "We couldn't open that page just now.";
+}
+
+/** A message if the link's website doesn't exist or isn't public. Only looks up the address; fetches nothing. */
+export async function websiteProblem(url: string): Promise<string | null> {
+  try {
+    await assertPublicUrl(new URL(url));
+    return null;
+  } catch (e) {
+    // A lookup that failed for some other reason (network trouble) shouldn't stop anyone saving.
+    return badLinkMessage(e);
+  }
+}
+
 /** Fetch a public page politely and extract metadata. Follows up to 5 redirects, re-checking each hop. */
 export async function unfurl(input: string): Promise<Unfurled> {
   let url = new URL(input);
