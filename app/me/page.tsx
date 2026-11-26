@@ -211,6 +211,7 @@ export default async function MyLayerPage({ searchParams }: { searchParams: Prom
                   compact={view !== "saved"}
                   inLayer
                   entryId={e.id}
+                  updatedAt={e.updated_at}
                   signedIn
                   saved
                   isOwner={e.owner_id === user.id}

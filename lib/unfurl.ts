@@ -24,17 +24,34 @@ export function isPrivateAddress(ip: string): boolean {
     const [a, b] = ip.split(".").map(Number);
     return a === 0 || a === 10 || a === 127 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127) || a >= 224;
   }
-  const v = ip.toLowerCase();
-  if (v.startsWith("::ffff:")) return isPrivateAddress(v.slice(7));
-  return v === "::" || v === "::1" || v.startsWith("fc") || v.startsWith("fd") || v.startsWith("fe80") || v.startsWith("ff");
+  // IPv6: allow only public (global unicast, 2000::/3) addresses. That refuses loopback, local, multicast and the
+  // forms that carry an IPv4 address inside them (::ffff:7f00:1, 64:ff9b::…, 6to4 2002::…) however they're written.
+  const first = parseInt(ip.split(":")[0] || "0", 16);
+  return !(first >= 0x2000 && first <= 0x3fff) || first === 0x2002;
+}
+
+/** Why a page couldn't be read, so callers can tell "gone" from "wouldn't let us in". */
+export class UnfurlError extends Error {
+  constructor(
+    message: string,
+    readonly kind: "http" | "not_html" | "no_such_host" | "refused" | "redirects",
+    readonly status?: number,
+  ) {
+    super(message);
+  }
 }
 
 async function assertPublicUrl(u: URL) {
-  if (u.protocol !== "http:" && u.protocol !== "https:") throw new Error("Only http and https links are supported.");
-  if (u.username || u.password) throw new Error("Links with credentials aren't supported.");
+  if (u.protocol !== "http:" && u.protocol !== "https:") throw new UnfurlError("Only http and https links are supported.", "refused");
+  if (u.username || u.password) throw new UnfurlError("Links with credentials aren't supported.", "refused");
   const host = u.hostname.replace(/^\[|\]$/g, "");
-  const addrs = isIP(host) ? [{ address: host }] : await lookup(host, { all: true });
-  if (addrs.length === 0 || addrs.some((a) => isPrivateAddress(a.address))) throw new Error("That address isn't publicly reachable.");
+  const addrs = isIP(host)
+    ? [{ address: host }]
+    : await lookup(host, { all: true }).catch((e: NodeJS.ErrnoException) => {
+        if (e.code === "ENOTFOUND") throw new UnfurlError("That website address doesn't exist.", "no_such_host");
+        throw e;
+      });
+  if (addrs.length === 0 || addrs.some((a) => isPrivateAddress(a.address))) throw new UnfurlError("That address isn't publicly reachable.", "refused");
 }
 
 const decode = (s: string) =>
@@ -117,9 +134,9 @@ export async function unfurl(input: string): Promise<Unfurled> {
       url = new URL(res.headers.get("location")!, url);
       continue;
     }
-    if (!res.ok) throw new Error(`The page answered with HTTP ${res.status}.`);
+    if (!res.ok) throw new UnfurlError(`The page answered with HTTP ${res.status}.`, "http", res.status);
     const type = res.headers.get("content-type") ?? "";
-    if (!/html|xml/i.test(type)) throw new Error("That link isn't a web page.");
+    if (!/html|xml/i.test(type)) throw new UnfurlError("That link isn't a web page.", "not_html");
     const reader = res.body?.getReader();
     const chunks: Uint8Array[] = [];
     let size = 0;
@@ -136,7 +153,7 @@ export async function unfurl(input: string): Promise<Unfurled> {
     const html = new TextDecoder().decode(Buffer.concat(chunks));
     return { url: url.toString(), ...parseHtml(html, url.toString()) };
   }
-  throw new Error("Too many redirects.");
+  throw new UnfurlError("Too many redirects.", "redirects");
 }
 
 /** Normalise for duplicate checks: lowercase host, drop default ports, trailing slash and tracking params. */

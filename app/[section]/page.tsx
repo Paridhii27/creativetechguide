@@ -48,11 +48,11 @@ export default async function SectionPage({ params, searchParams }: { params: Pr
     <div>
       <PageTitle
         title={section.label}
-        meta={section.kind ? undefined : <BracketLabel className="text-ink-muted">Lens — {lens.label}</BracketLabel>}
+        eyebrow={section.kind ? undefined : <BracketLabel className="text-ink-muted">Lens — {lens.label}</BracketLabel>}
         aside={<p className="text-body-l max-w-md text-ink-muted">{INTRO[section.slug]}</p>}
       />
       <div className="mb-10 border-t border-line" />
-      <div className={`grid gap-y-8 ${catalogue ? "lg:grid-cols-[13rem_minmax(0,64rem)] lg:gap-x-16 xl:gap-x-20" : "lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-x-28 xl:gap-x-36"}`}>
+      <div className={`group/browse grid gap-y-8 ${catalogue ? "lg:grid-cols-[13rem_minmax(0,64rem)] lg:gap-x-16 xl:gap-x-20" : "lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-x-28 xl:gap-x-36"}`}>
         <aside>
           <details className="group lg:hidden">
             <summary className="text-label flex cursor-pointer list-none items-center justify-between border-y border-line py-3 text-ink">
@@ -66,7 +66,8 @@ export default async function SectionPage({ params, searchParams }: { params: Pr
             <Filters type={section.type} kinds={kindsForSection(section)} params={sp} lens={lens} disciplines={disciplines} placeless={!!section.kind} />
           </div>
         </aside>
-        <div className="min-w-0">
+        {/* Dimmed while a filter change is loading (AutoSubmit marks its form). */}
+        <div className="min-w-0 transition-opacity group-has-data-pending/browse:opacity-50">
           {catalogue ? (
             <EntryCatalogue entries={entries} lens={lens} disciplines={disciplines} query={q} empty={empty} savedIds={savedIds} placeless={!!section.kind} />
           ) : (

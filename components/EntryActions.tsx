@@ -6,6 +6,8 @@ import type { Status, Visibility } from "@/lib/types";
 
 interface Props {
   entryId: string;
+  /** The entry's updated_at as shown on this page: reviewing only goes through if it hasn't changed since. */
+  updatedAt: string;
   signedIn: boolean;
   saved: boolean;
   isOwner: boolean;
@@ -18,7 +20,7 @@ interface Props {
   inLayer?: boolean;
 }
 
-export default function EntryActions({ entryId, signedIn, saved: initialSaved, isOwner, isAdmin, status, visibility, compact, inLayer }: Props) {
+export default function EntryActions({ entryId, updatedAt, signedIn, saved: initialSaved, isOwner, isAdmin, status, visibility, compact, inLayer }: Props) {
   const [saved, setSaved] = useState(initialSaved);
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
@@ -91,15 +93,15 @@ export default function EntryActions({ entryId, signedIn, saved: initialSaved, i
           </button>
         )}
         {isAdmin && status !== "approved" && (
-          <button disabled={pending} className={solid} onClick={() => run(() => reviewAction(entryId, "approved"))}>
+          <button disabled={pending} className={solid} onClick={() => run(() => reviewAction(entryId, "approved", updatedAt))}>
             {status === "pending_review" ? <>Approve &amp; publish</> : "Publish to the Map"}
           </button>
         )}
         {isAdmin && status === "pending_review" && (
-          <button disabled={pending} className={btn} onClick={() => run(() => reviewAction(entryId, "rejected"))}>Reject</button>
+          <button disabled={pending} className={btn} onClick={() => run(() => reviewAction(entryId, "rejected", updatedAt))}>Reject</button>
         )}
         {isAdmin && status === "approved" && (
-          <button disabled={pending} className={btn} onClick={() => confirm("Archive this entry? It will be hidden from the Map.") && run(() => reviewAction(entryId, "archived"))}>Archive</button>
+          <button disabled={pending} className={btn} onClick={() => confirm("Archive this entry? It will be hidden from the Map.") && run(() => reviewAction(entryId, "archived", updatedAt))}>Archive</button>
         )}
       </div>
       {error && <p className="text-body-s text-accent-text">{error}</p>}

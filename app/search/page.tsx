@@ -30,7 +30,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
   return (
     <div>
-      <PageTitle title="Search" meta={<BracketLabel className="text-ink-muted">Lens — {lens.label}</BracketLabel>} />
+      <PageTitle title="Search" eyebrow={<BracketLabel className="text-ink-muted">Lens — {lens.label}</BracketLabel>} />
       <div className="max-w-3xl">
         <form className="flex gap-2" action="/search">
           <input type="hidden" name="lens" value={lens.slug} />

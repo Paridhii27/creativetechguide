@@ -91,7 +91,10 @@ export default function Filters({
         />
       )}
       <div className={c.actions}>
-        <a href={`?lens=${lens.slug}`} className={c.clear}>Clear filters</a>
+        <a href={`?lens=${lens.slug}`} data-clear className={c.clear}>Clear filters</a>
+        <span role="status" className="text-tag ml-auto text-ink-muted">
+          <span className="hidden in-data-pending:inline">Updating…</span>
+        </span>
       </div>
     </AutoSubmit>
   );

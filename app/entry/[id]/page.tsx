@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { DeadlineChip, EligibilityBadge, dateLabelFor, locationLabel } from "@/components/Badges";
 import { AnnotationBox } from "@/components/ui/hud";
@@ -8,6 +9,8 @@ import { Thumb } from "@/components/ui/Thumb";
 import { entrySwatch } from "@/lib/swatch";
 import EntryList from "@/components/EntryList";
 import EntryActions from "@/components/EntryActions";
+import LinkChecks, { LinkChecksFrame } from "@/components/LinkChecks";
+import UnreviewedLink from "@/components/UnreviewedLink";
 import { getCurrentUser } from "@/lib/db/profiles";
 import { getUserState, isAdmin } from "@/lib/db/mylayer";
 import { getDisciplines, getEntriesByIds, getEntry, getFxTable, getRelatedEntries, getToolResources } from "@/lib/db/entries";
@@ -31,7 +34,7 @@ function money(v: unknown, lens: Lens, fx: FxTable): string | null {
   return conv ? `${orig} (${conv})` : orig;
 }
 
-function facts(e: Entry, lens: Lens, fx: FxTable, linked: Record<string, Entry>): Fact[] {
+function facts(e: Entry, lens: Lens, fx: FxTable, linked: Record<string, Entry>, unreviewed: boolean): Fact[] {
   const d = e.data;
   const link = (id: unknown) => {
     const o = typeof id === "string" ? linked[id] : undefined;
@@ -43,7 +46,7 @@ function facts(e: Entry, lens: Lens, fx: FxTable, linked: Record<string, Entry>)
         ["Kind", str(d.org_kind)],
         ["Size", str(d.size)],
         ["Hires design technologists", d.hires_design_technologists == null ? null : yesNo(d.hires_design_technologists)],
-        ["Careers", typeof d.careers_url === "string" ? <a href={d.careers_url} className="underline" rel="noopener">{d.careers_url}</a> : null],
+        ["Careers", typeof d.careers_url !== "string" ? null : unreviewed ? <UnreviewedLink url={d.careers_url} label="Careers page" /> : <a href={d.careers_url} className="underline" rel="noopener">{d.careers_url}</a>],
         ["Instagram", typeof d.instagram === "string" ? <a href={`https://instagram.com/${d.instagram}`} className="underline" rel="noopener">@{d.instagram}</a> : null],
         ["Notable projects", listOf(d.notable_projects)],
       ];
@@ -81,7 +84,7 @@ function facts(e: Entry, lens: Lens, fx: FxTable, linked: Record<string, Entry>)
             <ul>
               {scholarships.map((s, i) => (
                 <li key={i}>
-                  {s.url ? <a href={s.url} className="underline" rel="noopener">{s.name}</a> : s.name}
+                  {!s.url ? s.name : unreviewed ? <><span>{s.name}</span><UnreviewedLink url={s.url} label="Scholarship link" /></> : <a href={s.url} className="underline" rel="noopener">{s.name}</a>}
                   {s.open_worldwide ? <Tag tone="accent" className="ml-2">Open worldwide</Tag> : null}
                   {s.eligible_countries?.length ? <span className="text-body-s ml-2 text-ink-muted">For applicants from {s.eligible_countries.join(", ")}</span> : null}
                 </li>
@@ -165,9 +168,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function EntryPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ lens?: string; added?: string; edited?: string }> }) {
   const [{ id }, sp] = await Promise.all([params, searchParams]);
-  const e = await getEntry(id);
+  const [e, lens] = await Promise.all([getEntry(id), resolveLens(sp.lens)]);
   if (!e) notFound();
-  const lens = await resolveLens(sp.lens);
   const d = e.data;
   const linkIds = [d.organisation_id, d.institution_id, d.submission_opportunity_id, d.tool_id].filter((x): x is string => typeof x === "string");
   const [fx, linked, related, user, userState, admin, disciplines] = await Promise.all([
@@ -184,8 +186,10 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
   const dateLabel = dateLabelFor(e.type);
   const applyUrl = (typeof d.apply_url === "string" && d.apply_url) || e.url;
   const programInstitution = e.type === "program" && typeof d.institution_id === "string" ? linked[d.institution_id]?.title.replace(/^\[Demo\]\s*/, "") : undefined;
-  const rows = facts(e, lens, fx, linked).filter(([, v]) => v != null && v !== "");
   const isPublic = e.visibility === "public" && e.status === "approved";
+  // Someone else's entry that isn't on the Map yet (a suggestion under review): its links need a second look.
+  const unreviewed = !isPublic && e.owner_id !== user?.id;
+  const rows = facts(e, lens, fx, linked, unreviewed).filter(([, v]) => v != null && v !== "");
 
   const swatch = entrySwatch(e);
   const pic = entryPicture(e);
@@ -221,6 +225,15 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
         <Link href={`/${section.slug}?lens=${lens.slug}`} className="text-label text-ink-muted hover:text-ink">← {section.label}</Link>
       )}
 
+      {/* Fetching the links takes a few seconds, so the page doesn't wait for it. */}
+      {admin && e.status === "pending_review" && (
+        <div className="mt-8 max-w-[46rem]">
+          <Suspense key={e.updated_at} fallback={<LinkChecksFrame><p className="text-body-s mt-3 text-ink-muted">Opening the links…</p></LinkChecksFrame>}>
+            <LinkChecks entry={e} />
+          </Suspense>
+        </div>
+      )}
+
       <div className="mt-8 grid gap-12 lg:grid-cols-[minmax(0,46rem)_minmax(0,22rem)] lg:gap-16 xl:gap-24">
         {/* MAIN ---------------------------------------------------------- */}
         <div className="min-w-0">
@@ -247,13 +260,17 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
           {e.summary && <p className="text-body-l mt-8 text-ink">{e.summary}</p>}
 
           <div className="mt-8 flex flex-wrap items-start gap-3">
-            {applyUrl && (
+            {unreviewed ? (
+              // Both addresses when they differ: the button visitors would press, and the page the entry came from.
+              [...new Set([applyUrl, e.url])].filter((u): u is string => !!u).map((u) => <UnreviewedLink key={u} url={u} label={u === e.url ? "Entry link" : "Apply link"} />)
+            ) : applyUrl && (
               <a href={applyUrl} rel="noopener" target="_blank" className="text-label inline-flex items-center rounded-full border border-ink bg-ink px-4 py-2 text-bg transition-colors hover:bg-transparent hover:text-ink">
                 {e.type === "job" || e.type === "opportunity" ? "Apply / read the call ↗" : "Visit site ↗"}
               </a>
             )}
             <EntryActions
               entryId={e.id}
+              updatedAt={e.updated_at}
               signedIn={!!user}
               saved={userState?.saved ?? false}
               isOwner={!!user && e.owner_id === user.id}

@@ -144,6 +144,14 @@ describe.skipIf(!configured)("RLS", () => {
       const { data } = await service.from("entries").select("visibility").eq("id", ids.alicePrivate).single();
       expect(data!.visibility).toBe("private");
     });
+    it("approving the version an admin saw does nothing once the owner has changed it", async () => {
+      const seen = (await admin.from("entries").select("updated_at").eq("id", ids.alicePrivate).single()).data!.updated_at;
+      expect((await alice.from("entries").update({ title: "swapped" }).eq("id", ids.alicePrivate)).error).toBeNull();
+      const { data, error } = await admin.from("entries").update({ status: "approved" }).eq("id", ids.alicePrivate).eq("updated_at", seen).select("id");
+      expect(error).toBeNull();
+      expect(data).toHaveLength(0);
+      expect((await service.from("entries").select("status").eq("id", ids.alicePrivate).single()).data!.status).toBe("pending_review");
+    });
     it("an admin can see pending entries and approving makes them public", async () => {
       expect((await admin.from("entries").select("id").eq("id", ids.alicePrivate)).data).toHaveLength(1);
       const { error } = await admin.from("entries").update({ status: "approved" }).eq("id", ids.alicePrivate);

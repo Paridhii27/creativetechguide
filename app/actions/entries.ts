@@ -56,9 +56,9 @@ export async function suggestAction(entryId: string) {
   return err;
 }
 
-export async function reviewAction(entryId: string, decision: "approved" | "rejected" | "archived") {
-  if (!ID.test(entryId) || !["approved", "rejected", "archived"].includes(decision)) return "Bad request";
-  const err = await reviewEntry(entryId, decision);
+export async function reviewAction(entryId: string, decision: "approved" | "rejected" | "archived", seenUpdatedAt: string) {
+  if (!ID.test(entryId) || !["approved", "rejected", "archived"].includes(decision) || typeof seenUpdatedAt !== "string" || !seenUpdatedAt) return "Bad request";
+  const err = await reviewEntry(entryId, decision, seenUpdatedAt);
   revalidatePath("/", "layout");
   return err;
 }

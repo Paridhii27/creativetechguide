@@ -1,7 +1,8 @@
 import "server-only";
-import { unstable_cache } from "next/cache";
+import { revalidateTag, unstable_cache } from "next/cache";
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
-import { createClient as createAnonClient } from "@supabase/supabase-js";
+import { createClient as createAnonClient, type SupabaseClient } from "@supabase/supabase-js";
 import { isSupabaseConfigured, SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/supabase/env";
 import { SECTIONS, TOOL_KIND, type Country, type Discipline, type Entry, type EntryType, type Geo, type Place, type Region, type Relevance } from "@/lib/types";
 import type { FxTable } from "@/lib/money";
@@ -29,6 +30,32 @@ export interface BrowseFilters {
   offset?: number;
   /** Also count every match (for "Page 02 of 05"). Costs a second query, so only paged lists ask. */
   withTotal?: boolean;
+}
+
+/**
+ * Reference data that rarely changes is kept in Next's data cache for an hour and shared by every visitor, not read
+ * again on each page. It uses a signed-out client, because a cached read can't depend on cookies, so only use this
+ * for tables anyone may read. A failed read throws, so it is never cached.
+ */
+const REFERENCE_TAG = "reference-data";
+
+function cachedReference<T>(key: string, read: (supabase: SupabaseClient) => Promise<T>) {
+  return unstable_cache(() => read(createAnonClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } })), [key], { revalidate: 3600, tags: [REFERENCE_TAG] });
+}
+
+/** Drop the cached reference data so the next read comes from the database. Callers must check the user is an admin. */
+export function expireReferenceData() {
+  revalidateTag(REFERENCE_TAG);
+}
+
+async function orFallback<T>(read: () => Promise<T>, fallback: T): Promise<T> {
+  if (!isSupabaseConfigured()) return fallback;
+  try {
+    return await read();
+  } catch (e) {
+    console.error(e);
+    return fallback;
+  }
 }
 
 export async function browseEntries(f: BrowseFilters): Promise<{ entries: Entry[]; hasMore: boolean; total: number }> {
@@ -72,13 +99,14 @@ export async function browseEntries(f: BrowseFilters): Promise<{ entries: Entry[
   return { entries: rows.slice(0, limit), hasMore, total };
 }
 
-export async function getEntry(id: string): Promise<Entry | null> {
+/** One read per render: the page and its metadata both ask. */
+export const getEntry = cache(async (id: string): Promise<Entry | null> => {
   if (!isSupabaseConfigured() || !/^[0-9a-f-]{36}$/i.test(id)) return null;
   const supabase = await createClient();
   const { data, error } = await supabase.from("entries").select("*").eq("id", id).maybeSingle();
   if (error) throw new Error(error.message);
   return data as Entry | null;
-}
+});
 
 /** Look up linked entries (e.g. a job's organisation) by id. RLS hides anything the user can't see. */
 export async function getEntriesByIds(ids: string[]): Promise<Record<string, Entry>> {
@@ -151,52 +179,37 @@ export async function getCountryNames(): Promise<string[]> {
   return (data ?? []).map((c) => c.name as string);
 }
 
-export async function getDisciplines(): Promise<Discipline[]> {
-  if (!isSupabaseConfigured()) return [];
-  const supabase = await createClient();
-  const { data } = await supabase.from("disciplines").select("slug,label").order("sort_order");
+const readDisciplines = cachedReference("disciplines", async (supabase): Promise<Discipline[]> => {
+  const { data, error } = await supabase.from("disciplines").select("slug,label").order("sort_order");
+  if (error) throw new Error(`disciplines query failed: ${error.message}`);
   return (data ?? []) as Discipline[];
-}
+});
 
-/**
- * Rates change once a day, so they're kept in Next's data cache and shared by every visitor, not read again on each
- * page. A signed-out client because a cached read can't depend on cookies; anyone may read fx_rates. A failed read
- * throws, so it is never cached.
- */
-const readFxTable = unstable_cache(
-  async (): Promise<FxTable> => {
-    const supabase = createAnonClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
-    const { data, error } = await supabase.from("fx_rates").select("currency,inr_per_unit,as_of").order("as_of", { ascending: false });
-    if (error) throw new Error(`fx_rates query failed: ${error.message}`);
-    const fx: FxTable = { INR: 1 };
-    for (const r of data ?? []) if (fx[r.currency] == null) fx[r.currency] = Number(r.inr_per_unit);
-    return fx;
-  },
-  ["fx-table"],
-  { revalidate: 3600 },
-);
+export const getDisciplines = cache(() => orFallback(readDisciplines, []));
 
-/** Latest INR rate per currency, at most an hour old. Without it, costs just show in their original currency. */
-export async function getFxTable(): Promise<FxTable> {
-  if (!isSupabaseConfigured()) return { INR: 1 };
-  try {
-    return await readFxTable();
-  } catch (e) {
-    console.error(e);
-    return { INR: 1 };
-  }
-}
+const readFxTable = cachedReference("fx-table", async (supabase): Promise<FxTable> => {
+  const { data, error } = await supabase.from("fx_rates").select("currency,inr_per_unit,as_of").order("as_of", { ascending: false });
+  if (error) throw new Error(`fx_rates query failed: ${error.message}`);
+  const fx: FxTable = { INR: 1 };
+  for (const r of data ?? []) if (fx[r.currency] == null) fx[r.currency] = Number(r.inr_per_unit);
+  return fx;
+});
 
-/** Countries and regions for the lens picker and relevance rules. */
-export async function getGeo(): Promise<Geo> {
-  if (!isSupabaseConfigured()) return { regions: [], countries: [] };
-  const supabase = await createClient();
+/** Latest INR rate per currency. Without it, costs just show in their original currency. */
+export const getFxTable = () => orFallback(readFxTable, { INR: 1 });
+
+const readGeo = cachedReference("geo", async (supabase): Promise<Geo> => {
   const [r, c] = await Promise.all([
     supabase.from("regions").select("slug,name,also_matches").order("sort_order"),
     supabase.from("countries").select("code,slug,name,region,currency,groups").order("name"),
   ]);
+  const error = r.error ?? c.error;
+  if (error) throw new Error(`regions/countries query failed: ${error.message}`);
   return { regions: (r.data ?? []) as Region[], countries: (c.data ?? []) as Country[] };
-}
+});
+
+/** Countries and regions for the lens picker and relevance rules. */
+export const getGeo = () => orFallback(readGeo, { regions: [], countries: [] });
 
 /**
  * Every public, approved entry's id and last update, for the sitemap. Uses a signed-out client (no

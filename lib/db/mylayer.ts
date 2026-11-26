@@ -1,4 +1,6 @@
 import "server-only";
+import { cache } from "react";
+import { getAuthUser } from "./auth";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { buildData, extraPlaces, mergeData, type EntryFormValues } from "@/lib/entry-input";
@@ -14,9 +16,8 @@ export interface UserEntryState {
 }
 
 async function client() {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-  return { supabase, user: data.user };
+  const [supabase, user] = await Promise.all([createClient(), getAuthUser()]);
+  return { supabase, user };
 }
 
 /** Public Map entry with this URL (if any), for duplicate checks. */
@@ -80,12 +81,12 @@ async function inrRate(currency?: string): Promise<number | undefined> {
   return data?.[0] ? Number(data[0].inr_per_unit) : undefined;
 }
 
-export async function isAdmin(): Promise<boolean> {
+export const isAdmin = cache(async (): Promise<boolean> => {
   const { supabase, user } = await client();
   if (!user) return false;
   const { data } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
   return data?.role === "admin";
-}
+});
 
 /** Create an entry from the Add form. Users get a private draft (or pending_review if suggested); admins may publish. */
 export async function createEntry(v: EntryFormValues): Promise<{ id: string } | { error: string } | { duplicate: { id: string; title: string } }> {
@@ -191,13 +192,19 @@ export async function deleteOwnEntry(entryId: string): Promise<string | null> {
   return data?.length ? null : "Only your own private entries can be deleted.";
 }
 
-/** Admin review: approve publishes (trigger sets visibility public), reject keeps it private. */
-export async function reviewEntry(entryId: string, decision: "approved" | "rejected" | "archived"): Promise<string | null> {
+/**
+ * Admin review: approve publishes (trigger sets visibility public), reject keeps it private.
+ * `seenUpdatedAt` is the entry's updated_at as the admin saw it. The check and the change are one UPDATE, so an
+ * edit made in the meantime (the database sets updated_at on every write) means nothing happens.
+ */
+export async function reviewEntry(entryId: string, decision: "approved" | "rejected" | "archived", seenUpdatedAt: string): Promise<string | null> {
   const { supabase } = await client();
   if (!(await isAdmin())) return "Only admins can review entries.";
-  const { data, error } = await supabase.from("entries").update({ status: decision }).eq("id", entryId).select("id");
+  const { data, error } = await supabase.from("entries").update({ status: decision }).eq("id", entryId).eq("updated_at", seenUpdatedAt).select("id");
   if (error) return error.code === "23505" ? "Another public entry already has this URL. Edit or reject this one." : error.message;
-  return data?.length ? null : "Entry not found.";
+  if (data?.length) return null;
+  const { data: current } = await supabase.from("entries").select("id").eq("id", entryId).maybeSingle();
+  return current ? "This entry changed since you opened it, so nothing was done. Check the latest version, then decide again." : "Entry not found.";
 }
 
 /** Your own entries (newest first) and what you saved from the Map (most recently saved first). */
@@ -240,6 +247,18 @@ export async function pendingReviewCount(): Promise<number> {
   const { supabase } = await client();
   const { count } = await supabase.from("entries").select("id", { count: "exact", head: true }).eq("status", "pending_review");
   return count ?? 0;
+}
+
+/** How busy a suggestion's author and website are, for the review checks. Admins only: others see only their own. */
+export async function submissionSignals(entryId: string, ownerId: string | null, site: string | null): Promise<{ addedByOwnerToday: number; pendingSameSite: number }> {
+  const { supabase } = await client();
+  const since = new Date(Date.now() - 86_400_000).toISOString();
+  const count = () => supabase.from("entries").select("id", { count: "exact", head: true });
+  const [owner, sameSite] = await Promise.all([
+    ownerId ? count().eq("owner_id", ownerId).gte("created_at", since) : null,
+    site ? count().eq("status", "pending_review").neq("id", entryId).ilike("url", `%${likeLiteral(site)}%`) : null,
+  ]);
+  return { addedByOwnerToday: owner?.count ?? 0, pendingSameSite: sameSite?.count ?? 0 };
 }
 
 export async function listPendingReview(): Promise<Entry[]> {

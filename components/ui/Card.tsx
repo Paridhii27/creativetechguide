@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Thumb } from "./Thumb";
 import { LocationLabel, Mark } from "./primitives";
-import { swatchVar, type Swatch } from "@/lib/swatch";
+import type { Swatch } from "@/lib/swatch";
 
 /**
  * Compact entry card (search results, My Layer lists, related entries).
@@ -33,16 +33,11 @@ export function Card({
   eligibility?: ReactNode;
   tags?: ReactNode;
   footer?: ReactNode;
-  /** type colour (TYPE_SWATCH): mark beside the kicker, image ground, top rule on hover. null = outlined mark */
+  /** type colour (TYPE_SWATCH): mark beside the kicker, image ground. null = outlined mark */
   swatch?: Swatch | null;
 }) {
   return (
     <article className="group relative flex flex-col border border-line bg-bg transition-colors hover:border-ink">
-      <span
-        aria-hidden
-        className="absolute inset-x-0 -top-px z-10 h-[3px] origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100 motion-reduce:transition-none"
-        style={{ background: swatch ? swatchVar(swatch) : "var(--accent)" }}
-      />
       <Link href={href} className="block" tabIndex={-1} aria-hidden>
         <Thumb src={image} title={title} fit={imageFit} swatch={swatch} className={`w-full ${image && imageFit === "cover" ? "aspect-[16/10]" : "aspect-[5/2]"}`} />
       </Link>

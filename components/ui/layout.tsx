@@ -14,14 +14,15 @@ export function Accent({ children }: { children: ReactNode }) {
 }
 
 /**
- * Page title: optional serif kicker, display-m title, micro meta line, right-hand slot.
+ * Page title: optional micro eyebrow or serif kicker, display-m title, micro meta line, right-hand slot.
  * From lg up the slot always sits beside the title; a long title wraps onto two lines rather than
  * pushing the slot underneath. Smaller screens stack them.
  */
-export function PageTitle({ kicker, title, meta, aside }: { kicker?: ReactNode; title: ReactNode; meta?: ReactNode; aside?: ReactNode }) {
+export function PageTitle({ eyebrow, kicker, title, meta, aside }: { eyebrow?: ReactNode; kicker?: ReactNode; title: ReactNode; meta?: ReactNode; aside?: ReactNode }) {
   return (
     <header className="flex flex-wrap items-end justify-between gap-6 pb-8 lg:flex-nowrap lg:gap-x-16">
       <div className="min-w-0">
+        {eyebrow && <p className="text-micro mb-3 text-ink-muted">{eyebrow}</p>}
         {kicker && <p className="text-accent-m mb-2 text-ink-muted">{kicker}</p>}
         <h1 className="text-display-m text-balance text-ink">{title}</h1>
         {meta && <p className="text-micro mt-3 text-ink-muted">{meta}</p>}

@@ -1,6 +1,7 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { getAuthUser } from "./auth";
 
 export interface Profile {
   id: string;
@@ -12,9 +13,7 @@ export interface Profile {
 
 export async function getCurrentUser() {
   if (!isSupabaseConfigured()) return null;
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-  return data.user;
+  return getAuthUser();
 }
 
 export async function getCurrentProfile(): Promise<Profile | null> {
