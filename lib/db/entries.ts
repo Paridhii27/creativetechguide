@@ -1,6 +1,7 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { createClient as createAnonClient } from "@supabase/supabase-js";
+import { isSupabaseConfigured, SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/supabase/env";
 import { SECTIONS, TOOL_KIND, type Country, type Discipline, type Entry, type EntryType, type Geo, type Place, type Region, type Relevance } from "@/lib/types";
 import type { FxTable } from "@/lib/money";
 
@@ -175,4 +176,28 @@ export async function getGeo(): Promise<Geo> {
     supabase.from("countries").select("code,slug,name,region,currency,groups").order("name"),
   ]);
   return { regions: (r.data ?? []) as Region[], countries: (c.data ?? []) as Country[] };
+}
+
+/**
+ * Every public, approved entry's id and last update, for the sitemap. Uses a signed-out client (no
+ * cookies) so the sitemap can be cached, and RLS already limits it to what anyone may read.
+ */
+export async function listPublicEntriesForSitemap(): Promise<Pick<Entry, "id" | "updated_at">[]> {
+  if (!isSupabaseConfigured()) return [];
+  const supabase = createAnonClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
+  const out: Pick<Entry, "id" | "updated_at">[] = [];
+  // Page through in chunks of 1000 (PostgREST's default cap); a sitemap file holds up to 50,000 URLs.
+  for (let from = 0; from < 50_000; from += 1000) {
+    const { data, error } = await supabase
+      .from("entries")
+      .select("id, updated_at")
+      .eq("visibility", "public")
+      .eq("status", "approved")
+      .order("updated_at", { ascending: false })
+      .range(from, from + 999);
+    if (error) throw new Error(`sitemap query failed: ${error.message}`);
+    out.push(...(data ?? []));
+    if (!data || data.length < 1000) break;
+  }
+  return out;
 }

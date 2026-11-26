@@ -8,7 +8,7 @@ import { getCurrentUser } from "@/lib/db/profiles";
 import { isAdmin } from "@/lib/db/mylayer";
 import { entryToFormValues } from "@/lib/entry-input";
 
-export const metadata: Metadata = { title: "Edit entry" };
+export const metadata: Metadata = { title: "Edit entry", robots: { index: false } };
 
 export default async function EditEntryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

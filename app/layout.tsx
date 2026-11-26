@@ -16,6 +16,8 @@ import { DuotoneFilters } from "@/components/ui/DuotoneFilters";
 import { NavBar } from "@/components/ui/layout";
 import { PillLink } from "@/components/ui/primitives";
 import { VIEW_MODE_SCRIPT } from "@/lib/theme";
+import { Analytics } from "@vercel/analytics/next";
+import { jsonLdScript, SITE_DESCRIPTION, SITE_NAME, siteUrl } from "@/lib/seo";
 
 // The only three families on the site (DESIGN.md).
 const blackHanSans = Black_Han_Sans({ subsets: ["latin"], weight: "400", variable: "--font-black-han-sans", display: "swap" });
@@ -23,8 +25,28 @@ const instrumentSerif = Instrument_Serif({ subsets: ["latin"], weight: "400", st
 const instrumentSans = Instrument_Sans({ subsets: ["latin"], axes: ["wdth"], variable: "--font-instrument-sans", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "Field Guide: Creative Technology", template: "%s · Field Guide" },
-  description: "A field guide to creative technology, experience design and design-technology work, seen through any country or region.",
+  metadataBase: new URL(siteUrl()),
+  title: { default: SITE_NAME, template: "%s · Field Guide" },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: ["creative technology", "experience design", "creative coding", "interaction design", "open calls", "residencies", "design technologist jobs", "creative technology masters"],
+  alternates: { canonical: "/" },
+  openGraph: { type: "website", siteName: SITE_NAME, title: SITE_NAME, description: SITE_DESCRIPTION, url: "/", locale: "en" },
+  twitter: { card: "summary_large_image", title: SITE_NAME, description: SITE_DESCRIPTION },
+  // Paste the code from Google Search Console / Bing Webmaster Tools (HTML tag method) into these env vars.
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    other: process.env.BING_SITE_VERIFICATION ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION } : undefined,
+  },
+};
+
+const WEBSITE_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE_NAME,
+  description: SITE_DESCRIPTION,
+  url: siteUrl(),
+  potentialAction: { "@type": "SearchAction", target: `${siteUrl()}/search?q={search_term_string}`, "query-input": "required name=search_term_string" },
 };
 
 /** Account pill in the top strip, matching the view-mode switch beside it (outlined, tag-size text, small icon). */
@@ -51,6 +73,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: VIEW_MODE_SCRIPT }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(WEBSITE_JSON_LD) }} />
       </head>
       <body className="min-h-screen">
         <DuotoneFilters />
@@ -129,6 +152,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <span>Open data under CC BY 4.0 (coming soon)</span>
           </div>
         </footer>
+        <Analytics />
       </body>
     </html>
   );

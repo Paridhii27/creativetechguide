@@ -12,6 +12,7 @@ import { getCurrentUser } from "@/lib/db/profiles";
 import { getUserState, isAdmin } from "@/lib/db/mylayer";
 import { getEntriesByIds, getEntry, getFxTable, getRelatedEntries, getToolResources } from "@/lib/db/entries";
 import { formatDate } from "@/lib/dates";
+import { entryJsonLd, isIndexable, jsonLdScript, SITE_NAME } from "@/lib/seo";
 import { entryPicture } from "@/lib/icon";
 import { resolveLens } from "@/lib/lens-server";
 import { approxIn, formatMoney, isMoney, type FxTable } from "@/lib/money";
@@ -147,7 +148,17 @@ function facts(e: Entry, lens: Lens, fx: FxTable, linked: Record<string, Entry>)
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const e = await getEntry((await params).id);
-  return { title: e?.title ?? "Not found", description: e?.summary ?? undefined };
+  if (!e) return { title: "Not found", robots: { index: false } };
+  const title = e.title.replace(/^\[Demo\]\s*/, "");
+  const description = e.summary ?? `${sectionForEntry(e).singular}${locationLabel(e) ? ` · ${locationLabel(e)}` : ""} on the ${SITE_NAME}.`;
+  return {
+    title,
+    description,
+    alternates: { canonical: `/entry/${e.id}` },
+    robots: isIndexable(e) ? undefined : { index: false, follow: false },
+    openGraph: { type: "article", title, description, url: `/entry/${e.id}`, images: e.image_url ? [{ url: e.image_url }] : undefined },
+    twitter: { card: e.image_url ? "summary_large_image" : "summary", title, description, images: e.image_url ? [e.image_url] : undefined },
+  };
 }
 
 export default async function EntryPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ lens?: string; added?: string; edited?: string }> }) {
@@ -182,6 +193,8 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
   const notice = "text-body-s mb-8 flex flex-wrap items-center gap-x-2 gap-y-1 border border-line bg-surface px-4 py-3 text-ink";
 
   return (
+    <>
+      {isPublic && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(entryJsonLd(e, linked)) }} />}
     <article>
       {sp.added && (
         <p className={notice}>
@@ -323,5 +336,6 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
         </section>
       )}
     </article>
+    </>
   );
 }

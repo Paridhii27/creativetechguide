@@ -8,7 +8,7 @@ import { getFxTable } from "@/lib/db/entries";
 import { getCurrentUser } from "@/lib/db/profiles";
 import { isAdmin, listPendingReview } from "@/lib/db/mylayer";
 
-export const metadata: Metadata = { title: "Review queue" };
+export const metadata: Metadata = { title: "Review queue", robots: { index: false } };
 
 export default async function ReviewPage() {
   if (!(await getCurrentUser())) redirect("/login?next=/admin/review");

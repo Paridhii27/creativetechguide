@@ -13,7 +13,7 @@ import { resolveLens } from "@/lib/lens-server";
 import type { Swatch } from "@/lib/swatch";
 import type { Entry } from "@/lib/types";
 
-export const metadata: Metadata = { title: "My Layer" };
+export const metadata: Metadata = { title: "My Layer", robots: { index: false } };
 
 type ViewKey = "saved" | "private" | "pending" | "public";
 

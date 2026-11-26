@@ -11,7 +11,7 @@ import Link from "next/link";
 import { PageTitle } from "@/components/ui/layout";
 import { BracketLabel } from "@/components/ui/primitives";
 
-export const metadata: Metadata = { title: "Search" };
+export const metadata: Metadata = { title: "Search", robots: { index: false } };
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<Params> }) {
   const sp = await searchParams;

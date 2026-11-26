@@ -6,7 +6,7 @@ import { getCountryNames, getDisciplines, getPlaces, getToolNames } from "@/lib/
 import { getCurrentUser } from "@/lib/db/profiles";
 import { isAdmin } from "@/lib/db/mylayer";
 
-export const metadata: Metadata = { title: "Add an entry" };
+export const metadata: Metadata = { title: "Add an entry", robots: { index: false } };
 
 export default async function AddPage({ searchParams }: { searchParams: Promise<{ url?: string; tool?: string }> }) {
   const { url, tool } = await searchParams;
