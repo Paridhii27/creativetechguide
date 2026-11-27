@@ -132,7 +132,7 @@ The five swatches (`--swatch-1…5`) appear throughout the system, always as fil
 
 ### Images per mode
 - Document: images as they are, on `--surface`.
-- Monitor: images as they are, at 90% brightness so they don't glare.
+- Monitor: images as they are, at 90% brightness so they don't glare. A see-through logo too dark to read on black is replaced, in this mode only, by the letter block (checked by `/api/logo-tone`).
 - Blueprint: images get a blue duotone (CSS `filter` or an SVG duotone filter mapping shadows to `--ink` and highlights to `--bg`) so the page stays monochrome. Show the original on hover or on the detail page.
 
 ### Switching modes

@@ -156,14 +156,14 @@ export async function unfurl(input: string): Promise<Unfurled> {
   return { url, ...parseHtml(html, url) };
 }
 
-/** A public page's HTML (capped). Follows up to 5 redirects, re-checking each hop. */
-export async function fetchPage(input: string): Promise<{ url: string; html: string }> {
+/** GET a public address, following up to 5 redirects and re-checking each hop. */
+async function fetchPublic(input: string, accept: string): Promise<{ url: URL; res: Response }> {
   let url = new URL(input);
   for (let hop = 0; hop < 6; hop++) {
     await assertPublicUrl(url);
     const res = await fetch(url, {
       redirect: "manual",
-      headers: { "user-agent": UA, accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.5" },
+      headers: { "user-agent": UA, accept },
       signal: AbortSignal.timeout(10_000),
     });
     if (res.status >= 300 && res.status < 400 && res.headers.get("location")) {
@@ -171,25 +171,45 @@ export async function fetchPage(input: string): Promise<{ url: string; html: str
       continue;
     }
     if (!res.ok) throw new UnfurlError(`The page answered with HTTP ${res.status}.`, "http", res.status);
-    const type = res.headers.get("content-type") ?? "";
-    if (!/html|xml/i.test(type)) throw new UnfurlError("That link isn't a web page.", "not_html");
-    const reader = res.body?.getReader();
-    const chunks: Uint8Array[] = [];
-    let size = 0;
-    while (reader) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunks.push(value);
-      size += value.length;
-      if (size > MAX_BYTES) {
-        await reader.cancel();
-        break;
-      }
-    }
-    const html = new TextDecoder().decode(Buffer.concat(chunks));
-    return { url: url.toString(), html };
+    return { url, res };
   }
   throw new UnfurlError("Too many redirects.", "redirects");
+}
+
+/** A response body, cut off once it passes MAX_BYTES. */
+async function readCapped(res: Response): Promise<{ body: Buffer; truncated: boolean }> {
+  const reader = res.body?.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  let truncated = false;
+  while (reader) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    size += value.length;
+    if (size > MAX_BYTES) {
+      await reader.cancel();
+      truncated = true;
+      break;
+    }
+  }
+  return { body: Buffer.concat(chunks), truncated };
+}
+
+/** A public page's HTML (capped). */
+export async function fetchPage(input: string): Promise<{ url: string; html: string }> {
+  const { url, res } = await fetchPublic(input, "text/html,application/xhtml+xml;q=0.9,*/*;q=0.5");
+  if (!/html|xml/i.test(res.headers.get("content-type") ?? "")) throw new UnfurlError("That link isn't a web page.", "not_html");
+  const { body } = await readCapped(res);
+  return { url: url.toString(), html: new TextDecoder().decode(body) };
+}
+
+/** A public picture's bytes. Files over the size cap are refused, since part of an image is no use. */
+export async function fetchImage(input: string): Promise<Buffer> {
+  const { res } = await fetchPublic(input, "image/*,*/*;q=0.5");
+  const { body, truncated } = await readCapped(res);
+  if (truncated) throw new UnfurlError("That picture is too large.", "refused");
+  return body;
 }
 
 /** Normalise for duplicate checks: lowercase host, drop default ports, trailing slash and tracking params. */

@@ -1,10 +1,12 @@
 "use client";
 import { useCallback, useState, type CSSProperties } from "react";
+import { useLostOnBlack } from "./useLostOnBlack";
 import { swatchFor, swatchVar, tintVar, type Swatch } from "@/lib/swatch";
 
 /**
  * Tightly cropped image, following the view mode (dimmed in Night, blue duotone in Blueprint,
  * original on hover). The ground is a soft wash of `swatch` (or plain surface without one); Monitor mode makes it transparent.
+ * A picture that would vanish on Monitor mode's black is replaced there by the letter block.
  * With no image, it becomes a solid palette block with the title's first letter — so lists
  * without pictures still read as the "paper squares", not grey boxes.
  */
@@ -24,16 +26,21 @@ export function Thumb({
   className?: string;
 }) {
   const [failed, setFailed] = useState<string | null>(null);
-  // An image can fail before React is listening (a server-rendered page), so onError alone would leave a broken
-  // picture: check any that has already finished.
+  const [loaded, setLoaded] = useState<string | null>(null);
+  // An image can finish or fail before React is listening (a server-rendered page), so onLoad and onError alone
+  // would miss it: check any that has already finished.
   const check = useCallback(
     (img: HTMLImageElement | null) => {
-      if (img?.complete && !img.naturalWidth) img.decode().catch(() => setFailed(src ?? null));
+      if (!img?.complete) return;
+      if (img.naturalWidth) setLoaded(src ?? null);
+      else img.decode().catch(() => setFailed(src ?? null));
     },
     [src],
   );
   const letter = title.replace(/^\[Demo\]\s*/, "").trim().charAt(0).toUpperCase() || "?";
-  const hasImage = !!src && failed !== src;
+  // Asked only once the picture has loaded, so off-screen (lazy) pictures cost nothing.
+  const lost = useLostOnBlack(src && loaded === src ? src : null);
+  const hasImage = !!src && failed !== src && !lost;
   // Fallback blocks vary by title, so a list of one type still reads as scattered paper squares.
   const fill = swatchFor(title);
   return (
@@ -48,6 +55,7 @@ export function Thumb({
           src={src!}
           alt=""
           loading="lazy"
+          onLoad={() => setLoaded(src!)}
           onError={() => setFailed(src!)}
           className={`mode-img absolute inset-0 ${fit === "contain" ? "h-full w-full object-contain p-[12%]" : fit === "icon" ? "m-auto aspect-square h-[84%] max-h-44 object-contain" : "h-full w-full object-cover"}`}
         />
