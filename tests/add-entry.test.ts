@@ -59,7 +59,9 @@ describe("link checks", () => {
   it("blocks missing sites and pages, but not pages that merely wouldn't load", () => {
     expect(badLinkMessage(new UnfurlError("x", "no_such_host"))).toBeTruthy();
     expect(badLinkMessage(new UnfurlError("x", "http", 404))).toBeTruthy();
-    for (const e of [new UnfurlError("x", "http", 403), new UnfurlError("x", "http", 503), new TypeError("fetch failed")]) {
+    expect(badLinkMessage(new UnfurlError("x", "lookup_failed"))).toBeTruthy();
+    // PDFs and other files aren't web pages, but they can still be added.
+    for (const e of [new UnfurlError("x", "not_html"), new UnfurlError("x", "http", 403), new UnfurlError("x", "http", 503), new TypeError("fetch failed")]) {
       expect(badLinkMessage(e)).toBeNull();
       expect(unreadableLinkMessage(e)).not.toMatch(/fetch|HTTP|\d{3}/);
     }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import EntryIndex from "@/components/EntryIndex";
 import Meanings from "@/components/Meanings";
 import FieldGlobe from "@/components/FieldGlobe";
@@ -9,7 +10,7 @@ import { mySavedIds } from "@/lib/db/mylayer";
 import { addDays, daysUntil } from "@/lib/dates";
 import { resolveLens } from "@/lib/lens-server";
 import { isPlaceLens } from "@/lib/lens";
-import { sectionSwatch } from "@/lib/swatch";
+import { sectionSwatch, swatchVar } from "@/lib/swatch";
 import { SECTIONS } from "@/lib/types";
 
 const BLURB: Record<string, string> = {
@@ -21,6 +22,9 @@ const BLURB: Record<string, string> = {
   tools: "What to make it with",
   events: "Where the field meets",
 };
+
+/** The rotating "It can mean" examples under the headline: hidden until there's a better version. */
+const SHOW_MEANINGS: boolean = false;
 
 /** Home: specimen hero (visual-direction reference), section index, and the next 60 days of deadlines. */
 export default async function Home({ searchParams }: { searchParams: Promise<{ lens?: string }> }) {
@@ -48,9 +52,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           <BracketLabel className="text-ink-muted">Lens — {lens.label}</BracketLabel>
           {/* Also capped to the column's width, so "Technology" never runs into the globe. */}
           <h1 className="text-display-l mt-5 text-ink [font-size:min(clamp(48px,31.1px+4.51vw,96px),14cqw)]">
-            <Accent>A map of</Accent> <span className="block">Creative technology</span>
+            <Accent>A map of</Accent> <span className="block text-accent-text">Creative technology</span>
           </h1>
-          <Meanings lens={lens.slug} />
+          {SHOW_MEANINGS && <Meanings lens={lens.slug} />}
           <p className="text-body-l mt-6 max-w-xl text-ink-muted">
             Studios, programmes, jobs, open calls, publications and events in experience design and design technology. Pick a country or
             region in the lens to see what&apos;s based there or open to applicants from there.
@@ -82,15 +86,27 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           {SECTIONS.map((s) => {
             const sw = sectionSwatch(s);
             return (
-              <li key={s.slug} className="min-w-0 border-r border-b border-line">
+              <li key={s.slug} className="@container min-w-0 border-r border-b border-line">
                 <Link href={`/${s.slug}?lens=${lens.slug}`} className="group flex h-full flex-col gap-6 p-4 sm:p-5 transition-colors hover:bg-surface">
                   <span className="text-micro flex items-center gap-1.5 text-ink-muted">
                     <Mark swatch={sw} size={7} />
                     {BLURB[s.slug]}
                   </span>
-                  <span className="mt-auto flex flex-wrap items-end justify-between gap-x-3 gap-y-1">
-                    <span className="text-body min-w-0 break-words font-semibold leading-tight text-ink group-hover:underline">{s.label}</span>
-                    <span className="text-numeral text-ink">{counts[s.slug]}</span>
+                  {/* Name left, count right on one baseline; narrow tiles all stack the count under the name. */}
+                  <span className="mt-auto flex flex-col items-start gap-x-3 gap-y-1 @[13.75rem]:flex-row @[13.75rem]:items-baseline-last @[13.75rem]:justify-between">
+                    <span className="text-body min-w-0 break-words font-semibold leading-tight text-ink group-hover:underline">
+                      {/* Always two lines: this name is too long to sit beside its count on one. */}
+                      {s.slug === "resources" ? (
+                        <>
+                          Publications <br />
+                          &amp;&nbsp;Resources
+                        </>
+                      ) : (
+                        s.label
+                      )}
+                    </span>
+                    {/* Takes the colour of the section's square above (darkened in Document: see globals.css). */}
+                    <span className="section-count text-numeral shrink-0" style={sw ? ({ "--count": swatchVar(sw) } as CSSProperties) : undefined}>{counts[s.slug]}</span>
                   </span>
                 </Link>
               </li>

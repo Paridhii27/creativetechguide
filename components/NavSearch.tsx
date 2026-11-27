@@ -256,7 +256,7 @@ export default function NavSearch() {
                     onClick={finish}
                   >
                     <span className="truncate">See all results for &ldquo;{term}&rdquo;</span>
-                    <span aria-hidden>→</span>
+                    <span aria-hidden className="nudge">→</span>
                   </Link>
                 </li>
               </ul>

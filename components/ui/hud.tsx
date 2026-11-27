@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { Barcode, BracketLabel } from "./primitives";
+import { BracketLabel } from "./primitives";
 import { swatchVar, tintVar, type Swatch } from "@/lib/swatch";
 import { HudClock } from "./HudClock";
 
@@ -12,7 +12,6 @@ export function AnnotationBox({
   title,
   rows,
   children,
-  barcode,
   swatch,
   className = "",
   style,
@@ -22,16 +21,14 @@ export function AnnotationBox({
   swatch?: Swatch;
   rows?: { label: string; value: ReactNode }[];
   children?: ReactNode;
-  barcode?: string;
   className?: string;
   style?: CSSProperties;
 }) {
   return (
     <div className={`ticks anim-fade-up border border-line bg-bg p-3 ${className}`} style={style}>
       {title && (
-        <div className="mb-2 flex items-center justify-between gap-3">
+        <div className="mb-2 flex">
           <BracketLabel accent mark={swatch}>{title}</BracketLabel>
-          {barcode && <Barcode seed={barcode} width={36} height={8} />}
         </div>
       )}
       {rows && (
@@ -127,7 +124,6 @@ export function Specimen({
           </div>
         )}
         {coords && <div className="text-micro absolute bottom-3 left-3 text-ink-muted">{coords}</div>}
-        <Barcode seed={label ?? "specimen"} className="absolute right-3 bottom-3" />
 
         {/* leader lines (desktop): crisp 1px orthogonal segments that draw in */}
         {annotations.map((a, i) => {

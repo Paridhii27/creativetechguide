@@ -101,7 +101,7 @@ export function ViewLink({ href, children = "View", className = "" }: { href: st
   return (
     <Link href={href} className={`text-label inline-flex items-center gap-1 text-ink underline-offset-4 hover:underline ${className}`}>
       {children}
-      <span aria-hidden>→</span>
+      <span aria-hidden className="nudge">→</span>
     </Link>
   );
 }
@@ -119,34 +119,28 @@ export function LocationLabel({ children, className = "" }: { children: ReactNod
   );
 }
 
-/** Wordmark, set like the home headline: serif italic lead-in, then the subject in display capitals. */
+/**
+ * Wordmark, set like the home headline: serif italic lead-in, then the subject in display capitals.
+ * `stacked` (the navbar) sets it on three lines whose ink is exactly as tall as the controls beside it:
+ * 40px (the search and menu buttons) below lg, 76px (the two-line control column) from lg. The block is
+ * 2.69em tall, from the top of the "A" to the baseline of the last line; the margins on the first two lines
+ * come from the two fonts' metrics, so recheck them if either typeface changes.
+ */
 export function Wordmark({ href = "/", stacked = false }: { href?: string; stacked?: boolean }) {
   return (
-    <Link href={href} className={`text-wordmark inline-flex text-ink ${stacked ? "flex-col lg:text-[28px] lg:leading-[0.95]" : "flex-wrap items-baseline gap-x-2"}`}>
-      <span className="text-accent-display">A map of</span>{" "}
-      <span>Creative Technology</span>
+    <Link
+      href={href}
+      className={`text-wordmark inline-flex text-ink ${stacked ? "h-[2.69em] flex-col text-[length:calc(40px/2.69)] leading-[0.95] lg:text-[length:calc(76px/2.69)]" : "flex-wrap items-baseline gap-x-2"}`}
+    >
+      <span className={`text-accent-display ${stacked ? "-mt-[0.085em] ml-[0.07em]" : ""}`}>A map of</span>{" "}
+      {stacked ? (
+        <>
+          <span className="mt-[0.04em]">Creative</span> <span>Technology</span>
+        </>
+      ) : (
+        <span>Creative Technology</span>
+      )}
     </Link>
-  );
-}
-
-/** Tiny decorative barcode (HUD detail). Deterministic from `seed`. */
-export function Barcode({ seed = "field-guide", width = 64, height = 14, className = "" }: { seed?: string; width?: number; height?: number; className?: string }) {
-  let h = 0;
-  for (const ch of seed) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  const bars: { x: number; w: number }[] = [];
-  let x = 0;
-  while (x < width) {
-    h = (h * 1103515245 + 12345) >>> 0;
-    const w = 1 + (h % 3);
-    if ((h >> 4) % 3 !== 0) bars.push({ x, w });
-    x += w + 1;
-  }
-  return (
-    <svg aria-hidden width={width} height={height} viewBox={`0 0 ${width} ${height}`} className={`text-ink ${className}`}>
-      {bars.map((b, i) => (
-        <rect key={i} x={b.x} y={0} width={Math.min(b.w, width - b.x)} height={height} fill="currentColor" />
-      ))}
-    </svg>
   );
 }
 

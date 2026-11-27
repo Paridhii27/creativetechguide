@@ -367,6 +367,11 @@ a { text-underline-offset: 3px; }
 .ticks::before { top: -1px; left: -1px; border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); }
 .ticks::after { bottom: -1px; right: -1px; border-bottom: 1px solid var(--ink); border-right: 1px solid var(--ink); }
 
+/* Home section counts: the section's swatch. On Document's light ground the swatches are darkened towards ink so
+   every count reads (at least 3:1 for large text). */
+.section-count { color: var(--count, var(--ink)); }
+:is(:root:not([data-theme]), [data-theme="paper"]) .section-count { color: color-mix(in srgb, var(--count, var(--ink)) 70%, var(--ink)); }
+
 /* Focus: always visible, follows the accent */
 :where(a, button, input, select, textarea, [tabindex]):focus-visible {
   outline: 2px solid var(--accent);
@@ -391,6 +396,19 @@ a { text-underline-offset: 3px; }
 .anim-stagger > *:nth-child(5) { animation-delay: 160ms; }
 .anim-stagger > *:nth-child(6) { animation-delay: 200ms; }
 .anim-stagger > *:nth-child(n + 7) { animation-delay: 240ms; }
+
+/* Micro-interactions: feedback for a press or hover. Only scale and translate, so nothing around them moves. */
+.nudge { display: inline-block; }
+@media (prefers-reduced-motion: no-preference) {
+  /* pills dip while held */
+  :where(a, button, label).rounded-full:active:not(:disabled, [aria-disabled="true"]) { scale: 0.97; }
+  /* arrows lean the way they point */
+  .nudge { transition: translate 150ms cubic-bezier(0.2, 0, 0, 1); }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  :where(a, button):hover .nudge { translate: 3px 0; }
+  :where(a, button):hover .nudge-back { translate: -3px 0; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .anim-draw, .anim-fade-up, .anim-stagger > * { animation: none; }

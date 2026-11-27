@@ -1,39 +1,19 @@
 import SearchField from "./ui/SearchField";
 import AutoSubmit from "./AutoSubmit";
+import FilterSelect from "./FilterSelect";
 import { REMOTE_TYPES, WINDOWS, type Params } from "@/lib/filters";
 import { humanize, KINDS, type Discipline, type EntryType, type Lens } from "@/lib/types";
 
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 
-/** Field-guide filter column (DESIGN.md): micro labels, square hairline fields, pill buttons. */
+/** Field-guide filter column (DESIGN.md): micro labels, square hairline dropdowns, pill buttons. */
 const c = {
   form: "flex flex-col gap-5",
   label: "text-micro text-ink-muted",
-  field:
-    "text-body-s mt-1.5 w-full appearance-none rounded-none border border-line bg-bg py-2 pr-7 pl-2.5 text-ink transition-colors hover:border-ink focus:border-ink",
   keyword: "block",
   actions: "flex items-center gap-2 border-t border-line pt-5",
   clear: "text-label py-1.5 text-ink-muted hover:text-ink",
 };
-
-function Select({ name, label, value, options }: { name: string; label: string; value: string; options: { value: string; label: string }[] }) {
-  return (
-    <label className="block min-w-0">
-      <span className={c.label}>{label}</span>
-      <span className="relative block">
-        <select name={name} defaultValue={value} className={c.field}>
-          <option value="">Any</option>
-          {options.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
-        <span aria-hidden className="text-tag pointer-events-none absolute top-1/2 right-2.5 mt-[3px] -translate-y-1/2 text-ink-muted">
-          ▾
-        </span>
-      </span>
-    </label>
-  );
-}
 
 export default function Filters({
   type,
@@ -70,22 +50,22 @@ export default function Filters({
         </label>
       )}
       {/* Discipline leads the filters on every section, right after the keyword. */}
-      <Select name="discipline" label="Discipline" value={v("discipline")} options={disciplines.map((d) => ({ value: d.slug, label: d.label }))} />
+      <FilterSelect name="discipline" label="Discipline" value={v("discipline")} options={disciplines.map((d) => ({ value: d.slug, label: d.label }))} />
       {(kinds ?? KINDS[type].values).length > 0 && (
-        <Select name="kind" label={kindLabel} value={v("kind")} options={(kinds ?? KINDS[type].values).map((k) => ({ value: k, label: humanize(k) }))} />
+        <FilterSelect name="kind" label={kindLabel} value={v("kind")} options={(kinds ?? KINDS[type].values).map((k) => ({ value: k, label: humanize(k) }))} />
       )}
       {dated && (
-        <Select name="within" label={type === "event" ? "Starting within" : "Deadline within"} value={v("within")} options={WINDOWS.map((w) => ({ ...w }))} />
+        <FilterSelect name="within" label={type === "event" ? "Starting within" : "Deadline within"} value={v("within")} options={WINDOWS.map((w) => ({ ...w }))} />
       )}
       {type === "job" && (
         <>
-          <Select name="work_mode" label="Work mode" value={v("work_mode")} options={["onsite", "hybrid", "remote"].map((x) => ({ value: x, label: humanize(x) }))} />
-          <Select name="visa" label="Visa sponsorship" value={v("visa")} options={[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "unknown", label: "Unknown" }]} />
+          <FilterSelect name="work_mode" label="Work mode" value={v("work_mode")} options={["onsite", "hybrid", "remote"].map((x) => ({ value: x, label: humanize(x) }))} />
+          <FilterSelect name="visa" label="Visa sponsorship" value={v("visa")} options={[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "unknown", label: "Unknown" }]} />
         </>
       )}
-      {REMOTE_TYPES.includes(type) && <Select name="remote" label="Remote / In person" value={v("remote")} options={[{ value: "yes", label: "Remote / Online" }, { value: "no", label: "In person" }]} />}
+      {REMOTE_TYPES.includes(type) && <FilterSelect name="remote" label="Remote / In person" value={v("remote")} options={[{ value: "yes", label: "Remote / Online" }, { value: "no", label: "In person" }]} />}
       {lens.kind !== "global" && !placeless && (
-        <Select
+        <FilterSelect
           name="relevance"
           label={`Relevance to ${lens.label}`}
           value={v("relevance")}

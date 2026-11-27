@@ -6,7 +6,7 @@ import { useEffect, useRef, useTransition } from "react";
 const TYPING_PAUSE = 300;
 
 /**
- * GET filter form with no submit button: a select or checkbox applies as soon as it changes, typed text after a
+ * GET filter form with no submit button: a select or checkbox applies as soon as it changes (FilterSelect submits itself), typed text after a
  * short pause (or Enter). Keeps URLs clean (no empty params).
  *
  * While the new results load, the form carries `data-pending` so the page can show it's working. A link marked
@@ -29,7 +29,10 @@ export default function AutoSubmit({ children, className }: { children: React.Re
         // Leave modified clicks alone, so "open in new tab" still works.
         if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || !(ev.target as Element).closest("[data-clear]")) return;
         ev.preventDefault();
-        for (const field of ev.currentTarget.querySelectorAll<HTMLInputElement | HTMLSelectElement>("select, input:not([type=hidden])")) field.value = "";
+        for (const field of ev.currentTarget.querySelectorAll<HTMLInputElement | HTMLSelectElement>("select, input:not([type=hidden]), input[data-filter]")) {
+          field.value = "";
+          field.dispatchEvent(new Event("filter-clear"));
+        }
         typing.current = false;
         ev.currentTarget.requestSubmit();
       }}

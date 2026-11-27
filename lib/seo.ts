@@ -1,9 +1,11 @@
 import { sectionForEntry, type Entry } from "@/lib/types";
 import { placeName } from "./places";
 
-export const SITE_NAME = "Field Guide: Creative Technology";
+export const SITE_NAME = "A map of Creative Technology";
+/** The shorter form used in browser tabs. */
+export const TAB_NAME = "Map of Creative Technology";
 export const SITE_DESCRIPTION =
-  "A field guide to creative technology, experience design and design-technology work, seen through any country or region.";
+  "Creative technology, experience design and design-technology work, mapped through any country or region.";
 
 /**
  * The canonical public address, for sitemap, canonical links and Open Graph URLs (which must be

@@ -170,7 +170,7 @@ export default async function MyLayerPage({ searchParams }: { searchParams: Prom
                   className="flex items-end justify-between gap-3 border-l-2 border-transparent py-3 pr-2 pl-3 transition-colors hover:bg-surface"
                 >
                   <span className="text-label flex items-center gap-2 text-ink">
-                    Review queue <span aria-hidden>→</span>
+                    Review queue <span aria-hidden className="nudge">→</span>
                   </span>
                   <span className={`text-numeral ${reviewCount > 0 ? "text-accent-text" : "text-ink-muted"}`}>{reviewCount}</span>
                 </Link>

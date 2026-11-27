@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useOptimistic, useState, useTransition } from "react";
 import { deleteEntryAction, reviewAction, suggestAction, toggleSavedAction } from "@/app/actions/entries";
 import type { Status, Visibility } from "@/lib/types";
 
@@ -24,6 +24,24 @@ export default function EntryActions({ entryId, updatedAt, signedIn, saved: init
   const [saved, setSaved] = useState(initialSaved);
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
+  // Save answers on click: `shownSaved` flips at once and falls back to `saved` if the server refuses.
+  const [shownSaved, showSaved] = useOptimistic(saved);
+  const [saving, startSave] = useTransition();
+  const toggleSave = () => {
+    if (saving) return;
+    startSave(async () => {
+      const next = !saved;
+      showSaved(next);
+      setError(null);
+      try {
+        const err = await toggleSavedAction(entryId, next);
+        if (err) setError(err);
+        else setSaved(next);
+      } catch {
+        setError(next ? "Couldn’t save this. Check your connection and try again." : "Couldn’t remove this. Check your connection and try again.");
+      }
+    });
+  };
   const run = (fn: () => Promise<string | null | undefined | void>) =>
     start(async () => {
       setError(null);
@@ -53,21 +71,16 @@ export default function EntryActions({ entryId, updatedAt, signedIn, saved: init
         )}
         {!compact && <button
           disabled={pending}
-          title={saved ? "Remove from My Layer. The entry itself isn't changed." : undefined}
-          className={saved && !inLayer ? solid : btn}
-          onClick={() =>
-            run(async () => {
-              const err = await toggleSavedAction(entryId, !saved);
-              if (!err) setSaved(!saved);
-              return err;
-            })
-          }
+          aria-busy={saving}
+          title={shownSaved ? "Remove from My Layer. The entry itself isn't changed." : undefined}
+          className={shownSaved && !inLayer ? solid : btn}
+          onClick={toggleSave}
         >
-          {saved ? (inLayer ? "Remove from My Layer" : "Saved ✓") : "Save to My Layer"}
+          {shownSaved ? (inLayer ? "Remove from My Layer" : "Saved ✓") : "Save to My Layer"}
         </button>}
-        {!compact && saved && !inLayer && (
+        {!compact && shownSaved && !inLayer && (
           <Link href="/me?view=saved" className={btn}>
-            In My Layer →
+            In My Layer <span aria-hidden className="nudge ml-1">→</span>
           </Link>
         )}
         {/* Users suggest; the admin publishes directly (below), so never sees Suggest. */}
@@ -110,7 +123,7 @@ export default function EntryActions({ entryId, updatedAt, signedIn, saved: init
           <button disabled={pending} className={btn} onClick={() => confirm("Archive this entry? It will be hidden from the Map.") && run(() => reviewAction(entryId, "archived", updatedAt))}>Archive</button>
         )}
       </div>
-      {error && <p className="text-body-s text-accent-text">{error}</p>}
+      {error && <p role="alert" className="text-body-s text-accent-text">{error}</p>}
     </div>
   );
 }

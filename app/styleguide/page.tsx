@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { addDays } from "@/lib/dates";
 import { SECTIONS } from "@/lib/types";
 import { ChangeView } from "@/components/ui/ChangeView";
-import { Barcode, BracketLabel, DisciplineTag, GridMark, LocationLabel, Mark, PillButton, Tag, ViewLink, Wordmark } from "@/components/ui/primitives";
+import { BracketLabel, DisciplineTag, GridMark, LocationLabel, Mark, PillButton, Tag, ViewLink, Wordmark } from "@/components/ui/primitives";
 import { swatchFor, TYPE_SWATCH, type Swatch } from "@/lib/swatch";
 import { ENTRY_TYPES } from "@/lib/types";
 import { DeadlineMark, EligibilityTag } from "@/components/ui/status";
@@ -95,9 +95,8 @@ function Sub({ title, children, note }: { title: string; children: ReactNode; no
 function ModeSample({ mode, name, note }: { mode: "paper" | "night" | "blueprint"; name: string; note: string }) {
   return (
     <div data-theme={mode} className="bg-specimen-grid ticks flex flex-col gap-4 border border-line p-5 text-ink">
-      <div className="flex items-center justify-between">
+      <div className="flex">
         <BracketLabel accent>{name}</BracketLabel>
-        <Barcode seed={mode} width={40} height={9} />
       </div>
       <div className="text-display-m">
         Open <Accent>calls</Accent>
@@ -289,7 +288,6 @@ export default function StyleguidePage() {
               <p className="text-micro max-w-[34ch] text-ink-muted">
                 Experience design · creative coding · spatial XR · installation · physical computing · generative art
               </p>
-              <Barcode seed="signature" />
             </div>
           </div>
         </Sub>
@@ -344,7 +342,6 @@ export default function StyleguidePage() {
               <BracketLabel mark={2}>Programme</BracketLabel>
               <LocationLabel>Bengaluru, IN</LocationLabel>
               <LocationLabel>Remote</LocationLabel>
-              <Barcode />
               <GridMark />
             </div>
           </Sub>
@@ -528,7 +525,6 @@ export default function StyleguidePage() {
           <div className="grid max-w-2xl gap-4 sm:grid-cols-2">
             <AnnotationBox
               title="Deadline"
-              barcode="a1"
               swatch={1}
               rows={[
                 { label: "Closes", value: "28.06.2026" },
@@ -576,7 +572,7 @@ export default function StyleguidePage() {
                 to: { x: 20, y: 70 },
                 box: { x: 4, y: 68, w: 24 },
                 content: (
-                  <AnnotationBox title="Deadline" barcode="dl" swatch={1}>
+                  <AnnotationBox title="Deadline" swatch={1}>
                     <DeadlineMark date={addDays(5)} />
                   </AnnotationBox>
                 ),

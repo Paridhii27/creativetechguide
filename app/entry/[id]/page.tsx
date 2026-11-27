@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { DeadlineChip, EligibilityBadge, dateLabelFor, locationLabel } from "@/components/Badges";
 import { AnnotationBox } from "@/components/ui/hud";
-import { Barcode, BracketLabel, DisciplineTag, LocationLabel, Mark, PillLink, Tag } from "@/components/ui/primitives";
+import { BracketLabel, DisciplineTag, LocationLabel, Mark, PillLink, Tag } from "@/components/ui/primitives";
 import { Thumb } from "@/components/ui/Thumb";
 import { entrySwatch } from "@/lib/swatch";
 import EntryList from "@/components/EntryList";
@@ -205,9 +205,9 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
         </p>
       )}
       {e.visibility === "private" && e.owner_id === user?.id ? (
-        <Link href="/me" className="text-label text-ink-muted hover:text-ink">← My Layer</Link>
+        <Link href="/me" className="text-label text-ink-muted hover:text-ink"><span aria-hidden className="nudge nudge-back">←</span> My Layer</Link>
       ) : (
-        <Link href={`/${section.slug}?lens=${lens.slug}`} className="text-label inline-block py-1.5 text-ink-muted hover:text-ink">← {section.label}</Link>
+        <Link href={`/${section.slug}?lens=${lens.slug}`} className="text-label inline-block py-1.5 text-ink-muted hover:text-ink"><span aria-hidden className="nudge nudge-back">←</span> {section.label}</Link>
       )}
 
       {/* Fetching the links takes a few seconds, so the page doesn't wait for it. */}
@@ -284,9 +284,8 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
         {/* SPECIMEN PANEL (visual-direction reference) -------------------- */}
         <aside className="lg:sticky lg:top-8 lg:self-start">
           <div className="ticks bg-specimen-grid border border-line p-4">
-            <div className="mb-3 flex items-center justify-between">
+            <div className="mb-3">
               <BracketLabel mark={swatch}>{section.singular}</BracketLabel>
-              <Barcode seed={e.id} width={48} height={10} />
             </div>
             <Thumb src={pic.src} title={e.title.replace(/^\[Demo\]\s*/, "")} fit={pic.fit === "icon" ? "icon" : "cover"} swatch={swatch} className="aspect-square w-full" />
             <div className="mt-4 flex flex-col gap-3">

@@ -34,7 +34,7 @@ export function isPrivateAddress(ip: string): boolean {
 export class UnfurlError extends Error {
   constructor(
     message: string,
-    readonly kind: "http" | "not_html" | "no_such_host" | "refused" | "redirects",
+    readonly kind: "http" | "not_html" | "no_such_host" | "lookup_failed" | "refused" | "redirects",
     readonly status?: number,
   ) {
     super(message);
@@ -49,7 +49,8 @@ async function assertPublicUrl(u: URL) {
     ? [{ address: host }]
     : await lookup(host, { all: true }).catch((e: NodeJS.ErrnoException) => {
         if (e.code === "ENOTFOUND") throw new UnfurlError("That website address doesn't exist.", "no_such_host");
-        throw e;
+        // Some hosts report a missing domain with another code (EBUSY, EAI_AGAIN), so any failed lookup counts.
+        throw new UnfurlError(`The address lookup failed (${e.code}).`, "lookup_failed");
       });
   if (addrs.length === 0 || addrs.some((a) => isPrivateAddress(a.address))) throw new UnfurlError("That address isn't publicly reachable.", "refused");
 }
@@ -124,6 +125,7 @@ export function parseHtml(html: string, baseUrl: string): Omit<Unfurled, "url"> 
 export function badLinkMessage(e: unknown): string | null {
   if (!(e instanceof UnfurlError)) return null;
   if (e.kind === "no_such_host") return "We couldn't find a website at that address. Check the spelling and try again.";
+  if (e.kind === "lookup_failed") return "We couldn't confirm that website exists. Check the spelling, or try again in a moment.";
   if (e.kind === "refused") return "That address isn't a public website, so it can't be added.";
   if (e.kind === "http" && (e.status === 404 || e.status === 410)) return "That page doesn't exist on this website. Check the link and try again.";
   return null;
@@ -138,13 +140,12 @@ export function unreadableLinkMessage(e: unknown): string {
   return "We couldn't open that page just now.";
 }
 
-/** A message if the link's website doesn't exist or isn't public. Only looks up the address; fetches nothing. */
+/** A message if the link's website can't be found or isn't public. Only looks up the address; fetches nothing. */
 export async function websiteProblem(url: string): Promise<string | null> {
   try {
     await assertPublicUrl(new URL(url));
     return null;
   } catch (e) {
-    // A lookup that failed for some other reason (network trouble) shouldn't stop anyone saving.
     return badLinkMessage(e);
   }
 }

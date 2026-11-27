@@ -9,6 +9,8 @@ import { SECTIONS, type MapPoint } from "@/lib/types";
 const R = 100;
 const RAD = Math.PI / 180;
 const MAX_ZOOM = 3;
+/** Sections the globe can be filtered to. Tools have no location, so they aren't offered. */
+const MAPPED = SECTIONS.filter((s) => s.slug !== "tools");
 
 /** Orthographic projection: a point `lift` globe-radii above the surface, seen from above (lat0, lng0). z > 0 faces us. */
 function project(lat: number, lng: number, lat0: number, lng0: number, lift = 0) {
@@ -147,7 +149,7 @@ export default function FieldGlobe({ points, total, closing, lens, lensLabel, ho
           </g>
         </svg>
 
-        <BracketLabel className="pointer-events-none absolute top-3 left-3 bg-bg px-1">The field</BracketLabel>
+        <BracketLabel accent className="pointer-events-none absolute top-3 left-3 bg-bg px-1">The field</BracketLabel>
         <p className="text-micro pointer-events-none absolute top-3 right-3 bg-bg px-1 text-right text-ink-muted">
           {total.toLocaleString("en")} entries
           <br />
@@ -173,7 +175,7 @@ export default function FieldGlobe({ points, total, closing, lens, lensLabel, ho
                   <Link href={`/${s.slug}?city=${encodeURIComponent(active.city)}&lens=${lens}`} className="text-micro flex items-center gap-2 py-1 text-ink hover:underline">
                     <Mark swatch={sectionSwatch(s)} size={6} />
                     <span className="min-w-0 flex-1">{s.label}</span>
-                    <span>{active.counts[s.slug]} →</span>
+                    <span>{active.counts[s.slug]} <span className="nudge">→</span></span>
                   </Link>
                 </li>
               ))}
@@ -184,7 +186,7 @@ export default function FieldGlobe({ points, total, closing, lens, lensLabel, ho
           <div className="text-micro pointer-events-none absolute bottom-3 left-3 bg-bg px-1 text-ink-muted">
             {lensLabel}
             <br />
-            <span className="text-ink">{closing.week} closing this week</span> · {closing.sixtyDays} in 60 days
+            <span className="text-accent-text">{closing.week} closing this week</span> · {closing.sixtyDays} in 60 days
           </div>
         )}
       </div>
@@ -201,7 +203,7 @@ export default function FieldGlobe({ points, total, closing, lens, lensLabel, ho
             label={current?.label ?? "Everything"}
             ariaLabel={`Show on the globe (now ${current?.label ?? "Everything"})`}
             value={section ?? ""}
-            groups={[{ label: "Show", options: [{ value: "", label: "Everything" }, ...SECTIONS.map((s) => ({ value: s.slug, label: s.label }))] }]}
+            groups={[{ label: "Show", options: [{ value: "", label: "Everything" }, ...MAPPED.map((s) => ({ value: s.slug, label: s.label }))] }]}
             onSelect={(v) => setSection(v || null)}
             className={MENU}
           />

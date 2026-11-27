@@ -26,7 +26,7 @@ export default async function EditEntryPage({ params }: { params: Promise<{ id: 
 
   return (
     <div className="max-w-3xl">
-      <Link href={`/entry/${id}`} className="text-label text-ink-muted hover:text-ink">← Back to entry</Link>
+      <Link href={`/entry/${id}`} className="text-label text-ink-muted hover:text-ink"><span aria-hidden className="nudge nudge-back">←</span> Back to entry</Link>
       <h1 className="text-display-m mt-6 text-ink">Edit entry</h1>
       {e.visibility === "public" && <p className="text-body-s mt-4 text-ink-muted">This entry is on the public Map. Your changes go live as soon as you save.</p>}
       <div className="mt-8">

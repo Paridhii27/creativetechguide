@@ -17,7 +17,7 @@ import { NavBar } from "@/components/ui/NavBar";
 import { PillLink } from "@/components/ui/primitives";
 import { VIEW_MODE_SCRIPT } from "@/lib/theme";
 import { Analytics } from "@vercel/analytics/next";
-import { jsonLdScript, SITE_DESCRIPTION, SITE_NAME, siteUrl } from "@/lib/seo";
+import { jsonLdScript, SITE_DESCRIPTION, SITE_NAME, siteUrl, TAB_NAME } from "@/lib/seo";
 
 // The only three families on the site (DESIGN.md).
 const blackHanSans = Black_Han_Sans({ subsets: ["latin"], weight: "400", variable: "--font-black-han-sans", display: "swap" });
@@ -26,7 +26,7 @@ const instrumentSans = Instrument_Sans({ subsets: ["latin"], axes: ["wdth"], var
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title: { default: SITE_NAME, template: "%s · Field Guide" },
+  title: { default: TAB_NAME, template: `%s · ${TAB_NAME}` },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
   keywords: ["creative technology", "experience design", "creative coding", "interaction design", "open calls", "residencies", "design technologist jobs", "creative technology masters"],
@@ -148,10 +148,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Takes up any spare height, so the footer sits at the bottom of the screen on short pages too. */}
         <main className="page-width flex-1 py-10">{children}</main>
         <footer className="mt-16 border-t border-line">
-          <div className="text-micro page-width flex flex-wrap items-center justify-between gap-3 py-6 text-ink-muted">
-            <span>Field Guide: Creative Technology. Entries are reviewed before going public.</span>
-            <span>Open data under CC BY 4.0 (coming soon)</span>
-          </div>
+          {/* One centred line; where it has to wrap (phones), each sentence takes its own line. */}
+          <p className="text-micro page-width py-8 text-center text-balance text-ink-muted">
+            <span className="inline-block">A map of Creative Technology, growing with your suggestions.</span>{" "}
+            <span className="inline-block">Every public entry is reviewed first.</span>
+          </p>
         </footer>
         <Analytics />
       </body>

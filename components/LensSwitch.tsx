@@ -86,7 +86,8 @@ export default function LensSwitch({ fallback, geo }: { fallback: string; geo: G
         <form
           onSubmit={submitPlace}
           onKeyDown={(e) => e.key === "Escape" && closeBox()}
-          className="absolute left-0 top-full z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] space-y-2 border border-ink bg-bg p-3 sm:left-auto sm:right-0"
+          // Placed like the place list (PlaceMenu), so the box that replaces it is exactly as wide.
+          className="absolute inset-x-0 top-full z-50 mt-2 space-y-2 border border-ink bg-bg p-3"
         >
           <label htmlFor="other-place" className="label">See what’s open to another place</label>
           <div className="flex gap-2">

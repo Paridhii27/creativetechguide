@@ -58,7 +58,7 @@ export default function Meanings({ lens }: { lens: string }) {
       </button>
       <div className="mt-1 flex items-center justify-between gap-3">
         <Link href={`/studios?discipline=${slug}&lens=${lens}`} className="text-label text-ink-muted underline-offset-4 hover:text-ink hover:underline">
-          {name} studios <span aria-hidden>→</span>
+          {name} studios <span aria-hidden className="nudge">→</span>
         </Link>
         {/* One tick per example: where you are, and a way to jump. */}
         <div className="flex">

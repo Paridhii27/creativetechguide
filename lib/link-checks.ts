@@ -12,7 +12,7 @@ export interface Check {
 /** What fetching a link gave: the page, or why it couldn't be read. */
 export type Fetched =
   | { ok: true; url: string; title: string | null; description: string | null; text: string }
-  | { ok: false; kind: "http" | "not_html" | "no_such_host" | "refused" | "redirects" | "failed"; status?: number };
+  | { ok: false; kind: "http" | "not_html" | "no_such_host" | "lookup_failed" | "refused" | "redirects" | "failed"; status?: number };
 
 const SHORTENERS = ["bit.ly", "tinyurl.com", "t.co", "goo.gl", "ow.ly", "is.gd", "buff.ly", "rebrand.ly", "cutt.ly", "shorturl.at", "tiny.cc", "rb.gy", "t.ly"];
 const SPAM = /\b(casino|sports ?betting|slot online|jackpot|payday loans?|instant loans?|viagra|cialis|online pharmacy|escorts?|porn|xxx|forex signals?|crypto giveaway|free bitcoin|replica watches|buy followers|essay writing service)\b/i;

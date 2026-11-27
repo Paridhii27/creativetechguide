@@ -41,3 +41,10 @@ export async function setPreferredLens(lens: string): Promise<void> {
   if (!auth.user) return;
   await supabase.from("profiles").update({ preferred_lens: lens }).eq("id", auth.user.id);
 }
+
+/** How many people have an account. RLS lets only admins count every profile; null if the count fails. */
+export async function countAccounts(): Promise<number | null> {
+  const supabase = await createClient();
+  const { count, error } = await supabase.from("profiles").select("id", { count: "exact", head: true });
+  return error ? null : count;
+}

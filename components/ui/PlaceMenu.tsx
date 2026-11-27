@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 
 export interface PlaceGroup {
   label: string;
@@ -8,7 +8,7 @@ export interface PlaceGroup {
 
 /**
  * A button that opens a hairline index in the site's own style (like the search matches), in place of
- * the browser's native select list. Used by the place half of the lens toggle and under the home globe.
+ * the browser's native select list. Used by the lens toggle, under the home globe and in the section filters.
  * Arrows, Home/End and first letters move through it; Escape or a click outside closes it.
  * The panel is positioned against the nearest `relative` ancestor and is exactly as wide as it.
  */
@@ -23,6 +23,7 @@ export default function PlaceMenu({
   prefix,
   ariaLabel,
   above = false,
+  autoPlace = false,
   compact = false,
 }: {
   /** a shorter list with tighter rows */
@@ -33,6 +34,8 @@ export default function PlaceMenu({
   ariaLabel?: string;
   /** open the panel over what's above the button rather than below it */
   above?: boolean;
+  /** open upwards when there isn't room below the button but there is above it */
+  autoPlace?: boolean;
   label: string;
   /** the selected option's value, or "" when the selection isn't in the list */
   value: string;
@@ -57,6 +60,17 @@ export default function PlaceMenu({
     setOpen(false);
     if (refocus) toggle.current?.focus();
   }
+
+  // Moved before focus lands in the list, so focusing never scrolls the page to a panel that's about to move.
+  useLayoutEffect(() => {
+    const p = panel.current;
+    const b = toggle.current?.getBoundingClientRect();
+    if (!open || !autoPlace || !p || !b) return;
+    const need = p.offsetHeight + 16;
+    const flip = window.innerHeight - b.bottom < need && b.top >= need;
+    for (const c of ["top-full", "mt-2"]) p.classList.toggle(c, !flip);
+    for (const c of ["bottom-full", "mb-2"]) p.classList.toggle(c, flip);
+  }, [open, autoPlace]);
 
   // Opening starts on the current place, scrolled into view inside the list.
   useEffect(() => {
@@ -99,7 +113,7 @@ export default function PlaceMenu({
   }
 
   const pad = compact ? "px-3" : "px-4";
-  const row = "text-body-s flex w-full items-center gap-3 text-left text-ink transition-colors hover:bg-surface focus-visible:bg-surface focus-visible:-outline-offset-2! " + (compact ? "px-3 py-1" : "px-4 py-2");
+  const row = "text-body-s flex w-full items-center gap-3 text-left text-ink transition-colors hover:bg-surface focus-visible:bg-surface focus-visible:-outline-offset-2! " + (compact ? "px-3 py-1 pointer-coarse:py-2" : "px-4 py-2");
 
   return (
     // No positioning here, so the panel lines up with the whole toggle rather than this half of it.
@@ -173,7 +187,7 @@ export default function PlaceMenu({
               className={`${row} text-label! justify-between border-t border-line py-3`}
             >
               <span>{other.label}</span>
-              <span aria-hidden>→</span>
+              <span aria-hidden className="nudge">→</span>
             </button>
           )}
         </div>
