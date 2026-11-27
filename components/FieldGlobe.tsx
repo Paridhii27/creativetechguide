@@ -233,6 +233,7 @@ export default function FieldGlobe({ points, total, closing, lens, lensLabel, ho
             above
             compact
             prefix="Fly to"
+            search="Type a city or country"
             label={chosen?.city ?? "Choose a city"}
             ariaLabel={`Fly to a city${chosen ? ` (now ${chosen.city})` : ""}`}
             value={chosen ? keyOf(chosen) : ""}

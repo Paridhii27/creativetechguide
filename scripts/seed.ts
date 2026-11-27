@@ -96,7 +96,7 @@ async function main() {
       data: compact({
         program_kind: str(r.program_kind), institution_id: orgIds.get(r.institution) ?? null, degree_name: str(r.degree_name),
         duration_months: num(r.duration_months), mode: str(r.mode), portfolio_required: bool(r.portfolio_required),
-        curriculum_tags: list(r.curriculum_tags), application_deadlines: [], scholarships: [],
+        curriculum_tags: list(r.curriculum_tags), application_deadlines: r.deadline ? [{ round: "Last day to apply", date: r.deadline, source_text: str(r.deadline_source_text) }] : [], scholarships: [],
       }),
     });
   }

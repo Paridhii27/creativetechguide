@@ -10,6 +10,7 @@ export interface PlaceGroup {
  * A button that opens a hairline index in the site's own style (like the search matches), in place of
  * the browser's native select list. Used by the lens toggle, under the home globe and in the section filters.
  * Arrows, Home/End and first letters move through it; Escape or a click outside closes it.
+ * With `search`, a field filters the list as you type instead.
  * The panel is positioned against the nearest `relative` ancestor and is exactly as wide as it.
  */
 export default function PlaceMenu({
@@ -25,7 +26,10 @@ export default function PlaceMenu({
   above = false,
   autoPlace = false,
   compact = false,
+  search,
 }: {
+  /** adds a field that narrows the list as you type; the string is its placeholder */
+  search?: string;
   /** a shorter list with tighter rows */
   compact?: boolean;
   /** a small caption inside the button, before the label */
@@ -53,6 +57,11 @@ export default function PlaceMenu({
   const toggle = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
+  const field = useRef<HTMLInputElement>(null);
+  const [query, setQuery] = useState("");
+  // Each opening starts from the whole list.
+  if (!open && query) setQuery("");
+  const shown = search ? matching(groups, query) : groups;
 
   const items = () => Array.from(panel.current?.querySelectorAll<HTMLButtonElement>("button[data-option]") ?? []);
 
@@ -76,7 +85,12 @@ export default function PlaceMenu({
   useEffect(() => {
     if (!open) return;
     const all = items();
-    (all.find((b) => b.getAttribute("aria-current")) ?? all[0])?.focus();
+    const current = all.find((b) => b.getAttribute("aria-current"));
+    // On touch screens the field waits for a tap, so the keyboard doesn't cover the list unasked.
+    if (field.current && !window.matchMedia("(pointer: coarse)").matches) {
+      current?.scrollIntoView({ block: "nearest" });
+      field.current.focus({ preventScroll: true });
+    } else (current ?? all[0])?.focus();
     // pointerdown, not mousedown: iOS doesn't send mouse events for taps on non-clickable areas.
     const onDown = (e: PointerEvent) => {
       if (!root.current?.contains(e.target as Node)) setOpen(false);
@@ -100,11 +114,21 @@ export default function PlaceMenu({
     const all = items();
     const at = all.indexOf(document.activeElement as HTMLButtonElement);
     let next: HTMLButtonElement | undefined;
+    const typing = e.target === field.current;
+    // Enter in the field takes the first match.
+    if (typing && e.key === "Enter") {
+      e.preventDefault();
+      if (query.trim()) all[0]?.click();
+      return;
+    }
+    if (typing && (e.key === "Home" || e.key === "End")) return; // these move the caret
     if (e.key === "ArrowDown") next = all[(at + 1) % all.length];
     else if (e.key === "ArrowUp") next = all[at <= 0 ? all.length - 1 : at - 1];
     else if (e.key === "Home") next = all[0];
     else if (e.key === "End") next = all[all.length - 1];
     else if (e.key.length === 1 && e.key !== " " && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      // Typing from a row carries on in the field, which receives this same keystroke.
+      if (field.current) return field.current.focus();
       const rest = [...all.slice(at + 1), ...all.slice(0, at + 1)];
       next = rest.find((b) => b.textContent?.toLowerCase().startsWith(e.key.toLowerCase()));
     } else return;
@@ -144,10 +168,11 @@ export default function PlaceMenu({
         <div
           ref={panel}
           id={panelId}
-          className={`absolute inset-x-0 z-50 border border-ink bg-bg ${above ? "bottom-full mb-2" : "top-full mt-2"}`}
+          className={`absolute inset-x-0 z-50 flex flex-col border border-ink bg-bg ${above ? "bottom-full mb-2" : "top-full mt-2"}`}
         >
           <div className={`overflow-y-auto overscroll-contain ${compact ? "max-h-[min(13rem,45vh)]" : "max-h-[min(24rem,60vh)]"}`}>
-            {groups.map((g) => (
+            {search && shown.length === 0 && <p role="status" className={`text-body-s py-2 text-ink-muted ${pad}`}>No matches</p>}
+            {shown.map((g) => (
               <div key={g.label} role="group" aria-label={g.label}>
                 <p aria-hidden className={`text-micro sticky top-0 border-b border-line bg-bg text-ink-muted ${pad} ${compact ? "py-1" : "py-2"}`}>[ {g.label} ]</p>
                 <ul className="divide-y divide-line border-b border-line">
@@ -176,6 +201,23 @@ export default function PlaceMenu({
               </div>
             ))}
           </div>
+          {search && (
+            // Beside the button, so it stays put while the list above or below it shrinks.
+            <input
+              ref={field}
+              type="text"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                e.target.previousElementSibling?.scrollTo(0, 0);
+              }}
+              placeholder={search}
+              aria-label={search}
+              autoComplete="off"
+              spellCheck={false}
+              className={`text-body-s w-full bg-bg py-2 text-ink placeholder:text-ink-muted focus-visible:-outline-offset-2! pointer-coarse:text-base! ${pad} ${above ? "border-t border-line" : "order-first border-b border-line"}`}
+            />
+          )}
           {other && (
             <button
               type="button"
@@ -194,4 +236,15 @@ export default function PlaceMenu({
       )}
     </div>
   );
+}
+
+/** Lower case without accents, so "sao" finds "São Paulo". */
+const plain = (s: string) => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+
+/** The options with a word starting with what's typed; a matching group name keeps its whole group. */
+function matching(groups: PlaceGroup[], query: string): PlaceGroup[] {
+  const q = plain(query.trim());
+  if (!q) return groups;
+  const hit = (text: string) => ` ${plain(text)}`.includes(` ${q}`);
+  return groups.map((g) => (hit(g.label) ? g : { ...g, options: g.options.filter((o) => hit(o.label)) })).filter((g) => g.options.length > 0);
 }
