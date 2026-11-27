@@ -31,7 +31,7 @@ export default function SearchField({
       <input
         type="search"
         {...props}
-        className={`peer w-full appearance-none rounded-full border border-line bg-bg text-ink transition-colors placeholder:text-ink-muted hover:border-ink focus:border-ink focus:outline-2 focus:outline-offset-1 focus:outline-accent [&::-webkit-search-cancel-button]:hidden ${s.input}`}
+        className={`peer w-full appearance-none rounded-full border border-control bg-bg text-ink transition-colors placeholder:text-ink-muted hover:border-ink focus:border-ink focus:outline-2 focus:outline-offset-1 focus:outline-accent [&::-webkit-search-cancel-button]:hidden ${s.input}`}
       />
       {kbd && (
         <kbd

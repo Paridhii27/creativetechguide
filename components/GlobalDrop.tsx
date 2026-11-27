@@ -12,7 +12,9 @@ const SEARCHING = new Set(["/search", ...SECTIONS.map((s) => `/${s.slug}`)]);
 /** N only counts as a shortcut when nothing is focused (not a field, menu, button or link) and no dropdown is open. */
 function isShortcut(e: KeyboardEvent) {
   if (e.key.toLowerCase() !== "n" || e.metaKey || e.ctrlKey || e.altKey || e.repeat || e.isComposing || e.defaultPrevented) return false;
-  if (e.target !== document.body && e.target !== document.documentElement) return false;
+  // The page itself counts as nothing focused: <main> takes focus from "Skip to content" or a click on it.
+  const t = e.target;
+  if (t !== document.body && t !== document.documentElement && !(t instanceof HTMLElement && t.id === "main")) return false;
   // An open menu can be left without focus (Safari doesn't focus a button you click), so check for one too.
   return !SEARCHING.has(window.location.pathname) && !document.querySelector('[aria-expanded="true"]');
 }

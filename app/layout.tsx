@@ -76,6 +76,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(WEBSITE_JSON_LD) }} />
       </head>
       <body className="flex min-h-screen flex-col">
+        {/* First stop for the Tab key; hidden until it has focus. */}
+        <a href="#main" className="text-label sr-only rounded-full border border-ink bg-ink px-4 py-2 text-bg focus:not-sr-only focus:fixed! focus:top-3 focus:left-3 focus:z-[60] focus:px-4! focus:py-2!">
+          Skip to content
+        </a>
         <DuotoneFilters />
         <header>
           <div className="page-width">
@@ -146,7 +150,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         )}
         {user && <GlobalDrop />}
         {/* Takes up any spare height, so the footer sits at the bottom of the screen on short pages too. */}
-        <main className="page-width flex-1 py-10">{children}</main>
+        <main id="main" tabIndex={-1} className="page-width flex-1 py-10 outline-none!">{children}</main>
         <footer className="mt-16 border-t border-line">
           {/* One centred line; where it has to wrap (phones), each sentence takes its own line. */}
           <p className="text-micro page-width py-8 text-center text-balance text-ink-muted">

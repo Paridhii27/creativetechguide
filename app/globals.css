@@ -35,7 +35,8 @@
   --bg: #fcfcfc;
   --surface: #f2f2f0;
   --ink: #1e1e1e;
-  --ink-muted: rgb(30 30 30 / 0.6);
+  --ink-muted: rgb(30 30 30 / 0.66);
+  --control: color-mix(in srgb, var(--ink) 55%, var(--bg)); /* form field borders: at least 3:1 */
   --line: #dadad6;
   /* accent: a deepened paper-squares red, so white text on solid fills is easy to read (AA) */
   --accent: #c8321a;
@@ -45,6 +46,7 @@
   /* secondary palette (paper squares): fills and marks only, never small text */
   --swatch-1: #f04a30; /* red */
   --swatch-2: #387eb2; /* blue */
+  --swatch-2-tile: #6a9ec5; /* the blue, lifted so ink reads on a whole tile */
   --swatch-3: #7fb17e; /* green */
   --swatch-4: #dcb572; /* mustard */
   --swatch-5: #dbaaae; /* pink */
@@ -59,10 +61,12 @@
 /* No-JS first visit: follow the system. The inline script normally sets data-theme before paint. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
+    --swatch-2-tile: var(--swatch-2);
     --bg: #050505;
     --surface: #0f0f0f;
     --ink: #f2f2f2;
     --ink-muted: rgb(242 242 242 / 0.6);
+    --control: color-mix(in srgb, var(--ink) 40%, var(--bg));
     --line: #262626;
     /* accent: chartreuse marker; secondary palette from the soft gradient tiles */
     --accent: #eafd57;
@@ -86,10 +90,12 @@
 }
 
 [data-theme="night"] {
+  --swatch-2-tile: var(--swatch-2);
   --bg: #050505;
   --surface: #0f0f0f;
   --ink: #f2f2f2;
   --ink-muted: rgb(242 242 242 / 0.6);
+  --control: color-mix(in srgb, var(--ink) 40%, var(--bg));
   --line: #262626;
   /* accent: chartreuse marker; secondary palette from the soft gradient tiles */
   --accent: #eafd57;
@@ -113,10 +119,12 @@
 }
 
 [data-theme="blueprint"] {
+  --swatch-2-tile: var(--swatch-2);
   --bg: #fcfcfc;
   --surface: #eef3fc;
   --ink: #3449b2;
-  --ink-muted: rgb(52 73 178 / 0.65);
+  --ink-muted: rgb(52 73 178 / 0.82);
+  --control: color-mix(in srgb, var(--ink) 65%, var(--bg));
   --line: #d4dcf0;
   --accent: #3449b2;
   --accent-text: #3449b2;
@@ -143,6 +151,7 @@
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-line: var(--line);
+  --color-control: var(--control);
   --color-accent: var(--accent);
   --color-accent-text: var(--accent-text);
   --color-accent-soft: var(--accent-soft);
@@ -457,7 +466,7 @@ a { text-underline-offset: 3px; }
 
 .field {
   width: 100%;
-  border: 1px solid var(--line);
+  border: 1px solid var(--control);
   border-radius: 0;
   background: var(--bg);
   padding: 0.5rem 0.625rem;

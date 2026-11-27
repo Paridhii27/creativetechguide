@@ -45,7 +45,7 @@ export default function FilterSelect({ name, label, value, options }: { name: st
             setChosen(next);
             input.form?.requestSubmit();
           }}
-          className="text-body-s flex w-full items-center justify-between border border-line bg-bg px-2.5 py-2 text-left text-ink transition-colors hover:border-ink aria-expanded:border-ink"
+          className="text-body-s flex w-full items-center justify-between border border-control bg-bg px-2.5 py-2 text-left text-ink transition-colors hover:border-ink aria-expanded:border-ink"
         />
       </div>
     </div>

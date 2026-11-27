@@ -76,12 +76,12 @@ export function BentoCard({
     ink: "bg-ink text-bg",
     swatch: "text-on-swatch",
   }[tone];
+  // A mode can give a swatch a paler version for tiles (--swatch-N-tile) where text on the full colour is faint.
+  const fill = `var(--swatch-${swatch}-tile, var(--swatch-${swatch}))`;
   const style =
-    tone === "swatch"
-      ? { background: `radial-gradient(120% 100% at 85% 100%, color-mix(in srgb, var(--swatch-${swatch}) 70%, var(--bg)), var(--swatch-${swatch}) 70%)` }
-      : undefined;
+    tone === "swatch" ? { background: `radial-gradient(120% 100% at 85% 100%, color-mix(in srgb, ${fill} 70%, var(--bg)), ${fill} 70%)` } : undefined;
   return (
-    <div className={`flex flex-col rounded-3xl p-5 ${t} ${className}`} style={style}>
+    <div data-swatch={tone === "swatch" || undefined} className={`flex flex-col rounded-3xl p-5 ${t} ${className}`} style={style}>
       {children}
     </div>
   );
@@ -90,7 +90,8 @@ export function BentoCard({
 export function BigStat({ value, label, note }: { value: ReactNode; label: string; note?: ReactNode }) {
   return (
     <div className="flex h-full flex-col justify-between gap-4">
-      <span className="text-micro opacity-70">{label}</span>
+      {/* Full strength on colour, where a faded label gets hard to read. */}
+      <span className="text-micro opacity-70 in-data-swatch:opacity-100">{label}</span>
       <div>
         <div className="text-display-l">{value}</div>
         {note && <div className="text-body-s mt-1 opacity-70">{note}</div>}

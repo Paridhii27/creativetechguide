@@ -67,10 +67,10 @@ export default function LayerInsights({ insights: i, added, lens, disciplines }:
 
   return (
     <BentoGrid>
-      <BentoCard><BigStat label="In your layer" value={i.total} /></BentoCard>
-      <BentoCard><BigStat label="Added by you" value={added} /></BentoCard>
+      <BentoCard tone="swatch" swatch={2}><BigStat label="In your layer" value={i.total} /></BentoCard>
+      <BentoCard tone="swatch" swatch={3}><BigStat label="Added by you" value={added} /></BentoCard>
       <BentoCard tone="swatch" swatch={1}><BigStat label="Deadlines in 30 days" value={i.deadlinesIn30} /></BentoCard>
-      <BentoCard tone="swatch" swatch={4}><BigStat label="Events in 30 days" value={i.eventsIn30} /></BentoCard>
+      <BentoCard tone="swatch" swatch={5}><BigStat label="Events in 30 days" value={i.eventsIn30} /></BentoCard>
 
       <Panel title="Coming up" wide empty={next.length ? undefined : "Nothing in your layer has a date ahead."}>
         <ul className="mt-3 divide-y divide-line">

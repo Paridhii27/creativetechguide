@@ -100,7 +100,8 @@ The site has **three view modes**, taken from the three versions of the specimen
 | `--bg` | `#FCFCFC` | `#050505` | `#FCFCFC` |
 | `--surface` (cards, image grounds) | `#F2F2F0` | `#0F0F0F` | `#EEF3FC` |
 | `--ink` (all type) | `#1E1E1E` | `#F2F2F2` | `#3449B2` |
-| `--ink-muted` | `#1E1E1E` at 60% | `#F2F2F2` at 60% | `#3449B2` at 65% |
+| `--ink-muted` | `#1E1E1E` at 66% | `#F2F2F2` at 60% | `#3449B2` at 82% |
+| `--control` (borders of fields, search boxes and filter dropdowns; at least 3:1) | ink 55% into bg | ink 40% | ink 65% |
 | `--line` (hairlines, rules, grid) | `#DADAD6` | `#262626` | `#D4DCF0` |
 | `--accent` (shapes, lines, large type) | `#C8321A` signal red | `#EAFD57` chartreuse | `#3449B2` (same as ink) |
 | `--accent-text` (accent used for small text) | `#C8321A` | `#EAFD57` | `#3449B2` |
@@ -126,7 +127,7 @@ The five swatches (`--swatch-1…5`) appear throughout the system, always as fil
 - **Kind chips:** `tint` tags (residency, masters, full time…) take a soft wash of their type's swatch.
 - **HUD:** specimen anchor dots and their annotation boxes share a swatch mark; layers in the exploded diagram are tinted.
 - **Hover:** index rows take a faint wash of their type colour; cards draw a 3px rule of it along the top.
-- **Bento:** tiles filled with swatch gradients.
+- **Bento:** tiles filled with swatch gradients. My Layer's four counts are all coloured (blue, green, red, pink; no mustard), with labels at full strength.
 - The main `--accent` keeps its jobs: active states, urgency, the lens toggle, focus and the nav underline.
 
 ### Images per mode
@@ -156,6 +157,10 @@ More than 30 days: `--ink`. Under 30 days: `--accent` outline. Under 7 days: sol
 - Tags in `tag` style as small outlined chips. Pill-shaped buttons in `nav` or `label` style.
 - Images are cut-out objects or tightly cropped work stills on light grey grounds. Use the entry's OG image or a screenshot, with a caption in `micro`.
 - Each card shows a small location label and, in the India lens, an eligibility badge (Based in India / Open to India / Eligibility unclear).
+
+## Accessibility
+- Muted text keeps at least 4.5:1 on `--bg` and `--surface`; form control borders use `--control`, not `--line`.
+- "Skip to content" is the first thing Tab reaches. Anything that moves on its own has a visible pause button.
 
 ## Motion
 - Subtle and precise: leader lines draw in, annotation boxes fade up, and the list rows reveal with a slight stagger. Nothing bouncy. Respect `prefers-reduced-motion`.

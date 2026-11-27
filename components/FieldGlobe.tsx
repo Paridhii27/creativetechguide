@@ -68,6 +68,9 @@ export default function FieldGlobe({ points, total, closing, lens, lensLabel, ho
     return () => cancelAnimationFrame(frame);
   }, [spin, inside, picked]);
 
+  /** Whether it's set to turn (hovering holds it for a moment without changing this). */
+  const turning = spin && !picked;
+
   const countOf = (p: MapPoint) => (section ? (p.counts[section] ?? 0) : sum(p.counts));
   const shown = points.filter((p) => countOf(p) > 0);
   const max = Math.max(1, ...shown.map(countOf));
@@ -156,6 +159,23 @@ export default function FieldGlobe({ points, total, closing, lens, lensLabel, ho
           {shown.length} cities shown
         </p>
         <div className="absolute right-3 bottom-3 flex border border-line bg-bg">
+          {/* The globe moves on its own, so it has a pause. Not shown where reduced motion already holds it still. */}
+          <button
+            type="button"
+            aria-label={turning ? "Pause the globe" : "Spin the globe"}
+            title={turning ? "Pause the globe" : "Spin the globe"}
+            onClick={() => {
+              setSpin(!turning);
+              setPicked(null);
+              // The pointer is still over the globe, which would hold it: let "Spin" take effect straight away.
+              setInside(false);
+            }}
+            className="grid h-8 w-8 cursor-pointer place-items-center border-r border-line text-ink hover:bg-surface motion-reduce:hidden"
+          >
+            <svg aria-hidden width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+              <path d={turning ? "M2 1h2v8H2zM6 1h2v8H6z" : "M2 1l7 4-7 4z"} />
+            </svg>
+          </button>
           {([["−", "Zoom out", -0.5], ["+", "Zoom in", 0.5]] as const).map(([glyph, label, step]) => (
             <button key={label} type="button" aria-label={label} disabled={step < 0 ? zoom <= 1 : zoom >= MAX_ZOOM} onClick={() => setZoom((z) => Math.min(MAX_ZOOM, Math.max(1, z + step)))} className="text-label h-8 w-8 cursor-pointer text-ink hover:bg-surface disabled:cursor-default disabled:opacity-30">
               {glyph}
