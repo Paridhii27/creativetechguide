@@ -17,6 +17,7 @@ import { NavBar } from "@/components/ui/NavBar";
 import { PillLink } from "@/components/ui/primitives";
 import { VIEW_MODE_SCRIPT } from "@/lib/theme";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { jsonLdScript, SITE_DESCRIPTION, SITE_NAME, siteUrl, TAB_NAME } from "@/lib/seo";
 
 // The only three families on the site (DESIGN.md).
@@ -159,6 +160,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </p>
         </footer>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
