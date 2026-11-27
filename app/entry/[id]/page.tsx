@@ -152,7 +152,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-export default async function EntryPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ lens?: string; added?: string; edited?: string }> }) {
+export default async function EntryPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ lens?: string; added?: string; edited?: string; from?: string }> }) {
   const [{ id }, sp] = await Promise.all([params, searchParams]);
   const [e, lens] = await Promise.all([getEntry(id), resolveLens(sp.lens)]);
   if (!e) notFound();
@@ -183,6 +183,9 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
     return typeof v === "string" ? humanize(v) : null;
   })();
   const endDate = typeof d.end_date === "string" ? d.end_date : null;
+  // Back goes to the review queue for an admin who came from it (kept after approving or rejecting), or who is
+  // looking at anything still waiting there (so it survives a detour through Edit).
+  const fromQueue = admin && (sp.from === "review" || e.status === "pending_review");
   const notice = "text-body-s mb-8 flex flex-wrap items-center gap-x-2 gap-y-1 border border-line bg-surface px-4 py-3 text-ink";
 
   return (
@@ -204,7 +207,9 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
           Changes saved.
         </p>
       )}
-      {e.visibility === "private" && e.owner_id === user?.id ? (
+      {fromQueue ? (
+        <Link href="/admin/review" className="text-label inline-block py-1.5 text-ink-muted hover:text-ink"><span aria-hidden className="nudge nudge-back">←</span> Review queue</Link>
+      ) : e.visibility === "private" && e.owner_id === user?.id ? (
         <Link href="/me" className="text-label text-ink-muted hover:text-ink"><span aria-hidden className="nudge nudge-back">←</span> My Layer</Link>
       ) : (
         <Link href={`/${section.slug}?lens=${lens.slug}`} className="text-label inline-block py-1.5 text-ink-muted hover:text-ink"><span aria-hidden className="nudge nudge-back">←</span> {section.label}</Link>

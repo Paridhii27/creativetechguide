@@ -149,6 +149,9 @@ export async function updateEntry(id: string, v: EntryFormValues): Promise<{ id:
     is_remote: v.is_remote,
     disciplines: v.disciplines,
     data: mergeData(v.type, existing.type, (existing.data ?? {}) as Record<string, unknown>, fresh),
+    // Pictures are only sent when a new one was chosen; otherwise the saved ones stay.
+    ...(v.favicon_url ? { favicon_url: v.favicon_url } : {}),
+    ...(v.image_url ? { image_url: v.image_url } : {}),
     // A rejected (or archived) private entry becomes a draft again when its owner edits it.
     ...(!admin && !["draft", "pending_review"].includes(existing.status) ? { status: "draft" as Status } : {}),
   };

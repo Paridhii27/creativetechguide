@@ -16,7 +16,7 @@ function kindLabel(e: Entry): string | null {
  * One entry in a mixed list (search, My Layer, review queue, related entries): picture first,
  * then a type mark and kicker, title, summary and actions, with date and eligibility at the end.
  */
-export default function EntryCard({ entry: e, lens, orgName, actions, saved }: { entry: Entry; lens: Lens; orgName?: string; actions?: React.ReactNode; saved?: boolean }) {
+export default function EntryCard({ entry: e, lens, orgName, actions, saved, from }: { entry: Entry; lens: Lens; orgName?: string; actions?: React.ReactNode; saved?: boolean; from?: "review" }) {
   const dateLabel = dateLabelFor(e.type);
   const kind = kindLabel(e);
   const isDemo = e.title.startsWith("[Demo]");
@@ -40,7 +40,7 @@ export default function EntryCard({ entry: e, lens, orgName, actions, saved }: {
           {kicker}
         </div>
         <div className="flex flex-wrap items-baseline gap-x-2">
-          <Link href={`/entry/${e.id}?lens=${lens.slug}`} className="text-body font-semibold leading-snug text-ink decoration-1 underline-offset-4 group-hover:underline after:absolute after:inset-0">
+          <Link href={`/entry/${e.id}?lens=${lens.slug}${from ? `&from=${from}` : ""}`} className="text-body font-semibold leading-snug text-ink decoration-1 underline-offset-4 group-hover:underline after:absolute after:inset-0">
             {byInstitution ? orgName : title}
           </Link>
           {saved && <Tag tone="solid" title="In My Layer">Saved</Tag>}

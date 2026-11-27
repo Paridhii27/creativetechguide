@@ -1,5 +1,5 @@
 "use client";
-import { useState, type CSSProperties } from "react";
+import { useCallback, useState, type CSSProperties } from "react";
 import { swatchFor, swatchVar, tintVar, type Swatch } from "@/lib/swatch";
 
 /**
@@ -17,13 +17,21 @@ export function Thumb({
 }: {
   src?: string | null;
   title: string;
-  /** cover: photos/OG images · contain: cut-out objects · icon: small favicons, kept small and centred */
+  /** cover: photos/OG images · contain: cut-out objects · icon: logos and favicons, centred with room around them (capped, as many are small files) */
   fit?: "cover" | "contain" | "icon";
   /** palette colour for the image ground (usually the type colour); fallback blocks take a stable colour from the title */
   swatch?: Swatch | null;
   className?: string;
 }) {
   const [failed, setFailed] = useState<string | null>(null);
+  // An image can fail before React is listening (a server-rendered page), so onError alone would leave a broken
+  // picture: check any that has already finished.
+  const check = useCallback(
+    (img: HTMLImageElement | null) => {
+      if (img?.complete && !img.naturalWidth) img.decode().catch(() => setFailed(src ?? null));
+    },
+    [src],
+  );
   const letter = title.replace(/^\[Demo\]\s*/, "").trim().charAt(0).toUpperCase() || "?";
   const hasImage = !!src && failed !== src;
   // Fallback blocks vary by title, so a list of one type still reads as scattered paper squares.
@@ -36,11 +44,12 @@ export function Thumb({
       {hasImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
+          ref={check}
           src={src!}
           alt=""
           loading="lazy"
           onError={() => setFailed(src!)}
-          className={`mode-img absolute inset-0 ${fit === "contain" ? "h-full w-full object-contain p-[12%]" : fit === "icon" ? "m-auto aspect-square h-[36%] max-h-14 object-contain" : "h-full w-full object-cover"}`}
+          className={`mode-img absolute inset-0 ${fit === "contain" ? "h-full w-full object-contain p-[12%]" : fit === "icon" ? "m-auto aspect-square h-[84%] max-h-44 object-contain" : "h-full w-full object-cover"}`}
         />
       ) : (
         <span aria-hidden className="absolute inset-0 grid place-items-center font-[family-name:var(--font-display)] text-[clamp(18px,42cqh,64px)] leading-none text-on-swatch">

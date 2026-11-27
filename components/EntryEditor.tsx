@@ -2,6 +2,7 @@
 import { startTransition, useActionState, useRef, useState } from "react";
 import type { SaveState } from "@/app/actions/entries";
 import { Monogram } from "@/components/Monogram";
+import PicturePicker from "@/components/PicturePicker";
 import { defaultIconChoice, type IconChoice } from "@/lib/icon";
 import { countryForCity } from "@/lib/places";
 import { KINDS, SECTIONS, TOOL_KIND, humanize, kindsForSection, type Discipline, type EntryType, type Place } from "@/lib/types";
@@ -141,7 +142,7 @@ function SpecField({ spec, values, errors }: { spec: Spec; values: FormValues; e
 interface Props {
   mode: "add" | "edit";
   initial: FormValues;
-  /** Hidden fields carried through unchanged (url, image_url, favicon_url). */
+  /** Hidden fields carried through (url, image_url, favicon_url). A newly chosen picture replaces its value. */
   hidden: Record<string, string>;
   action: (prev: SaveState, fd: FormData) => Promise<SaveState>;
   places: Place[];
@@ -168,6 +169,11 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
   const type = section.type;
   const [state, formAction, saving] = useActionState<SaveState, FormData>(action, null);
   const [allDisciplines, setAllDisciplines] = useState(false);
+  /** Pictures chosen with "Fetch from page", sent with the form. */
+  const [picked, setPicked] = useState<{ favicon_url?: string; image_url?: string }>({});
+  const formRef = useRef<HTMLFormElement>(null);
+  const logo = picked.favicon_url ?? favicon;
+  const photo = picked.image_url ?? image;
   // Other offices: rows of (city, country); the main place is the City / Country pair above.
   const initialCities = Array.isArray(initial.extra_city) ? initial.extra_city : [];
   const initialCountries = Array.isArray(initial.extra_country) ? initial.extra_country : [];
@@ -214,6 +220,7 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
   return (
     // Submitted by hand: with `action={formAction}` React clears the fields even when the save is refused.
     <form
+      ref={formRef}
       onSubmit={(e) => {
         e.preventDefault();
         const fd = new FormData(e.currentTarget);
@@ -221,7 +228,7 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
       }}
       className="space-y-8"
     >
-      {Object.entries(hidden).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
+      {Object.entries({ ...hidden, ...picked }).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
 
       <fieldset className="space-y-3">
         <legend className="text-heading text-ink">What is it?</legend>
@@ -245,13 +252,12 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
         <Field label="Title" name="title" error={errors.title} wide>
           <input id="title" name="title" required value={title} onChange={(e) => setTitle(e.target.value)} className="field" />
         </Field>
-        {(favicon || image) && (
-          <fieldset className="sm:col-span-2">
+        <fieldset className="min-w-0 sm:col-span-2">
             <legend className="label">Picture</legend>
             <div className="mt-1 flex flex-wrap gap-2">
               {([
-                favicon ? { value: "favicon", label: "Site icon", src: favicon } : null,
-                image ? { value: "image", label: "Page image", src: image } : null,
+                logo ? { value: "favicon", label: "Site icon", src: logo } : null,
+                photo ? { value: "image", label: "Page image", src: photo } : null,
                 { value: "letter", label: "Just the letter", src: null },
               ] as ({ value: IconChoice; label: string; src: string | null } | null)[])
                 .filter((o): o is { value: IconChoice; label: string; src: string | null } => !!o)
@@ -262,9 +268,16 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
                     {o.label}
                   </label>
                 ))}
+              <PicturePicker
+                pageUrl={() => (formRef.current?.elements.namedItem("url") as HTMLInputElement | null)?.value ?? ""}
+                selected={[icon === "favicon" ? logo : icon === "image" ? photo : null].filter((x): x is string => !!x)}
+                onPick={({ url, slot }) => {
+                  setPicked((p) => ({ ...p, [slot === "logo" ? "favicon_url" : "image_url"]: url }));
+                  setIcon(slot === "logo" ? "favicon" : "image");
+                }}
+              />
             </div>
-          </fieldset>
-        )}
+        </fieldset>
         <Field label="Summary" name="summary" error={errors.summary} wide>
           <textarea id="summary" name="summary" rows={3} defaultValue={asText(initial.summary)} className="field" />
         </Field>

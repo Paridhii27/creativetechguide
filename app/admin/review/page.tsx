@@ -34,7 +34,7 @@ export default async function ReviewPage() {
           </section>
         </aside>
         <div className="min-w-0">
-          <EntryList entries={pending} lens={GLOBAL_LENS} empty={<>Nothing waiting. <Link href="/" className="text-ink underline underline-offset-4">Back to the guide</Link></>} />
+          <EntryList from="review" entries={pending} lens={GLOBAL_LENS} empty={<>Nothing waiting. <Link href="/" className="text-ink underline underline-offset-4">Back to the guide</Link></>} />
         </div>
       </div>
     </div>

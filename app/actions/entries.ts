@@ -5,7 +5,9 @@ import { EntryForm, formDataToObject, type EntryFormValues } from "@/lib/entry-i
 import { createEntry, deleteOwnEntry, reviewEntry, setSaved, suggestEntry, updateEntry } from "@/lib/db/mylayer";
 import { getEntry } from "@/lib/db/entries";
 import { getCurrentUser } from "@/lib/db/profiles";
-import { websiteProblem } from "@/lib/unfurl";
+import { badLinkMessage, fetchPage, unreadableLinkMessage, websiteProblem } from "@/lib/unfurl";
+import { findImages, type PageImage } from "@/lib/images";
+import { linkProblem } from "@/lib/links";
 
 export type SaveState =
   | null
@@ -64,6 +66,20 @@ export async function updateEntryAction(entryId: string, _prev: SaveState, fd: F
   if ("error" in res) return { error: res.error };
   revalidatePath("/", "layout");
   redirect(`/entry/${entryId}?edited=1`);
+}
+
+/** The pictures on an entry's page, for "Fetch from page". Signed-in users only, like reading a link to add it. */
+export async function findImagesAction(url: string): Promise<{ images: PageImage[] } | { error: string }> {
+  if (!(await getCurrentUser())) return { error: "Sign in first." };
+  if (typeof url !== "string" || !url.trim()) return { error: "Add the entry’s link first, then fetch its images." };
+  const problem = linkProblem(url);
+  if (problem) return { error: problem };
+  try {
+    const page = await fetchPage(url.trim());
+    return { images: findImages(page.html, page.url) };
+  } catch (e) {
+    return { error: badLinkMessage(e) ?? unreadableLinkMessage(e) };
+  }
 }
 
 export async function toggleSavedAction(entryId: string, saved: boolean) {

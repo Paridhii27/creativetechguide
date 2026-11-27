@@ -150,8 +150,14 @@ export async function websiteProblem(url: string): Promise<string | null> {
   }
 }
 
-/** Fetch a public page politely and extract metadata. Follows up to 5 redirects, re-checking each hop. */
+/** Fetch a public page politely and extract metadata. */
 export async function unfurl(input: string): Promise<Unfurled> {
+  const { url, html } = await fetchPage(input);
+  return { url, ...parseHtml(html, url) };
+}
+
+/** A public page's HTML (capped). Follows up to 5 redirects, re-checking each hop. */
+export async function fetchPage(input: string): Promise<{ url: string; html: string }> {
   let url = new URL(input);
   for (let hop = 0; hop < 6; hop++) {
     await assertPublicUrl(url);
@@ -181,7 +187,7 @@ export async function unfurl(input: string): Promise<Unfurled> {
       }
     }
     const html = new TextDecoder().decode(Buffer.concat(chunks));
-    return { url: url.toString(), ...parseHtml(html, url.toString()) };
+    return { url: url.toString(), html };
   }
   throw new UnfurlError("Too many redirects.", "redirects");
 }
