@@ -137,7 +137,7 @@ export function unreadableLinkMessage(e: unknown): string {
     if (e.kind === "not_html") return "That link points to a file rather than a web page, so we couldn't read its details.";
     if (e.kind === "http" && (e.status === 401 || e.status === 403 || e.status === 429)) return "That website didn't let us read the page.";
   }
-  return "We couldn't open that page just now.";
+  return "That page is being a bit shy, so we couldn't open it just now.";
 }
 
 /** A message if the link's website can't be found or isn't public. Only looks up the address; fetches nothing. */

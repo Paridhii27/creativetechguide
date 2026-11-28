@@ -49,7 +49,7 @@ export default function PicturePicker({ pageUrl, selected, onPick }: { pageUrl: 
         type="button"
         disabled={finding}
         onClick={find}
-        className="text-body-s flex cursor-pointer items-center gap-2 border border-dashed border-control px-3 py-2 text-ink transition-colors hover:border-ink hover:bg-surface disabled:cursor-wait"
+        className="text-body-s flex min-w-0 cursor-pointer items-center gap-2 text-left border border-dashed border-control px-3 py-2 text-ink transition-colors hover:border-ink hover:bg-surface disabled:cursor-wait"
       >
         {/* The same 32px square the other choices show their picture in. */}
         <span className="grid h-8 w-8 place-items-center bg-surface">
@@ -61,9 +61,9 @@ export default function PicturePicker({ pageUrl, selected, onPick }: { pageUrl: 
       </button>
 
       {images && (
-        <div className="basis-full space-y-3 pt-1">
+        <div className="col-span-full basis-full space-y-3 pt-1">
           <p role="status" className="text-body-s text-ink-muted">
-            {shown.length ? "Choose one, then save. Logos sit centred; photos fill the picture area." : "No usable images found on that page."}
+            {shown.length ? "Choose one, then save. Logos sit centred; photos fill the picture area." : "No pictures we could use there. The letter tile looks good too."}
           </p>
           {(["logo", "photo"] as const).map((slot) => {
             const group = shown.filter((i) => i.slot === slot);
@@ -104,7 +104,7 @@ export default function PicturePicker({ pageUrl, selected, onPick }: { pageUrl: 
         </div>
       )}
 
-      {message && <p role="alert" className="text-body-s basis-full text-accent-text">{message}</p>}
+      {message && <p role="alert" className="text-body-s col-span-full basis-full text-accent-text">{message}</p>}
     </div>
   );
 }

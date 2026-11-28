@@ -11,8 +11,8 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
     <div className="mx-auto max-w-md py-8">
       <BracketLabel accent>Magic link</BracketLabel>
       <h1 className="text-display-m mt-4 text-ink">Sign in</h1>
-      <p className="text-body mt-4 text-ink-muted">We&apos;ll email you a link. No password needed. Signing in lets you save entries, keep notes and track applications.</p>
-      {sp.error && <p className="text-body-s mt-4 text-accent-text">That sign-in link didn&apos;t work or has expired. Request a new one.</p>}
+      <p className="text-body mt-4 text-ink-muted">Pop in your email and we&apos;ll send you a link, no password to remember. Once you&apos;re in, you can save your finds, keep notes and track applications.</p>
+      {sp.error && <p className="text-body-s mt-4 text-accent-text">That sign-in link has expired or didn&apos;t work. Let&apos;s send you a fresh one.</p>}
       <div className="ticks mt-8 border border-line p-5"><LoginForm next={next} /></div>
     </div>
   );

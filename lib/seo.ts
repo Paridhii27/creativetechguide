@@ -7,6 +7,9 @@ export const TAB_NAME = "Map of Creative Technology";
 export const SITE_DESCRIPTION =
   "Creative technology, experience design and design-technology work, mapped through any country or region.";
 
+/** A screenshot of the home page (app/opengraph-image.jpg), for pages with no picture of their own. */
+export const SHARE_IMAGE = "/opengraph-image.jpg";
+
 /**
  * The canonical public address, for sitemap, canonical links and Open Graph URLs (which must be
  * absolute and the same for every visitor, so not read from the request like `requestOrigin()`).

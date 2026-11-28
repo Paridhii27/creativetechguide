@@ -141,6 +141,8 @@
   --on-swatch: #fcfcfc;
   --grid: rgb(52 73 178 / 0.08);
   --img-filter: url(#duotone-blueprint);
+  /* Ink and swatches are the same blue here, so doodled squares stay pale under the text. */
+  --doodle-opacity: 0.2;
   color-scheme: light;
 }
 
@@ -362,6 +364,12 @@ a { text-underline-offset: 3px; }
 .mode-img { filter: var(--img-filter); transition: filter 300ms ease; }
 .mode-img:hover, .mode-img-original { filter: none; }
 [data-theme="night"] .mode-img:hover { filter: brightness(0.9); }
+
+/* Thumbnails lean towards the cursor (components/LeanThumbs sets the angles). Slow both ways, so it's soft. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-lean] { transition: transform 700ms cubic-bezier(0.2, 0, 0, 1); }
+  [data-lean][data-leaning] { transform: perspective(500px) rotateX(var(--lean-x)) rotateY(var(--lean-y)); }
+}
 
 /* Corner ticks on panels: add .ticks to a relatively positioned element */
 .ticks { position: relative; }

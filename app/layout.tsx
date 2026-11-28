@@ -12,6 +12,9 @@ import LensSwitch from "@/components/LensSwitch";
 import NavLink from "@/components/NavLink";
 import NavSearch from "@/components/NavSearch";
 import GlobalDrop from "@/components/GlobalDrop";
+import LeanThumbs from "@/components/LeanThumbs";
+import HiddenSquare from "@/components/ui/HiddenSquare";
+import { WHIMSY } from "@/lib/whimsy";
 import { DuotoneFilters } from "@/components/ui/DuotoneFilters";
 import { NavBar } from "@/components/ui/NavBar";
 import { PillLink } from "@/components/ui/primitives";
@@ -150,13 +153,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </div>
         )}
         {user && <GlobalDrop />}
+        <LeanThumbs />
         {/* Takes up any spare height, so the footer sits at the bottom of the screen on short pages too. */}
         <main id="main" tabIndex={-1} className="page-width flex-1 py-10 outline-none!">{children}</main>
         <footer className="mt-16 border-t border-line">
           {/* One centred line; where it has to wrap (phones), each sentence takes its own line. */}
-          <p className="text-micro page-width py-8 text-center text-balance text-ink-muted">
-            <span className="inline-block">A map of Creative Technology, growing with your suggestions.</span>{" "}
-            <span className="inline-block">Every public entry is reviewed first.</span>
+          <p className="text-micro page-width relative py-8 text-center text-balance text-ink-muted">
+            <span className="inline-block">A map of Creative Technology, growing one curious find at a time.</span>{" "}
+            <span className="inline-block">
+              Every public entry is reviewed first. <HiddenSquare phrases={WHIMSY.footer} />
+            </span>
           </p>
         </footer>
         <Analytics />

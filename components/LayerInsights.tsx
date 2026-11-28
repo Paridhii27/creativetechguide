@@ -61,7 +61,7 @@ const RELEVANCE_LABEL: Record<Relevance, (place: string) => string> = {
 
 /** Insights over the signed-in user's own layer. */
 export default function LayerInsights({ insights: i, added, lens, disciplines }: { insights: Insights; added: number; lens: Lens; disciplines: Discipline[] }) {
-  if (i.total === 0) return <p className="text-body ticks border border-line p-5 text-ink-muted">Save or add a few entries and your insights show up here.</p>;
+  if (i.total === 0) return <p className="text-body ticks border border-line p-5 text-ink-muted">Save or add a few things and your layer starts to take shape here.</p>;
   const label = new Map(disciplines.map((d) => [d.slug, d.label]));
   const next = i.upcoming.slice(0, TOP);
 
@@ -72,7 +72,7 @@ export default function LayerInsights({ insights: i, added, lens, disciplines }:
       <BentoCard tone="swatch" swatch={1}><BigStat label="Deadlines in 30 days" value={i.deadlinesIn30} /></BentoCard>
       <BentoCard tone="swatch" swatch={5}><BigStat label="Events in 30 days" value={i.eventsIn30} /></BentoCard>
 
-      <Panel title="Coming up" wide empty={next.length ? undefined : "Nothing in your layer has a date ahead."}>
+      <Panel title="Coming up" wide empty={next.length ? undefined : "No dates coming up. A quiet stretch."}>
         <ul className="mt-3 divide-y divide-line">
           {next.map((e) => (
             <li key={e.id} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2.5">

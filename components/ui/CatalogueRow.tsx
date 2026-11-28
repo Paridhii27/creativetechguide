@@ -25,7 +25,7 @@ export function CatalogueRow({ title, description, href, swatch, children }: { t
 /** Cut-out image on a soft palette ground, caption in `micro`, small "View" link. */
 export function CatalogueCard({ href, title, image, label, caption, swatch, fit = "contain" }: { href: string; title: string; image?: string | null; label?: ReactNode; caption?: ReactNode; /** ground colour; defaults to the plain surface */ swatch?: Swatch; fit?: "cover" | "contain" }) {
   return (
-    <li className="group relative flex min-w-0 flex-col">
+    <li data-lean-area className="group relative flex min-w-0 flex-col">
       <Link href={href} className="relative block" aria-label={title}>
         <Thumb src={image} title={title} fit={fit} swatch={swatch} className="aspect-[4/5] w-full" />
         {label && <span className={`text-micro absolute top-2 left-2 ${image ? "text-ink" : "text-on-swatch"}`}>{label}</span>}

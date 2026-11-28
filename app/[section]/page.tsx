@@ -10,16 +10,17 @@ import { browseEntries, getDisciplines } from "@/lib/db/entries";
 import { mySavedIds } from "@/lib/db/mylayer";
 import { currentPage, parseFilters, type Params } from "@/lib/filters";
 import { resolveLens } from "@/lib/lens-server";
+import { SHARE_IMAGE } from "@/lib/seo";
 import { kindsForSection, sectionForSlug } from "@/lib/types";
 
 const INTRO: Record<string, string> = {
-  studios: "Studios, companies, labs, collectives, institutions and funders working in creative technology.",
-  programmes: "Degrees, diplomas, short courses and summer schools.",
-  jobs: "Roles for creative technologists, interaction developers and experience designers.",
-  "open-calls": "Open calls, commissions, residencies, grants, fellowships and competitions.",
-  resources: "Magazines, journals, books, talks, communities, archives and directories.",
-  tools: "Software and hardware people make the work with. Open one to see its libraries, tutorials and communities.",
-  events: "Festivals, conferences, exhibitions, meetups and degree shows.",
+  studios: "The studios, companies, labs, collectives, institutions and funders making creative technology happen.",
+  programmes: "Degrees, diplomas, short courses and summer schools for curious minds.",
+  jobs: "Where creative technologists, interaction developers and experience designers can find their next role.",
+  "open-calls": "Open calls, commissions, residencies, grants, fellowships and competitions waiting for your ideas.",
+  resources: "Magazines, journals, books, talks, communities, archives and directories to get lost in.",
+  tools: "The software and hardware people play and make with. Open one to find its libraries, tutorials and communities.",
+  events: "Festivals, conferences, exhibitions, meetups and degree shows where the field comes together.",
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ section: string }> }): Promise<Metadata> {
@@ -27,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ section: 
   if (!s) return { title: "Not found", robots: { index: false } };
   // Filtered and lens views share one canonical URL, so search engines index the section once.
   // The tab shows just the section name, without the site suffix.
-  return { title: { absolute: s.label }, description: INTRO[s.slug], alternates: { canonical: `/${s.slug}` }, openGraph: { title: s.label, description: INTRO[s.slug], url: `/${s.slug}` } };
+  return { title: { absolute: s.label }, description: INTRO[s.slug], alternates: { canonical: `/${s.slug}` }, openGraph: { title: s.label, description: INTRO[s.slug], url: `/${s.slug}`, images: [SHARE_IMAGE] }, twitter: { card: "summary_large_image", title: s.label, description: INTRO[s.slug], images: [SHARE_IMAGE] } };
 }
 
 export default async function SectionPage({ params, searchParams }: { params: Promise<{ section: string }>; searchParams: Promise<Params> }) {
@@ -42,7 +43,7 @@ export default async function SectionPage({ params, searchParams }: { params: Pr
   const q = typeof sp.q === "string" ? sp.q : undefined;
   // Dated types read as an index table; organisations and resources as a catalogue of cards (DESIGN.md).
   const catalogue = section.type === "organisation" || section.type === "resource";
-  const empty = "No entries match these filters.";
+  const empty = "Nothing here with these filters yet. Try loosening one or two.";
 
   return (
     <div>

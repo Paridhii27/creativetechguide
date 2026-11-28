@@ -45,6 +45,7 @@ export function Thumb({
   const fill = swatchFor(title);
   return (
     <div
+      data-lean
       className={`relative overflow-hidden [container-type:size] ${hasImage ? (swatch ? "thumb-ground" : "bg-surface") : ""} ${className}`}
       style={hasImage ? (swatch ? ({ "--thumb-tint": tintVar(swatch) } as CSSProperties) : undefined) : { background: swatchVar(fill) }}
     >

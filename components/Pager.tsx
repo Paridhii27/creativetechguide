@@ -10,10 +10,11 @@ export default function Pager({ path, params, page, hasMore, total }: { path: st
   if (page === 1 && !hasMore) return null;
   const pages = Math.max(page, Math.ceil(total / PAGE_SIZE));
   return (
-    <nav className="mt-10 flex items-center justify-between gap-4 border-t border-line pt-5" aria-label="Pagination">
+    // Equal side columns keep the page number dead centre, even when only one of the arrows is there.
+    <nav className="mt-10 grid grid-cols-[1fr_auto_1fr] items-center justify-items-start gap-4 border-t border-line pt-5" aria-label="Pagination">
       {page > 1 ? <Link href={withParams(path, params, { page: page === 2 ? null : String(page - 1) })} className={pill}><PagerArrow back /> Previous</Link> : <span />}
       <span className="text-micro text-ink-muted">Page {pad(page)} of {pad(pages)}</span>
-      {hasMore ? <Link href={withParams(path, params, { page: String(page + 1) })} className={pill}>Next <PagerArrow /></Link> : <span />}
+      {hasMore ? <Link href={withParams(path, params, { page: String(page + 1) })} className={`${pill} justify-self-end`}>Next <PagerArrow /></Link> : <span />}
     </nav>
   );
 }

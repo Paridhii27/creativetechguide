@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { surpriseAction, type Surprise } from "@/app/actions/surprise";
 import PlaceMenu from "@/components/ui/PlaceMenu";
 import { BracketLabel, Mark } from "@/components/ui/primitives";
 import { sectionSwatch, swatchVar } from "@/lib/swatch";
@@ -50,6 +51,12 @@ export default function FieldGlobe({ points, total, closing, lens, lensLabel, ho
   const [inside, setInside] = useState(false);
   const [spin, setSpin] = useState(home.length === 0);
   const drag = useRef<{ x: number; y: number; moved: boolean } | null>(null);
+  /** the entry "Surprise me" turned up, shown on its city's card */
+  const [surprise, setSurprise] = useState<(NonNullable<Surprise> & { key: string }) | null>(null);
+  const [looking, setLooking] = useState(false);
+  const flight = useRef(0);
+  const land = () => cancelAnimationFrame(flight.current);
+  useEffect(() => land, []);
 
   useEffect(() => {
     if (!spin || inside || picked || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -81,8 +88,45 @@ export default function FieldGlobe({ points, total, closing, lens, lensLabel, ho
   const color = current ? swatchVar(sectionSwatch(current) ?? 5) : "var(--accent)";
 
   const focus = (p: MapPoint) => {
+    land();
     setPicked(keyOf(p));
     setView({ lat: clamp(p.lat), lng: p.lng });
+  };
+
+  /** Turns to a city over a second or so, the short way round. */
+  const flyTo = (p: MapPoint) => {
+    land();
+    setPicked(keyOf(p));
+    const to = { lat: clamp(p.lat), lng: p.lng };
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return setView(to);
+    const from = view;
+    const east = ((((to.lng - from.lng) % 360) + 540) % 360) - 180;
+    const began = performance.now();
+    const step = (now: number) => {
+      const t = Math.min(1, (now - began) / 1200);
+      const eased = t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2;
+      setView({ lat: from.lat + (to.lat - from.lat) * eased, lng: from.lng + east * eased });
+      if (t < 1) flight.current = requestAnimationFrame(step);
+    };
+    flight.current = requestAnimationFrame(step);
+  };
+
+  const surpriseMe = async () => {
+    const others = shown.filter((p) => keyOf(p) !== picked);
+    const p = others[Math.floor(Math.random() * others.length)] ?? shown[0];
+    if (!p) return;
+    setHover(null);
+    setSurprise(null);
+    setLooking(true);
+    flyTo(p);
+    try {
+      const found = await surpriseAction(p.city, section);
+      if (found) setSurprise({ ...found, key: keyOf(p) });
+    } catch {
+      /* no entry to show: the city's card still lists what's there */
+    } finally {
+      setLooking(false);
+    }
   };
 
   return (
@@ -94,7 +138,7 @@ export default function FieldGlobe({ points, total, closing, lens, lensLabel, ho
           aria-label="Globe of cities with entries. Drag to spin, or choose a city from the menu below."
           // Sideways drags spin the globe; up-and-down swipes still scroll the page.
           className="absolute inset-0 h-full w-full cursor-grab touch-pan-y select-none text-ink active:cursor-grabbing"
-          onPointerDown={(e) => { drag.current = { x: e.clientX, y: e.clientY, moved: false }; }}
+          onPointerDown={(e) => { land(); drag.current = { x: e.clientX, y: e.clientY, moved: false }; }}
           onPointerMove={(e) => {
             const d = drag.current;
             if (!d) return;
@@ -189,6 +233,12 @@ export default function FieldGlobe({ points, total, closing, lens, lensLabel, ho
           <div className="ticks border border-line bg-bg p-3">
             <BracketLabel accent>{active.city}</BracketLabel>
             {active.country !== active.city && <p className="text-micro mt-1 text-ink-muted">{active.country}</p>}
+            {surprise?.key === activeKey && (
+              <Link href={`/entry/${surprise.id}?lens=${lens}`} className="anim-fade-up mt-2 block border-y border-line py-2 hover:underline">
+                <span className="text-micro block text-accent-text">Surprise · {surprise.kind}</span>
+                <span className="text-body-s line-clamp-2 font-semibold text-ink">{surprise.title}</span>
+              </Link>
+            )}
             <ul className="mt-2">
               {SECTIONS.filter((s) => active.counts[s.slug] && (!section || s.slug === section)).map((s) => (
                 <li key={s.slug}>
@@ -211,10 +261,9 @@ export default function FieldGlobe({ points, total, closing, lens, lensLabel, ho
         )}
       </div>
 
-      {/* One quiet row of two menus under the globe: what to show, and where to look. */}
-      {/* One quiet row of two menus under the globe: what to show, and where to look. Each list opens over
+      {/* One quiet row under the globe: what to show, where to look, and a random trip. Each list opens over
           the globe, as wide as its button (the whole row on phones, so names aren't cut off). */}
-      <figcaption className="relative grid grid-cols-2 divide-x divide-line border-x border-b border-line">
+      <figcaption className="relative grid grid-cols-2 divide-x divide-line border-x border-b border-line sm:grid-cols-[1fr_1fr_auto]">
         <div className="flex min-w-0 sm:relative">
           <PlaceMenu
             above
@@ -245,6 +294,11 @@ export default function FieldGlobe({ points, total, closing, lens, lensLabel, ho
             className={MENU}
           />
         </div>
+        {/* A row of its own on phones; the third cell from sm. */}
+        <button type="button" onClick={surpriseMe} disabled={looking || shown.length === 0} className="group text-body-s col-span-2 flex cursor-pointer items-center justify-center gap-2 border-t border-line px-4 py-2.5 whitespace-nowrap text-ink transition-colors hover:bg-surface focus-visible:-outline-offset-2! disabled:cursor-wait sm:col-span-1 sm:border-t-0">
+          <span aria-hidden className={`h-2 w-2 bg-accent transition-[rotate] duration-300 group-hover:rotate-45 motion-reduce:transition-none ${looking ? "animate-pulse motion-reduce:animate-none" : ""}`} />
+          Surprise me
+        </button>
       </figcaption>
     </figure>
   );

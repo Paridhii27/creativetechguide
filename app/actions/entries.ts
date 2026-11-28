@@ -27,7 +27,7 @@ async function deadLinks(v: EntryFormValues, unchanged = new Set<unknown>()): Pr
     }),
   );
   const fieldErrors = Object.fromEntries(found.filter((x) => x !== null));
-  return Object.keys(fieldErrors).length ? { error: "Check the highlighted fields.", fieldErrors } : null;
+  return Object.keys(fieldErrors).length ? { error: "Nearly there. Have a look at the highlighted fields.", fieldErrors } : null;
 }
 
 export async function saveEntryAction(_prev: SaveState, fd: FormData): Promise<SaveState> {
@@ -35,7 +35,7 @@ export async function saveEntryAction(_prev: SaveState, fd: FormData): Promise<S
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
     for (const i of parsed.error.issues) fieldErrors[String(i.path[0] ?? "form")] ??= i.message;
-    return { error: "Check the highlighted fields.", fieldErrors };
+    return { error: "Nearly there. Have a look at the highlighted fields.", fieldErrors };
   }
   const dead = await deadLinks(parsed.data);
   if (dead) return dead;
@@ -55,7 +55,7 @@ export async function updateEntryAction(entryId: string, _prev: SaveState, fd: F
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
     for (const i of parsed.error.issues) fieldErrors[String(i.path[0] ?? "form")] ??= i.message;
-    return { error: "Check the highlighted fields.", fieldErrors };
+    return { error: "Nearly there. Have a look at the highlighted fields.", fieldErrors };
   }
   const old = await getEntry(entryId);
   const data = old?.data ?? {};

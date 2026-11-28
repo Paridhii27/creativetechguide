@@ -60,7 +60,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
             region in the lens to see what&apos;s based there or open to applicants from there.
           </p>
           <p className="text-body-l mt-4 max-w-xl text-ink-muted">
-            Found something that&apos;s missing? Sign in and paste or drop any link (a studio, course, job, open call or event) to add it to{" "}
+            Spotted something we&apos;re missing? Sign in, then paste or drop its link (a studio, course, job, open call or event) to add it to{" "}
             <Link href="/me" className="text-ink underline decoration-1 underline-offset-4 hover:decoration-2">your own layer</Link>. It stays private
             until you suggest it to the Map.
           </p>
@@ -121,7 +121,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           <h2 className="text-heading text-ink">Closing soon</h2>
           <p className="text-body-s mt-3 text-ink-muted">Open calls, job closing dates and programme application rounds in the next 60 days.</p>
         </div>
-        <EntryIndex entries={upcoming} lens={lens} byRelevance={false} savedIds={savedIds} empty="No dated deadlines in the next 60 days." />
+        <EntryIndex entries={upcoming} lens={lens} byRelevance={false} savedIds={savedIds} empty="Nothing closing in the next 60 days. Breathe easy." />
       </section>
     </div>
   );

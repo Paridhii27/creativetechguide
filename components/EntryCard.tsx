@@ -30,6 +30,7 @@ export default function EntryCard({ entry: e, lens, orgName, actions, saved, fro
   const location = locationLabel(e);
   return (
     <li
+      data-lean-area
       style={swatch ? ({ "--row-wash": tintVar(swatch, 10) } as CSSProperties) : undefined}
       className="group relative grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-4 gap-y-3 border-b border-line px-3 py-5 transition-colors hover:bg-[var(--row-wash,var(--surface))] sm:grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:gap-x-6"
     >
@@ -53,13 +54,14 @@ export default function EntryCard({ entry: e, lens, orgName, actions, saved, fro
             <span title={locationLabel(e, { all: true })}>{location}</span>
           </LocationLabel>
         )}
-        {/* Raised above the stretched title link so buttons and fields keep working. */}
-        {actions && <div className="relative z-10 mt-3">{actions}</div>}
       </div>
       <div className="col-start-2 flex flex-wrap items-start gap-1.5 sm:col-start-auto sm:max-w-56 sm:flex-col sm:items-end">
         {dateLabel && <DeadlineChip date={e.key_date} label={dateLabel} event={e.type === "event"} endDate={typeof e.data.end_date === "string" ? e.data.end_date : null} />}
         <EligibilityBadge entry={e} lens={lens} />
       </div>
+      {/* Last, so on phones the buttons get the row's full width; from sm they sit under the text.
+          Raised above the stretched title link so buttons and fields keep working. */}
+      {actions && <div className="relative z-10 col-span-full sm:col-span-1 sm:col-start-2">{actions}</div>}
     </li>
   );
 }

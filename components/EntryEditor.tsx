@@ -232,9 +232,9 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
 
       <fieldset className="space-y-3">
         <legend className="text-heading text-ink">What is it?</legend>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           {SECTIONS.map((s) => (
-            <label key={s.slug} className={`text-label cursor-pointer rounded-full border px-3.5 py-1.5 transition-colors ${slug === s.slug ? "border-accent bg-accent text-on-accent" : "border-line text-ink-muted hover:border-ink hover:text-ink"}`}>
+            <label key={s.slug} className={`text-label cursor-pointer rounded-full border px-3.5 py-1.5 transition-colors max-sm:flex max-sm:min-h-11 max-sm:items-center max-sm:justify-center max-sm:text-center ${s.slug === "resources" ? "max-sm:col-span-2" : ""} ${slug === s.slug ? "border-accent bg-accent text-on-accent" : "border-line text-ink-muted hover:border-ink hover:text-ink"}`}>
               <input type="radio" name="type" value={s.type} checked={slug === s.slug} onChange={() => setSlug(s.slug)} className="sr-only" />
               {s.slug === "resources" ? s.label : s.singular}
             </label>
@@ -254,7 +254,7 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
         </Field>
         <fieldset className="min-w-0 sm:col-span-2">
             <legend className="label">Picture</legend>
-            <div className="mt-1 flex flex-wrap gap-2">
+            <div className="mt-1 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
               {([
                 logo ? { value: "favicon", label: "Site icon", src: logo } : null,
                 photo ? { value: "image", label: "Page image", src: photo } : null,
@@ -307,19 +307,21 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
             <span className="label">Also based in</span>
             {extraRows.map((r, i) => (
               <div key={r.id} className="flex gap-2">
-                <input name="extra_city" list="cities" placeholder="City" value={r.city} onChange={(e) => onRowCity(r.id, e.target.value)} autoComplete="off" aria-label={`Other place ${i + 1} city`} className="field" />
-                <input name="extra_country" list="countries" placeholder="Country / region" value={r.country} onChange={(e) => patchRow(r.id, { country: e.target.value, auto: false })} autoComplete="off" aria-label={`Other place ${i + 1} country or region`} className="field" />
-                <button type="button" onClick={() => setExtraRows((rows) => rows.filter((x) => x.id !== r.id))} aria-label={`Remove other place ${i + 1}`} className="px-2 text-ink-muted hover:text-ink">✕</button>
+                <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row">
+                  <input name="extra_city" list="cities" placeholder="City" value={r.city} onChange={(e) => onRowCity(r.id, e.target.value)} autoComplete="off" aria-label={`Other place ${i + 1} city`} className="field" />
+                  <input name="extra_country" list="countries" placeholder="Country / region" value={r.country} onChange={(e) => patchRow(r.id, { country: e.target.value, auto: false })} autoComplete="off" aria-label={`Other place ${i + 1} country or region`} className="field" />
+                </div>
+                <button type="button" onClick={() => setExtraRows((rows) => rows.filter((x) => x.id !== r.id))} aria-label={`Remove other place ${i + 1}`} className="min-w-10 shrink-0 px-2 text-ink-muted hover:text-ink">✕</button>
               </div>
             ))}
           </div>
         )}
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-body-s sm:col-span-2">
-          <button type="button" onClick={() => setExtraRows((rows) => [...rows, { id: nextRowId.current++, city: "", country: "", auto: false }])} className="text-ink-muted underline hover:text-ink">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-body-s sm:col-span-2 sm:justify-start">
+          <button type="button" onClick={() => setExtraRows((rows) => [...rows, { id: nextRowId.current++, city: "", country: "", auto: false }])} className="text-ink-muted underline hover:text-ink max-sm:min-h-11">
             + Add another place
           </button>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="is_remote" defaultChecked={initial.is_remote === true} /> Remote / online
+          <label className="flex items-center gap-2 max-sm:min-h-11">
+            <input type="checkbox" name="is_remote" defaultChecked={initial.is_remote === true} className="accent-[var(--accent)] max-sm:size-5" /> Remote / online
           </label>
         </div>
           </>
@@ -337,14 +339,14 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
           {disciplines.map((d) => (
             <label
               key={d.slug}
-              className={`cursor-pointer items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-body-s has-[:checked]:border-ink has-[:checked]:bg-surface ${allDisciplines || selectedDisciplines.has(d.slug) ? "flex" : "hidden"}`}
+              className={`cursor-pointer items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-body-s max-sm:min-h-9 max-sm:px-3 has-[:checked]:border-ink has-[:checked]:bg-surface ${allDisciplines || selectedDisciplines.has(d.slug) ? "flex" : "hidden"}`}
             >
               <input type="checkbox" name="disciplines" value={d.slug} defaultChecked={selectedDisciplines.has(d.slug)} className="accent-[var(--accent)]" />
               {d.label}
             </label>
           ))}
           {!allDisciplines && (
-            <button type="button" onClick={() => setAllDisciplines(true)} className="text-body-s text-ink-muted underline hover:text-ink">
+            <button type="button" onClick={() => setAllDisciplines(true)} className="text-body-s text-ink-muted underline hover:text-ink max-sm:min-h-11">
               {selectedDisciplines.size ? "Change" : "Pick disciplines"}
             </button>
           )}
@@ -352,11 +354,11 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
       </fieldset>
 
       {more.length > 0 && (
-        <details key={slug} open={moreHasError || undefined} className="border border-line px-4 py-3">
-          <summary className="text-label cursor-pointer text-ink">
-            Add more details <span className="text-ink-muted">(optional, {more.length} more fields)</span>
+        <details key={slug} open={moreHasError || undefined} className="border border-line px-4">
+          <summary className="text-label cursor-pointer py-3 text-ink">
+            Add more details <span className="text-ink-muted max-sm:mt-1 max-sm:block max-sm:pl-4">(optional, {more.length} more fields)</span>
           </summary>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 pt-1 pb-4 sm:grid-cols-2">
             {more.map((s) => <SpecField key={namesOf(s)[0]} spec={s} values={initial} errors={errors} />)}
           </div>
         </details>
@@ -365,13 +367,13 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
       {mode === "add" && (
         <fieldset className="space-y-3 border-t border-line pt-6">
           {isAdmin ? (
-            <label className="flex items-start gap-2 text-body-s">
-              <input type="checkbox" name="publish" className="mt-1" />
+            <label className="flex items-start gap-2 text-body-s max-sm:gap-3">
+              <input type="checkbox" name="publish" className="mt-1 shrink-0 accent-[var(--accent)] max-sm:mt-0 max-sm:size-5" />
               <span><strong>Publish to the Map now.</strong> Everyone can see it straight away. Leave unticked to keep it private.</span>
             </label>
           ) : (
-            <label className="flex items-start gap-2 text-body-s">
-              <input type="checkbox" name="suggest" className="mt-1" />
+            <label className="flex items-start gap-2 text-body-s max-sm:gap-3">
+              <input type="checkbox" name="suggest" className="mt-1 shrink-0 accent-[var(--accent)] max-sm:mt-0 max-sm:size-5" />
               <span><strong>Suggest to the Map.</strong> It stays private until it&apos;s reviewed and approved, then everyone can see it. You can&apos;t edit it while it&apos;s being reviewed, so check the details first.</span>
             </label>
           )}
@@ -384,11 +386,11 @@ export default function EntryEditor({ mode, initial, hidden, action, places, cou
           Already on the Map: <a href={`/entry/${state.duplicate.id}`} className="underline">{state.duplicate.title}</a>. Open it to save it to your layer.
         </p>
       )}
-      <div className="flex items-center gap-4">
-        <button disabled={saving} className="text-label whitespace-nowrap rounded-full border border-ink bg-ink px-4 py-2 text-bg transition-colors hover:bg-transparent hover:text-ink disabled:opacity-50 px-5">
+      <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-4">
+        <button disabled={saving} className="text-label whitespace-nowrap rounded-full border border-ink bg-ink px-4 py-2 text-bg transition-colors hover:bg-transparent hover:text-ink disabled:opacity-50 sm:px-5 max-sm:min-h-12">
           {saving ? "Saving…" : mode === "add" ? "Save to My Layer" : "Save changes"}
         </button>
-        {cancelHref && <a href={cancelHref} className="text-body-s underline">Cancel</a>}
+        {cancelHref && <a href={cancelHref} className="text-body-s underline max-sm:py-3 max-sm:text-center">Cancel</a>}
       </div>
     </form>
   );

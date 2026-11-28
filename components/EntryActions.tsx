@@ -57,11 +57,13 @@ export default function EntryActions({ entryId, updatedAt, signedIn, saved: init
     );
 
   // Pill buttons (DESIGN.md): outlined; solid ink when on; accent outline for destructive.
-  const pillBase = `inline-flex items-center rounded-full border border-ink transition-colors disabled:opacity-50 ${compact ? "text-tag px-2.5 py-1" : "text-label px-3.5 py-1.5"}`;
+  // Taller on phones, so they're easy to tap.
+  const size = compact ? "text-tag px-2.5 py-1 max-sm:min-h-9 max-sm:px-3.5" : "text-label px-3.5 py-1.5 max-sm:min-h-10";
+  const pillBase = `inline-flex items-center rounded-full border border-ink transition-colors disabled:opacity-50 ${size}`;
   // Two separate recipes so the outlined and solid states never carry conflicting text/bg classes.
   const btn = `${pillBase} text-ink hover:bg-ink hover:text-bg`;
   const solid = `${pillBase} bg-ink text-bg hover:bg-transparent hover:text-ink`;
-  const danger = `inline-flex items-center rounded-full border border-accent text-accent-text transition-colors hover:bg-accent hover:text-on-accent disabled:opacity-50 ${compact ? "text-tag px-2.5 py-1" : "text-label px-3.5 py-1.5"}`;
+  const danger = `inline-flex items-center rounded-full border border-accent text-accent-text transition-colors hover:bg-accent hover:text-on-accent disabled:opacity-50 ${size}`;
   return (
     <div className="space-y-2">
       <div className={`flex flex-wrap gap-2 ${pending ? "opacity-60" : ""}`}>
@@ -97,7 +99,7 @@ export default function EntryActions({ entryId, updatedAt, signedIn, saved: init
         {!isAdmin && isOwner && status === "pending_review" && (
           <span
             title="The admin will approve or reject it. Until then it stays private and can't be edited."
-            className={`inline-flex items-center rounded-full border border-dashed border-line text-ink-muted ${compact ? "text-tag px-2.5 py-1" : "text-label px-3.5 py-1.5"}`}
+            className={`inline-flex items-center rounded-full border border-dashed border-line text-ink-muted ${size}`}
           >
             Waiting for review
           </span>

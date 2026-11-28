@@ -43,13 +43,13 @@ export default function AddForm({ initialUrl, places, countries, disciplines, to
     try {
       const res = await fetch("/api/unfurl", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ url: u }) });
       const json = (await res.json()) as UnfurlResult;
-      setResult(res.ok ? json : { page: null, existing: null, error: json.error ?? "Something went wrong. Please try again." });
+      setResult(res.ok ? json : { page: null, existing: null, error: json.error ?? "Something went sideways. Give it another go?" });
       if (res.ok) {
         setShowForm(!json.existing);
       }
     } catch {
       // Our own server didn't answer, so the link hasn't been checked yet.
-      setResult({ page: null, existing: null, error: "We couldn't check that link. Check your connection and try again." });
+      setResult({ page: null, existing: null, error: "We couldn't reach that link. Check your connection and give it another go." });
     } finally {
       setFetching(false);
     }
@@ -91,7 +91,8 @@ export default function AddForm({ initialUrl, places, countries, disciplines, to
   return (
     <div className="space-y-8">
       <form
-        className="flex flex-col gap-2 sm:flex-row"
+        // One line at every width; on phones Cancel drops beneath.
+        className="flex flex-wrap gap-2 sm:flex-nowrap"
         onSubmit={(e) => {
           e.preventDefault();
           void fetchUrl();
@@ -102,33 +103,31 @@ export default function AddForm({ initialUrl, places, countries, disciplines, to
           inputMode="url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://… a studio, programme, job, open call, event or article"
+          placeholder="Paste any link"
           aria-label="Link"
           autoFocus={!initialUrl && !inline}
-          className="field text-body"
+          className="field text-body min-w-0 flex-1"
         />
-        <div className="flex gap-2">
-          <button disabled={fetching || !url.trim()} className="text-label whitespace-nowrap rounded-full border border-ink bg-ink px-4 py-2 text-bg transition-colors hover:bg-transparent hover:text-ink disabled:opacity-50">
-            {fetching ? "Fetching…" : "Add"}
+        <button disabled={fetching || !url.trim()} className="text-label shrink-0 whitespace-nowrap rounded-full border border-ink bg-ink px-5 py-2 text-bg transition-colors hover:bg-transparent hover:text-ink disabled:opacity-50">
+          {fetching ? "Fetching…" : "Add"}
+        </button>
+        {inline && (showForm || result) && (
+          <button type="button" onClick={reset} className="text-label whitespace-nowrap px-2 py-2 text-ink-muted underline hover:text-ink max-sm:min-h-11 max-sm:basis-full">
+            Cancel
           </button>
-          {inline && (showForm || result) && (
-            <button type="button" onClick={reset} className="text-label whitespace-nowrap px-2 py-2 text-ink-muted underline hover:text-ink">
-              Cancel
-            </button>
-          )}
-        </div>
+        )}
       </form>
 
       {result?.error && <p role="alert" className="text-body-s text-accent-text">{result.error}</p>}
-      {result?.warning && <p className="text-body-s text-ink-muted">{result.warning} Fill in the details below.</p>}
+      {result?.warning && <p className="text-body-s text-ink-muted">{result.warning} You can fill in the details below.</p>}
 
       {duplicate && (
         <div className="ticks text-body-s border border-line bg-surface p-4 text-ink">
           <p>
-            <strong>Already on the Map:</strong>{" "}
+            <strong>Good news, it&apos;s already on the Map:</strong>{" "}
             <Link href={`/entry/${duplicate.id}`} className="underline">{duplicate.title}</Link>
           </p>
-          <div className="mt-3 flex flex-wrap gap-3">
+          <div className="mt-3 flex flex-wrap items-center gap-3">
             {savedDup === duplicate.id ? (
               <span className="chip">Saved to your layer</span>
             ) : (
@@ -149,12 +148,12 @@ export default function AddForm({ initialUrl, places, countries, disciplines, to
       )}
 
       {page && (
-        <div className="ticks flex gap-4 border border-line p-4">
+        <div className="ticks flex flex-col gap-3 border border-line p-4 sm:flex-row sm:gap-4">
           {page.image_url && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={page.image_url} alt="" className="mode-img h-20 w-32 shrink-0 object-cover" />
+            <img src={page.image_url} alt="" className="mode-img aspect-[1.91/1] w-full shrink-0 object-cover sm:aspect-auto sm:h-20 sm:w-32" />
           )}
-          <div className="min-w-0 text-body-s">
+          <div className="min-w-0 break-words text-body-s">
             <p className="label truncate">{page.site_name ?? new URL(page.url).hostname}</p>
             <p className="text-body mt-1 font-semibold leading-snug text-ink">{page.title ?? "Untitled page"}</p>
             {page.description && <p className="mt-1 line-clamp-2 text-ink-muted">{page.description}</p>}
@@ -177,7 +176,7 @@ export default function AddForm({ initialUrl, places, countries, disciplines, to
           favicon={page?.favicon_url}
           image={page?.image_url}
           isAdmin={isAdmin}
-          note={page ? (found > 0 ? `Filled in ${found} detail${found === 1 ? "" : "s"} from the page. Change anything that's off; everything stays editable after saving.` : "Guessed from the page. Change anything that's off; everything stays editable after saving.") : undefined}
+          note={page ? (found > 0 ? `We picked up ${found} detail${found === 1 ? "" : "s"} from the page. Tweak anything that's off; you can always edit it later.` : "Here's our first guess from the page. Tweak anything that's off; you can always edit it later.") : undefined}
         />
       )}
     </div>

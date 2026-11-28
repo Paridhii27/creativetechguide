@@ -37,7 +37,7 @@ export function Card({
   swatch?: Swatch | null;
 }) {
   return (
-    <article className="group relative flex flex-col border border-line bg-bg transition-colors hover:border-ink">
+    <article data-lean-area className="group relative flex flex-col border border-line bg-bg transition-colors hover:border-ink">
       <Thumb src={image} title={title} fit={imageFit} swatch={swatch} className={`w-full ${image && imageFit === "cover" ? "aspect-[16/10]" : "aspect-[5/2]"}`} />
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div className="flex items-center justify-between gap-2">

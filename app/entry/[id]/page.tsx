@@ -15,7 +15,7 @@ import { getCurrentUser } from "@/lib/db/profiles";
 import { getUserState, isAdmin } from "@/lib/db/mylayer";
 import { getDisciplines, getEntriesByIds, getEntry, getRelatedEntries, getToolResources } from "@/lib/db/entries";
 import { formatDate } from "@/lib/dates";
-import { entryJsonLd, isIndexable, jsonLdScript, SITE_NAME } from "@/lib/seo";
+import { entryJsonLd, isIndexable, jsonLdScript, SHARE_IMAGE, SITE_NAME } from "@/lib/seo";
 import { entryPicture } from "@/lib/icon";
 import { resolveLens } from "@/lib/lens-server";
 import { humanize, isTool, KINDS, sectionForEntry, type Entry } from "@/lib/types";
@@ -147,8 +147,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     description,
     alternates: { canonical: `/entry/${e.id}` },
     robots: isIndexable(e) ? undefined : { index: false, follow: false },
-    openGraph: { type: "article", title, description, url: `/entry/${e.id}`, images: e.image_url ? [{ url: e.image_url }] : undefined },
-    twitter: { card: e.image_url ? "summary_large_image" : "summary", title, description, images: e.image_url ? [e.image_url] : undefined },
+    openGraph: { type: "article", title, description, url: `/entry/${e.id}`, images: [e.image_url ?? SHARE_IMAGE] },
+    twitter: { card: "summary_large_image", title, description, images: [e.image_url ?? SHARE_IMAGE] },
   };
 }
 
@@ -335,7 +335,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
             )}
           </div>
           <div className="mt-4">
-            <EntryList entries={related} lens={lens} empty={<>Nothing linked yet. When you add a library, tutorial or community, choose {e.title} under &ldquo;For tool&rdquo;.</>} />
+            <EntryList entries={related} lens={lens} empty={<>Nothing here yet. Know a good library, tutorial or community? Add it and choose {e.title} under &ldquo;For tool&rdquo;.</>} />
           </div>
         </section>
       )}

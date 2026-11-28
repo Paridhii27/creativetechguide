@@ -59,12 +59,12 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               </ul>
             </nav>
           ) : (
-            <p className="text-body-s text-ink-muted">Search across every studio, programme, job, open call, resource and event.</p>
+            <p className="text-body-s text-ink-muted">Rummage through every studio, programme, job, open call, resource and event.</p>
           )}
         </aside>
         {q && (
           <div className="min-w-0 lg:col-start-2 lg:row-start-2">
-            <EntryList entries={entries} lens={lens} savedIds={savedIds} empty={<>No results for &ldquo;{q}&rdquo;.</>} />
+            <EntryList entries={entries} lens={lens} savedIds={savedIds} empty={<>Nothing for &ldquo;{q}&rdquo; yet. Try another word?</>} />
             <Pager path="/search" params={sp} page={currentPage(sp)} hasMore={hasMore} total={total} />
           </div>
         )}

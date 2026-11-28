@@ -9,7 +9,7 @@ export type LoginState = { ok: boolean; message: string } | null;
 export async function sendMagicLink(_prev: LoginState, form: FormData): Promise<LoginState> {
   if (!isSupabaseConfigured()) return { ok: false, message: "Supabase is not configured yet (see README)." };
   const parsed = z.email().safeParse(String(form.get("email") ?? "").trim());
-  if (!parsed.success) return { ok: false, message: "Enter a valid email address." };
+  if (!parsed.success) return { ok: false, message: "That email looks a little off. Mind checking it?" };
   const next = String(form.get("next") ?? "/");
   // The domain this request came in on (production, preview or localhost), never a hard-coded env value.
   const origin = await requestOrigin();
@@ -19,5 +19,5 @@ export async function sendMagicLink(_prev: LoginState, form: FormData): Promise<
     options: { emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next.startsWith("/") ? next : "/")}` },
   });
   if (error) return { ok: false, message: error.message };
-  return { ok: true, message: "Check your inbox for a sign-in link." };
+  return { ok: true, message: "Check your inbox, your sign-in link is on its way." };
 }

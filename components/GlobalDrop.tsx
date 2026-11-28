@@ -77,7 +77,7 @@ export default function GlobalDrop() {
     <div className="ticks bg-specimen-grid pointer-events-none fixed inset-3 z-50 grid place-items-center border border-dashed border-ink/60 opacity-95">
       <div className="text-center">
         <p className="text-micro text-accent-text">[ Drop URL ]</p>
-        <p className="text-display-m mt-3 text-ink">Drop the link to add it</p>
+        <p className="text-display-m mt-3 text-ink">Ooh, a link. Let go.</p>
       </div>
     </div>
   );
